@@ -130,7 +130,6 @@
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-purple-200">ACESSAR &rarr;</div>
                 </div>
 
-                <!-- CONFIGURAÇÕES (ABRE A MODAL) -->
                 <div onclick="openConfigModal()" class="card-menu cursor-pointer bg-[#495057] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
                     <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
                         <i class="fa-solid fa-gear"></i>
@@ -142,13 +141,13 @@
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="if(confirm('Deseja recarregar os dados da nuvem?')) loadDataFromSheet();" class="card-menu cursor-pointer bg-[#dc3545] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
+                <div onclick="resetSystemData()" class="card-menu cursor-pointer bg-[#dc3545] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
                     <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
                         <i class="fa-solid fa-power-off"></i>
                     </div>
                     <div>
                         <h3 class="text-xl font-bold uppercase tracking-wide">SAIR / RESET</h3>
-                        <p class="text-xs text-red-100 mt-1">Reiniciar Dados do Sistema</p>
+                        <p class="text-xs text-red-100 mt-1">Zerar Cache do Navegador</p>
                     </div>
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-red-200">EXECUTAR &rarr;</div>
                 </div>
@@ -291,7 +290,7 @@
                     </div>
                     <div class="border-t border-amber-200 pt-4 flex justify-between items-center mt-6">
                         <span class="text-lg font-bold uppercase text-amber-900">TOTAL</span>
-                        <span id="batch-total" class="text-3xl font-black text-amber-950">150</span>
+                        <span id="batch-total" class="text-3xl font-black text-amber-950">0</span>
                     </div>
                 </div>
             </div>
@@ -324,10 +323,10 @@
                         <i class="fa-solid fa-building"></i> SITE
                     </div>
                     <div class="space-y-2 text-xs">
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-site-cheios" class="text-base text-slate-800">676</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-site-vazios" class="text-base text-slate-800">250</strong></div>
+                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-site-cheios" class="text-base text-slate-800">0</strong></div>
+                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-site-vazios" class="text-base text-slate-800">0</strong></div>
                         <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong class="text-base text-slate-800">300</strong></div>
-                        <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-0.5 rounded-full text-xs">● NORMAL</span></div>
+                        <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span id="st-site-status" class="bg-slate-100 text-slate-700 font-bold px-3 py-0.5 rounded-full text-xs">● ZERADO</span></div>
                     </div>
                 </div>
 
@@ -336,10 +335,10 @@
                         <i class="fa-solid fa-house"></i> ALOJAMENTO 01
                     </div>
                     <div class="space-y-2 text-xs">
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-aloj1-cheios" class="text-base text-slate-800">329</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-aloj1-vazios" class="text-base text-slate-800">180</strong></div>
+                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-aloj1-cheios" class="text-base text-slate-800">0</strong></div>
+                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-aloj1-vazios" class="text-base text-slate-800">0</strong></div>
                         <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong class="text-base text-slate-800">200</strong></div>
-                        <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-0.5 rounded-full text-xs">● NORMAL</span></div>
+                        <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span id="st-aloj1-status" class="bg-slate-100 text-slate-700 font-bold px-3 py-0.5 rounded-full text-xs">● ZERADO</span></div>
                     </div>
                 </div>
 
@@ -348,10 +347,10 @@
                         <i class="fa-solid fa-house"></i> ALOJAMENTO 03
                     </div>
                     <div class="space-y-2 text-xs">
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-aloj3-cheios" class="text-base text-slate-800">390</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-aloj3-vazios" class="text-base text-slate-800">320</strong></div>
+                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-aloj3-cheios" class="text-base text-slate-800">0</strong></div>
+                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-aloj3-vazios" class="text-base text-slate-800">0</strong></div>
                         <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong class="text-base text-slate-800">200</strong></div>
-                        <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-0.5 rounded-full text-xs">● NORMAL</span></div>
+                        <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span id="st-aloj3-status" class="bg-slate-100 text-slate-700 font-bold px-3 py-0.5 rounded-full text-xs">● ZERADO</span></div>
                     </div>
                 </div>
             </div>
@@ -427,13 +426,13 @@
                 </div>
             </div>
 
-            <!-- PAINEL DE KPIS DINÂMICOS -->
+            <!-- PAINEL DE KPIS -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-[#0f5298] text-white p-4 rounded-2xl shadow flex justify-between items-center">
                     <div>
                         <p class="text-[10px] uppercase font-bold text-sky-100">CONSUMO TOTAL</p>
-                        <h3 id="dash-consumo-total" class="text-2xl font-black mt-1">25</h3>
-                        <p id="dash-litros-total" class="text-[10px] text-sky-200">500 litros</p>
+                        <h3 id="dash-consumo-total" class="text-2xl font-black mt-1">0</h3>
+                        <p id="dash-litros-total" class="text-[10px] text-sky-200">0 litros</p>
                     </div>
                     <i class="fa-solid fa-faucet-drip text-3xl opacity-40"></i>
                 </div>
@@ -459,7 +458,7 @@
                 <div class="bg-[#6f42c1] text-white p-4 rounded-2xl shadow flex justify-between items-center">
                     <div>
                         <p class="text-[10px] uppercase font-bold text-purple-100">ESTOQUE ATUAL (CHEIOS)</p>
-                        <h3 id="dash-estoque-atual" class="text-2xl font-black mt-1">1.769</h3>
+                        <h3 id="dash-estoque-atual" class="text-2xl font-black mt-1">0</h3>
                         <p class="text-[10px] text-purple-200">Galões</p>
                     </div>
                     <i class="fa-solid fa-cubes text-3xl opacity-40"></i>
@@ -468,8 +467,8 @@
                 <div class="bg-[#343a40] text-white p-4 rounded-2xl shadow flex justify-between items-center">
                     <div>
                         <p class="text-[10px] uppercase font-bold text-slate-300">MÉDIA DIÁRIA</p>
-                        <h3 id="dash-media-diaria" class="text-2xl font-black mt-1">1</h3>
-                        <p id="dash-media-diaria-litros" class="text-[10px] text-slate-300">20 litros/dia</p>
+                        <h3 id="dash-media-diaria" class="text-2xl font-black mt-1">0</h3>
+                        <p id="dash-media-diaria-litros" class="text-[10px] text-slate-300">0 litros/dia</p>
                     </div>
                     <i class="fa-solid fa-chart-line text-3xl opacity-40"></i>
                 </div>
@@ -587,61 +586,43 @@
 
     </main>
 
-    <!-- MODAL DE CONFIGURAÇÕES DO SISTEMA (IDÊNTICA À IMAGEM) -->
+    <!-- MODAL DE CONFIGURAÇÕES -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-6 relative border">
-            <!-- CABEÇALHO MODAL -->
             <div class="flex justify-between items-center pb-2 border-b">
                 <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-gear text-[#0b5394]"></i> Configurações do Sistema
                 </h3>
-                <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">
-                    &times;
-                </button>
+                <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
             </div>
 
-            <!-- FORMULÁRIO DE PARÂMETROS -->
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">
-                        Efetivo de Pessoas (Para Litros/Pessoa/Dia):
-                    </label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Efetivo de Pessoas (Para Litros/Pessoa/Dia):</label>
                     <input type="number" id="cfg-efetivo" class="w-full p-3 border border-slate-300 rounded-xl text-base font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
-
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">
-                        Meta de Consumo (L/Pessoa/Dia):
-                    </label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Meta de Consumo (L/Pessoa/Dia):</label>
                     <input type="number" step="0.1" id="cfg-meta" class="w-full p-3 border border-slate-300 rounded-xl text-base font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
-
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">
-                        Volume do Galão (Litros):
-                    </label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Volume do Galão (Litros):</label>
                     <input type="number" id="cfg-volume" class="w-full p-3 border border-slate-300 rounded-xl text-base font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
             </div>
 
-            <!-- BOTÕES DA MODAL -->
             <div class="flex justify-end gap-3 pt-2">
-                <button onclick="closeConfigModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-sm transition">
-                    Cancelar
-                </button>
-                <button onclick="saveConfigParameters()" class="bg-[#0b5394] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-xl text-sm shadow transition">
-                    Salvar Parâmetros
-                </button>
+                <button onclick="closeConfigModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-sm transition">Cancelar</button>
+                <button onclick="saveConfigParameters()" class="bg-[#0b5394] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-xl text-sm shadow transition">Salvar Parâmetros</button>
             </div>
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT -->
+    <!-- LÓGICA JAVASCRIPT Zerada -->
     <script>
         let database = [];
         const batchLocations = ['Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Área de Vivência', 'Refeitório', 'Repúblicas'];
 
-        // PARÂMETROS PADRÃO DO SISTEMA
         let systemConfig = {
             efetivo: 500,
             meta: 2.7,
@@ -659,12 +640,9 @@
             initCharts();
         });
 
-        // GERENCIAMENTO DA MODAL DE CONFIGURAÇÕES
         function loadSavedConfig() {
             const saved = localStorage.getItem('controle_agua_config');
-            if(saved) {
-                systemConfig = JSON.parse(saved);
-            }
+            if(saved) systemConfig = JSON.parse(saved);
         }
 
         function openConfigModal() {
@@ -707,9 +685,7 @@
                 if (SCRIPT_URL) {
                     const res = await fetch(SCRIPT_URL);
                     const data = await res.json();
-                    if(Array.isArray(data) && data.length > 0) {
-                        database = data;
-                    }
+                    if(Array.isArray(data)) database = data;
                 }
             } catch (err) {
                 console.error("Erro no carregamento:", err);
@@ -718,6 +694,7 @@
             }
             renderRecentTable();
             updateStockUI();
+            updateDashboard();
         }
 
         async function saveRecords(records) {
@@ -726,6 +703,7 @@
 
             renderRecentTable();
             updateStockUI();
+            updateDashboard();
 
             if (SCRIPT_URL) {
                 try {
@@ -738,6 +716,17 @@
                 } catch(e) {
                     console.error("Erro ao enviar:", e);
                 }
+            }
+        }
+
+        function resetSystemData() {
+            if(confirm('Tem certeza de que deseja zerar os registros salvos em cache no seu navegador?')) {
+                localStorage.removeItem('controle_agua_db');
+                database = [];
+                renderRecentTable();
+                updateStockUI();
+                updateDashboard();
+                alert('Cache zerado com sucesso!');
             }
         }
 
@@ -825,6 +814,7 @@
 
             saveRecords(records);
             alert('Consumo registrado com sucesso!');
+            clearBatch();
         }
 
         function clearBatch() {
@@ -860,16 +850,20 @@
             const tbodyMoves = document.getElementById('stock-last-moves');
             if(tbodyMoves) {
                 tbodyMoves.innerHTML = '';
-                list.forEach(r => {
-                    tbodyMoves.innerHTML += `
-                        <tr>
-                            <td class="p-2">${r.Data || '-'}</td>
-                            <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
-                            <td class="p-2">${r.LocalPrincipal || '-'}</td>
-                            <td class="p-2 text-center font-bold">${r.Quantidade || 0}</td>
-                        </tr>
-                    `;
-                });
+                if(list.length === 0) {
+                    tbodyMoves.innerHTML = `<tr><td colspan="4" class="p-2 text-center text-slate-400">Sem registros.</td></tr>`;
+                } else {
+                    list.forEach(r => {
+                        tbodyMoves.innerHTML += `
+                            <tr>
+                                <td class="p-2">${r.Data || '-'}</td>
+                                <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                                <td class="p-2">${r.LocalPrincipal || '-'}</td>
+                                <td class="p-2 text-center font-bold">${r.Quantidade || 0}</td>
+                            </tr>
+                        `;
+                    });
+                }
             }
         }
 
@@ -885,7 +879,7 @@
             database.forEach((r, idx) => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-3 text-slate-400 font-mono text-xs">#${5139 + idx}</td>
+                        <td class="p-3 text-slate-400 font-mono text-xs">#${1001 + idx}</td>
                         <td class="p-3">${r.Data || '-'}</td>
                         <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
                         <td class="p-3">${r.LocalPrincipal || '-'}</td>
@@ -905,6 +899,7 @@
                 renderRecentTable();
                 renderFullDatabaseTable();
                 updateStockUI();
+                updateDashboard();
             }
         }
 
@@ -924,7 +919,7 @@
                 if(matchesSearch && matchesTipo) {
                     tbody.innerHTML += `
                         <tr class="hover:bg-slate-50">
-                            <td class="p-3 text-slate-400 font-mono text-xs">#${5139 + idx}</td>
+                            <td class="p-3 text-slate-400 font-mono text-xs">#${1001 + idx}</td>
                             <td class="p-3">${r.Data || '-'}</td>
                             <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
                             <td class="p-3">${r.LocalPrincipal || '-'}</td>
@@ -940,9 +935,9 @@
 
         function calculateStock() {
             const stock = {
-                'Site': { cheios: 676, vazios: 250, min: 300, inicial: 676, entrada: 0, consumo: 0, devolucao: 0 },
-                'Alojamento 01': { cheios: 329, vazios: 180, min: 200, inicial: 354, entrada: 0, consumo: 25, devolucao: 0 },
-                'Alojamento 03': { cheios: 390, vazios: 320, min: 200, inicial: 390, entrada: 0, consumo: 0, devolucao: 0 }
+                'Site': { cheios: 0, vazios: 0, min: 300, inicial: 0, entrada: 0, consumo: 0, devolucao: 0 },
+                'Alojamento 01': { cheios: 0, vazios: 0, min: 200, inicial: 0, entrada: 0, consumo: 0, devolucao: 0 },
+                'Alojamento 03': { cheios: 0, vazios: 0, min: 200, inicial: 0, entrada: 0, consumo: 0, devolucao: 0 }
             };
 
             database.forEach(r => {
@@ -952,7 +947,7 @@
                 if(stock[loc]) {
                     if(r.Tipo === 'Consumo') { stock[loc].consumo += qtd; stock[loc].cheios -= qtd; }
                     else if(r.Tipo === 'Entrada') { stock[loc].entrada += qtd; stock[loc].cheios += qtd; }
-                    else if(r.Tipo === 'Devolução') { stock[loc].devolucao += qtd; }
+                    else if(r.Tipo === 'Devolução') { stock[loc].devolucao += qtd; stock[loc].vazios -= qtd; }
                 }
             });
 
@@ -975,6 +970,7 @@
             tbody.innerHTML = '';
             Object.keys(stock).forEach(loc => {
                 const s = stock[loc];
+                const isNormal = s.cheios >= s.min || s.cheios === 0;
                 tbody.innerHTML += `
                     <tr>
                         <td class="p-3 font-bold">${loc}</td>
@@ -984,7 +980,11 @@
                         <td class="p-3 text-center font-bold text-amber-600">${s.devolucao}</td>
                         <td class="p-3 text-center font-black text-slate-800 text-sm">${s.cheios}</td>
                         <td class="p-3 text-center">${s.min}</td>
-                        <td class="p-3 text-center"><span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-0.5 rounded-full text-xs">● Normal</span></td>
+                        <td class="p-3 text-center">
+                            <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'} font-bold px-3 py-0.5 rounded-full text-xs">
+                                ● ${isNormal ? 'Normal' : 'Abaixo do Mínimo'}
+                            </span>
+                        </td>
                     </tr>
                 `;
             });
@@ -1003,11 +1003,11 @@
             chartEvolucao = new Chart(ctxEvol, {
                 type: 'line',
                 data: {
-                    labels: ['01/09', '05/09', '10/09', '15/09', '20/09', '25/09', '30/09'],
+                    labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
                     datasets: [
-                        { label: 'Site', data: [1000, 1050, 920, 1020, 850, 930, 928], borderColor: '#0f5298', fill: false },
-                        { label: 'Alaj. 01', data: [380, 390, 310, 360, 310, 340, 329], borderColor: '#0e8a44', fill: false },
-                        { label: 'Alaj. 03', data: [510, 490, 520, 480, 500, 505, 390], borderColor: '#d9530f', fill: false }
+                        { label: 'Site', data: [0, 0, 0, 0], borderColor: '#0f5298', fill: false },
+                        { label: 'Alaj. 01', data: [0, 0, 0, 0], borderColor: '#0e8a44', fill: false },
+                        { label: 'Alaj. 03', data: [0, 0, 0, 0], borderColor: '#d9530f', fill: false }
                     ]
                 },
                 options: chartOptions
@@ -1017,8 +1017,8 @@
             chartDiario = new Chart(ctxDiario, {
                 type: 'bar',
                 data: {
-                    labels: Array.from({length: 30}, (_, i) => String(i + 1).padStart(2, '0')),
-                    datasets: [{ label: 'Site', data: Array.from({length: 30}, () => Math.floor(Math.random() * 200) + 150), backgroundColor: '#0f5298' }]
+                    labels: Array.from({length: 15}, (_, i) => String(i + 1).padStart(2, '0')),
+                    datasets: [{ label: 'Consumo Diário', data: Array(15).fill(0), backgroundColor: '#0f5298' }]
                 },
                 options: chartOptions
             });
@@ -1028,7 +1028,7 @@
                 type: 'doughnut',
                 data: {
                     labels: ['Site', 'Alojamento 01', 'Alojamento 03'],
-                    datasets: [{ data: [60, 20, 20], backgroundColor: ['#0f5298', '#0e8a44', '#d9530f'] }]
+                    datasets: [{ data: [0, 0, 0], backgroundColor: ['#0f5298', '#0e8a44', '#d9530f'] }]
                 },
                 options: chartOptions
             });
@@ -1037,10 +1037,10 @@
             chartEntradasDev = new Chart(ctxEntDev, {
                 type: 'line',
                 data: {
-                    labels: Array.from({length: 15}, (_, i) => String(i*2 + 1).padStart(2, '0')),
+                    labels: Array.from({length: 10}, (_, i) => String(i + 1).padStart(2, '0')),
                     datasets: [
-                        { label: 'Entradas', data: Array.from({length: 15}, () => Math.floor(Math.random() * 60) + 100), borderColor: '#0e8a44', fill: false },
-                        { label: 'Devoluções', data: Array.from({length: 15}, () => Math.floor(Math.random() * 70) + 90), borderColor: '#d9530f', fill: false }
+                        { label: 'Entradas', data: Array(10).fill(0), borderColor: '#0e8a44', fill: false },
+                        { label: 'Devoluções', data: Array(10).fill(0), borderColor: '#d9530f', fill: false }
                     ]
                 },
                 options: chartOptions
@@ -1050,35 +1050,44 @@
             chartMensal = new Chart(ctxMensal, {
                 type: 'bar',
                 data: {
-                    labels: ['Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set'],
-                    datasets: [{ label: 'Galões', data: [15000, 12800, 13200, 14500, 14255, 11750], backgroundColor: '#0f5298' }]
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    datasets: [{ label: 'Galões', data: Array(12).fill(0), backgroundColor: '#0f5298' }]
                 },
                 options: chartOptions
             });
         }
 
         function updateDashboard() {
-            let totalConsumo = 25;
+            let totalConsumo = 0, totalEntradas = 0, totalDevolucoes = 0;
+            const stock = calculateStock();
+
             database.forEach(r => {
-                if(r.Tipo === 'Consumo') totalConsumo += parseInt(r.Quantidade) || 0;
+                const q = parseInt(r.Quantidade) || 0;
+                if(r.Tipo === 'Consumo') totalConsumo += q;
+                if(r.Tipo === 'Entrada') totalEntradas += q;
+                if(r.Tipo === 'Devolução') totalDevolucoes += q;
             });
 
             const totalLitros = totalConsumo * systemConfig.volumeGalao;
             const mediaDiaria = Math.round(totalConsumo / 30);
             const mediaDiariaLitros = mediaDiaria * systemConfig.volumeGalao;
-            const litrosPessoaDia = (totalLitros / (systemConfig.efetivo * 30)).toFixed(1);
+            const litrosPessoaDia = systemConfig.efetivo > 0 ? (totalLitros / (systemConfig.efetivo * 30)).toFixed(1) : "0,0";
 
             document.getElementById('dash-consumo-total').innerText = totalConsumo;
             document.getElementById('dash-litros-total').innerText = `${totalLitros.toLocaleString()} litros`;
+            document.getElementById('dash-entradas').innerText = totalEntradas;
+            document.getElementById('dash-devolucoes').innerText = totalDevolucoes;
+            document.getElementById('dash-estoque-atual').innerText = stock['Site'].cheios + stock['Alojamento 01'].cheios + stock['Alojamento 03'].cheios;
+
             document.getElementById('dash-media-diaria').innerText = mediaDiaria;
             document.getElementById('dash-media-diaria-litros').innerText = `${mediaDiariaLitros} litros/dia`;
             document.getElementById('dash-efetivo').innerText = systemConfig.efetivo;
-            document.getElementById('dash-litros-pessoa').innerText = litrosPessoaDia.replace('.', ',');
+            document.getElementById('dash-litros-pessoa').innerText = litrosPessoaDia.toString().replace('.', ',');
             document.getElementById('dash-meta').innerText = systemConfig.meta.toString().replace('.', ',');
         }
 
         function exportToExcel() {
-            if(database.length === 0) { alert('Nenhum dado cadastrado.'); return; }
+            if(database.length === 0) { alert('Nenhum dado cadastrado para exportar.'); return; }
             const ws = XLSX.utils.json_to_sheet(database);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Lancamentos");
@@ -1086,7 +1095,7 @@
         }
 
         function exportToCSV() {
-            if(database.length === 0) { alert('Nenhum dado cadastrado.'); return; }
+            if(database.length === 0) { alert('Nenhum dado cadastrado para exportar.'); return; }
             const ws = XLSX.utils.json_to_sheet(database);
             const csv = XLSX.utils.sheet_to_csv(ws);
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
