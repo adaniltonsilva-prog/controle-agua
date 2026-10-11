@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #dbebe6; }
+        body { font-family: 'Inter', sans-serif; background-color: #dbebe6; line-height: 1.25; }
         .bg-nav { background-color: #0b5394; }
         .nav-btn { transition: all 0.2s; color: #ffffff; opacity: 0.85; }
         .nav-btn:hover { opacity: 1; background-color: rgba(255, 255, 255, 0.15); }
@@ -136,7 +136,7 @@
                     </div>
                     <div>
                         <h3 class="text-xl font-bold uppercase tracking-wide">CONFIGURAÇÕES</h3>
-                        <p class="text-xs text-slate-200 mt-1">Parâmetros do Sistema</p>
+                        <p class="text-xs text-slate-200 mt-1">Parâmetros e Estoques Iniciais</p>
                     </div>
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
                 </div>
@@ -328,9 +328,10 @@
                         <i class="fa-solid fa-building"></i> SITE
                     </div>
                     <div class="space-y-2 text-xs">
+                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE INICIAL</span> <strong id="st-site-inicial" class="text-base text-slate-800">0</strong></div>
                         <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-site-cheios" class="text-base text-slate-800">0</strong></div>
                         <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-site-vazios" class="text-base text-slate-800">0</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong class="text-base text-slate-800">300</strong></div>
+                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong id="st-site-minimo" class="text-base text-slate-800">300</strong></div>
                         <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span id="st-site-status" class="bg-slate-100 text-slate-700 font-bold px-3 py-0.5 rounded-full text-xs">● ZERADO</span></div>
                     </div>
                 </div>
@@ -340,9 +341,10 @@
                         <i class="fa-solid fa-house"></i> ALOJAMENTO 01
                     </div>
                     <div class="space-y-2 text-xs">
+                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE INICIAL</span> <strong id="st-aloj1-inicial" class="text-base text-slate-800">0</strong></div>
                         <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-aloj1-cheios" class="text-base text-slate-800">0</strong></div>
                         <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-aloj1-vazios" class="text-base text-slate-800">0</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong class="text-base text-slate-800">200</strong></div>
+                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong id="st-aloj1-minimo" class="text-base text-slate-800">200</strong></div>
                         <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span id="st-aloj1-status" class="bg-slate-100 text-slate-700 font-bold px-3 py-0.5 rounded-full text-xs">● ZERADO</span></div>
                     </div>
                 </div>
@@ -352,9 +354,10 @@
                         <i class="fa-solid fa-house"></i> ALOJAMENTO 03
                     </div>
                     <div class="space-y-2 text-xs">
+                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE INICIAL</span> <strong id="st-aloj3-inicial" class="text-base text-slate-800">0</strong></div>
                         <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-aloj3-cheios" class="text-base text-slate-800">0</strong></div>
                         <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-aloj3-vazios" class="text-base text-slate-800">0</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong class="text-base text-slate-800">200</strong></div>
+                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong id="st-aloj3-minimo" class="text-base text-slate-800">200</strong></div>
                         <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span id="st-aloj3-status" class="bg-slate-100 text-slate-700 font-bold px-3 py-0.5 rounded-full text-xs">● ZERADO</span></div>
                     </div>
                 </div>
@@ -591,9 +594,9 @@
 
     </main>
 
-    <!-- MODAL DE CONFIGURAÇÕES -->
+    <!-- MODAL DE CONFIGURAÇÕES COM ESTOQUES INICIAIS E MÍNIMOS -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-6 relative border">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 space-y-6 relative border max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2 border-b">
                 <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-gear text-[#0b5394]"></i> Configurações do Sistema
@@ -601,33 +604,76 @@
                 <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-6">
+                <!-- PARÂMETROS GERAIS -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Efetivo de Pessoas (Para Litros/Pessoa/Dia):</label>
-                    <input type="number" id="cfg-efetivo" class="w-full p-3 border border-slate-300 rounded-xl text-base font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b pb-1 mb-3">PARÂMETROS GERAIS</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Efetivo de Pessoas:</label>
+                            <input type="number" id="cfg-efetivo" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Meta (L/Pessoa/Dia):</label>
+                            <input type="number" step="0.1" id="cfg-meta" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Volume do Galão (Litros):</label>
+                            <input type="number" id="cfg-volume" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
                 </div>
+
+                <!-- ESTOQUE INICIAL -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Meta de Consumo (L/Pessoa/Dia):</label>
-                    <input type="number" step="0.1" id="cfg-meta" class="w-full p-3 border border-slate-300 rounded-xl text-base font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <h4 class="text-xs font-bold uppercase font-bold text-emerald-700 border-b pb-1 mb-3">ESTOQUE INICIAL (GALÕES CHEIOS)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Site:</label>
+                            <input type="number" id="cfg-ini-site" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Alojamento 01:</label>
+                            <input type="number" id="cfg-ini-aloj1" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Alojamento 03:</label>
+                            <input type="number" id="cfg-ini-aloj3" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0">
+                        </div>
+                    </div>
                 </div>
+
+                <!-- ESTOQUE MÍNIMO -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Volume do Galão (Litros):</label>
-                    <input type="number" id="cfg-volume" class="w-full p-3 border border-slate-300 rounded-xl text-base font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <h4 class="text-xs font-bold uppercase font-bold text-amber-700 border-b pb-1 mb-3">ESTOQUE MÍNIMO DE SEGURANÇA</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Site:</label>
+                            <input type="number" id="cfg-min-site" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="300">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Alojamento 01:</label>
+                            <input type="number" id="cfg-min-aloj1" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="200">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Alojamento 03:</label>
+                            <input type="number" id="cfg-min-aloj3" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="200">
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex justify-end gap-3 pt-2">
+            <div class="flex justify-end gap-3 pt-2 border-t">
                 <button onclick="closeConfigModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-sm transition">Cancelar</button>
-                <button onclick="saveConfigParameters()" class="bg-[#0b5394] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-xl text-sm shadow transition">Salvar Parâmetros</button>
+                <button onclick="saveConfigParameters()" class="bg-[#0b5394] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-xl text-sm shadow transition">Salvar Configurações</button>
             </div>
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT COMPLETA E AJUSTADA -->
+    <!-- LÓGICA JAVASCRIPT -->
     <script>
         let database = [];
 
-        // SUB-LOCAIS EXCLUSIVOS PARA CONSUMO (SEM "GERAL" E SEM "-")
         const subLocationsMap = {
             'Site': [
                 'Bebedouros', 'Carpas', 'Refeitório', 'Prédio ADM', 'Sala de Controle'
@@ -644,7 +690,17 @@
         let systemConfig = {
             efetivo: 500,
             meta: 2.7,
-            volumeGalao: 20
+            volumeGalao: 20,
+            estoqueInicial: {
+                'Site': 0,
+                'Alojamento 01': 0,
+                'Alojamento 03': 0
+            },
+            estoqueMinimo: {
+                'Site': 300,
+                'Alojamento 01': 200,
+                'Alojamento 03': 200
+            }
         };
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -660,7 +716,6 @@
             initCharts();
         });
 
-        // REGRA REFINADA: ENTRADA/DEVOLUÇÃO -> GERAL | CONSUMO -> APENAS SUB-LOCAIS ESPECÍFICOS
         function updateSubLocations() {
             const tipo = document.getElementById('single-tipo').value;
             const mainLoc = document.getElementById('single-local').value;
@@ -772,13 +827,26 @@
 
         function loadSavedConfig() {
             const saved = localStorage.getItem('controle_agua_config');
-            if(saved) systemConfig = JSON.parse(saved);
+            if(saved) {
+                systemConfig = JSON.parse(saved);
+                if(!systemConfig.estoqueInicial) systemConfig.estoqueInicial = { 'Site': 0, 'Alojamento 01': 0, 'Alojamento 03': 0 };
+                if(!systemConfig.estoqueMinimo) systemConfig.estoqueMinimo = { 'Site': 300, 'Alojamento 01': 200, 'Alojamento 03': 200 };
+            }
         }
 
         function openConfigModal() {
             document.getElementById('cfg-efetivo').value = systemConfig.efetivo;
             document.getElementById('cfg-meta').value = systemConfig.meta;
             document.getElementById('cfg-volume').value = systemConfig.volumeGalao;
+
+            document.getElementById('cfg-ini-site').value = systemConfig.estoqueInicial['Site'];
+            document.getElementById('cfg-ini-aloj1').value = systemConfig.estoqueInicial['Alojamento 01'];
+            document.getElementById('cfg-ini-aloj3').value = systemConfig.estoqueInicial['Alojamento 03'];
+
+            document.getElementById('cfg-min-site').value = systemConfig.estoqueMinimo['Site'];
+            document.getElementById('cfg-min-aloj1').value = systemConfig.estoqueMinimo['Alojamento 01'];
+            document.getElementById('cfg-min-aloj3').value = systemConfig.estoqueMinimo['Alojamento 03'];
+
             document.getElementById('modal-config').classList.remove('hidden');
         }
 
@@ -791,10 +859,19 @@
             systemConfig.meta = parseFloat(document.getElementById('cfg-meta').value) || 2.7;
             systemConfig.volumeGalao = parseInt(document.getElementById('cfg-volume').value) || 20;
 
+            systemConfig.estoqueInicial['Site'] = parseInt(document.getElementById('cfg-ini-site').value) || 0;
+            systemConfig.estoqueInicial['Alojamento 01'] = parseInt(document.getElementById('cfg-ini-aloj1').value) || 0;
+            systemConfig.estoqueInicial['Alojamento 03'] = parseInt(document.getElementById('cfg-ini-aloj3').value) || 0;
+
+            systemConfig.estoqueMinimo['Site'] = parseInt(document.getElementById('cfg-min-site').value) || 300;
+            systemConfig.estoqueMinimo['Alojamento 01'] = parseInt(document.getElementById('cfg-min-aloj1').value) || 200;
+            systemConfig.estoqueMinimo['Alojamento 03'] = parseInt(document.getElementById('cfg-min-aloj3').value) || 200;
+
             localStorage.setItem('controle_agua_config', JSON.stringify(systemConfig));
             closeConfigModal();
+            updateStockUI();
             updateDashboard();
-            alert('Parâmetros salvos com sucesso!');
+            alert('Configurações salvas com sucesso!');
         }
 
         function switchScreen(screenId) {
@@ -991,9 +1068,24 @@
 
         function calculateStock() {
             const stock = {
-                'Site': { cheios: 0, vazios: 0, min: 300, inicial: 0, entrada: 0, consumo: 0, devolucao: 0 },
-                'Alojamento 01': { cheios: 0, vazios: 0, min: 200, inicial: 0, entrada: 0, consumo: 0, devolucao: 0 },
-                'Alojamento 03': { cheios: 0, vazios: 0, min: 200, inicial: 0, entrada: 0, consumo: 0, devolucao: 0 }
+                'Site': { 
+                    inicial: systemConfig.estoqueInicial['Site'] || 0,
+                    min: systemConfig.estoqueMinimo['Site'] || 300,
+                    cheios: systemConfig.estoqueInicial['Site'] || 0,
+                    vazios: 0, entrada: 0, consumo: 0, devolucao: 0 
+                },
+                'Alojamento 01': { 
+                    inicial: systemConfig.estoqueInicial['Alojamento 01'] || 0,
+                    min: systemConfig.estoqueMinimo['Alojamento 01'] || 200,
+                    cheios: systemConfig.estoqueInicial['Alojamento 01'] || 0,
+                    vazios: 0, entrada: 0, consumo: 0, devolucao: 0 
+                },
+                'Alojamento 03': { 
+                    inicial: systemConfig.estoqueInicial['Alojamento 03'] || 0,
+                    min: systemConfig.estoqueMinimo['Alojamento 03'] || 200,
+                    cheios: systemConfig.estoqueInicial['Alojamento 03'] || 0,
+                    vazios: 0, entrada: 0, consumo: 0, devolucao: 0 
+                }
             };
 
             database.forEach(r => {
@@ -1013,14 +1105,20 @@
         function updateStockUI() {
             const stock = calculateStock();
 
+            document.getElementById('st-site-inicial').innerText = stock['Site'].inicial;
             document.getElementById('st-site-cheios').innerText = stock['Site'].cheios;
             document.getElementById('st-site-vazios').innerText = stock['Site'].vazios;
+            document.getElementById('st-site-minimo').innerText = stock['Site'].min;
 
+            document.getElementById('st-aloj1-inicial').innerText = stock['Alojamento 01'].inicial;
             document.getElementById('st-aloj1-cheios').innerText = stock['Alojamento 01'].cheios;
             document.getElementById('st-aloj1-vazios').innerText = stock['Alojamento 01'].vazios;
+            document.getElementById('st-aloj1-minimo').innerText = stock['Alojamento 01'].min;
 
+            document.getElementById('st-aloj3-inicial').innerText = stock['Alojamento 03'].inicial;
             document.getElementById('st-aloj3-cheios').innerText = stock['Alojamento 03'].cheios;
             document.getElementById('st-aloj3-vazios').innerText = stock['Alojamento 03'].vazios;
+            document.getElementById('st-aloj3-minimo').innerText = stock['Alojamento 03'].min;
 
             const tbody = document.getElementById('stock-summary-table');
             tbody.innerHTML = '';
@@ -1037,8 +1135,8 @@
                         <td class="p-3 text-center font-black text-slate-800 text-sm">${s.cheios}</td>
                         <td class="p-3 text-center">${s.min}</td>
                         <td class="p-3 text-center">
-                            <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'} font-bold px-3 py-0.5 rounded-full text-xs">
-                                ● ${isNormal ? 'Normal' : 'Zerado'}
+                            <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-3 py-0.5 rounded-full text-xs">
+                                ● ${isNormal ? 'Normal' : 'Abaixo do Mínimo'}
                             </span>
                         </td>
                     </tr>
