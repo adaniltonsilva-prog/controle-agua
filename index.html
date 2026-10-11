@@ -187,7 +187,7 @@
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-house text-blue-600"></i> LOCAL PRINCIPAL
                         </label>
-                        <select id="single-local" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
+                        <select id="single-local" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
                             <option value="Alojamento 01">Alojamento 01</option>
                             <option value="Alojamento 03">Alojamento 03</option>
                             <option value="Site">Site</option>
@@ -199,15 +199,7 @@
                             <i class="fa-solid fa-sitemap text-blue-600"></i> LOCAL DE CONSUMO (DETALHE)
                         </label>
                         <select id="single-detalhe" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
-                            <option value="Geral">Geral</option>
-                            <option value="Módulo 01">Módulo 01</option>
-                            <option value="Módulo 02">Módulo 02</option>
-                            <option value="Módulo 03">Módulo 03</option>
-                            <option value="Módulo 04">Módulo 04</option>
-                            <option value="Área de Vivência">Área de Vivência</option>
-                            <option value="Refeitório">Refeitório</option>
-                            <option value="Repúblicas">Repúblicas</option>
-                            <option value="-">-</option>
+                            <!-- Preenchido dinamicamente via JS sem a opção "-" -->
                         </select>
                     </div>
                 </div>
@@ -624,6 +616,20 @@
         let database = [];
         const batchLocations = ['Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Área de Vivência', 'Refeitório', 'Repúblicas'];
 
+        // Dicionário Dinâmico de Sub-locais (SEM A OPÇÃO "-")
+        const subLocationsMap = {
+            'Site': [
+                'Bebedouros', 'Carpas', 'Refeitório', 'Prédio ADM', 'Sala de Controle', 'Geral'
+            ],
+            'Alojamento 01': [
+                'Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Área de Vivência', 'Refeitório', 'Hotel / Casas', 'Geral'
+            ],
+            'Alojamento 03': [
+                'Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Módulo 05', 'Módulo 06', 'Módulo 07', 'Módulo 08', 'Módulo 09',
+                'Área de Vivência', 'Refeitório', 'Ambulatório', 'Sala de Manutenção', 'Geral'
+            ]
+        };
+
         let systemConfig = {
             efetivo: 500,
             meta: 2.7,
@@ -637,10 +643,25 @@
 
             localStorage.removeItem('controle_agua_db');
             loadSavedConfig();
+            updateSubLocations();
             buildBatchInputs();
             loadDataFromSheet();
             initCharts();
         });
+
+        function updateSubLocations() {
+            const mainLoc = document.getElementById('single-local').value;
+            const subSelect = document.getElementById('single-detalhe');
+            const options = subLocationsMap[mainLoc] || ['Geral'];
+
+            subSelect.innerHTML = '';
+            options.forEach(opt => {
+                const el = document.createElement('option');
+                el.value = opt;
+                el.innerText = opt;
+                subSelect.appendChild(el);
+            });
+        }
 
         function loadSavedConfig() {
             const saved = localStorage.getItem('controle_agua_config');
@@ -739,13 +760,14 @@
                 LocalPrincipal: document.getElementById('single-local').value,
                 LocalDetalhe: document.getElementById('single-detalhe').value,
                 Quantidade: parseInt(document.getElementById('single-qtd').value) || 0,
-                Observacao: document.getElementById('single-obs').value || '-'
+                Observacao: document.getElementById('single-obs').value || 'Geral'
             };
 
             saveRecords([record]);
             alert('Lançamento registrado com sucesso!');
             document.getElementById('form-single').reset();
             document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
+            updateSubLocations();
         }
 
         function buildBatchInputs() {
@@ -838,11 +860,11 @@
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-3">${r.Data || '-'}</td>
-                        <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
-                        <td class="p-3">${r.LocalPrincipal || '-'}</td>
-                        <td class="p-3">${r.LocalDetalhe || '-'}</td>
+                        <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || 'Geral'}</td>
+                        <td class="p-3">${r.LocalPrincipal || 'Geral'}</td>
+                        <td class="p-3">${r.LocalDetalhe || 'Geral'}</td>
                         <td class="p-3 text-center font-black">${r.Quantidade || 0}</td>
-                        <td class="p-3 text-xs text-slate-500">${r.Observacao || '-'}</td>
+                        <td class="p-3 text-xs text-slate-500">${r.Observacao || 'Geral'}</td>
                         <td class="p-3 text-center"><button onclick="deleteRecord(${database.length - 1 - idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>
                 `;
@@ -857,9 +879,9 @@
                     list.forEach(r => {
                         tbodyMoves.innerHTML += `
                             <tr>
-                                <td class="p-2">${r.Data || '-'}</td>
-                                <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
-                                <td class="p-2">${r.LocalPrincipal || '-'}</td>
+                                <td class="p-2">${r.Data || 'Geral'}</td>
+                                <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || 'Geral'}</td>
+                                <td class="p-2">${r.LocalPrincipal || 'Geral'}</td>
                                 <td class="p-2 text-center font-bold">${r.Quantidade || 0}</td>
                             </tr>
                         `;
@@ -881,12 +903,12 @@
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-3 text-slate-400 font-mono text-xs">#${1001 + idx}</td>
-                        <td class="p-3">${r.Data || '-'}</td>
-                        <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
-                        <td class="p-3">${r.LocalPrincipal || '-'}</td>
-                        <td class="p-3">${r.LocalDetalhe || '-'}</td>
+                        <td class="p-3">${r.Data || 'Geral'}</td>
+                        <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || 'Geral'}</td>
+                        <td class="p-3">${r.LocalPrincipal || 'Geral'}</td>
+                        <td class="p-3">${r.LocalDetalhe || 'Geral'}</td>
                         <td class="p-3 text-center font-black">${r.Quantidade || 0}</td>
-                        <td class="p-3 text-xs text-slate-500">${r.Observacao || '-'}</td>
+                        <td class="p-3 text-xs text-slate-500">${r.Observacao || 'Geral'}</td>
                         <td class="p-3 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>
                 `;
@@ -921,12 +943,12 @@
                     tbody.innerHTML += `
                         <tr class="hover:bg-slate-50">
                             <td class="p-3 text-slate-400 font-mono text-xs">#${1001 + idx}</td>
-                            <td class="p-3">${r.Data || '-'}</td>
-                            <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
-                            <td class="p-3">${r.LocalPrincipal || '-'}</td>
-                            <td class="p-3">${r.LocalDetalhe || '-'}</td>
+                            <td class="p-3">${r.Data || 'Geral'}</td>
+                            <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || 'Geral'}</td>
+                            <td class="p-3">${r.LocalPrincipal || 'Geral'}</td>
+                            <td class="p-3">${r.LocalDetalhe || 'Geral'}</td>
                             <td class="p-3 text-center font-black">${r.Quantidade || 0}</td>
-                            <td class="p-3 text-xs text-slate-500">${r.Observacao || '-'}</td>
+                            <td class="p-3 text-xs text-slate-500">${r.Observacao || 'Geral'}</td>
                             <td class="p-3 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
                         </tr>
                     `;
