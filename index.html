@@ -176,7 +176,7 @@
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-droplet text-blue-600"></i> TIPO DE LANÇAMENTO
                         </label>
-                        <select id="single-tipo" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
+                        <select id="single-tipo" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
                             <option value="Consumo">Consumo</option>
                             <option value="Entrada">Entrada</option>
                             <option value="Devolução">Devolução</option>
@@ -199,7 +199,7 @@
                             <i class="fa-solid fa-sitemap text-blue-600"></i> LOCAL DE CONSUMO (DETALHE)
                         </label>
                         <select id="single-detalhe" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
-                            <!-- Preenchido dinamicamente via JS sem a opção "-" -->
+                            <!-- Preenchido dinamicamente via JS -->
                         </select>
                     </div>
                 </div>
@@ -225,7 +225,7 @@
                         <button type="submit" class="bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
                             <i class="fa-solid fa-check"></i> Registrar
                         </button>
-                        <button type="reset" class="bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
+                        <button type="reset" onclick="setTimeout(updateSubLocations, 50)" class="bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
                             <i class="fa-solid fa-broom"></i> Limpar
                         </button>
                     </div>
@@ -611,12 +611,12 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT -->
+    <!-- LÓGICA JAVASCRIPT ATUALIZADA -->
     <script>
         let database = [];
         const batchLocations = ['Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Área de Vivência', 'Refeitório', 'Repúblicas'];
 
-        // Dicionário Dinâmico de Sub-locais (SEM A OPÇÃO "-")
+        // Dicionário Dinâmico de Sub-locais
         const subLocationsMap = {
             'Site': [
                 'Bebedouros', 'Carpas', 'Refeitório', 'Prédio ADM', 'Sala de Controle', 'Geral'
@@ -649,18 +649,28 @@
             initCharts();
         });
 
+        // REGRA SOLICITADA: Entrada ou Devolução -> Apenas "Geral". Consumo -> Lista de sub-locais.
         function updateSubLocations() {
+            const tipo = document.getElementById('single-tipo').value;
             const mainLoc = document.getElementById('single-local').value;
             const subSelect = document.getElementById('single-detalhe');
-            const options = subLocationsMap[mainLoc] || ['Geral'];
 
             subSelect.innerHTML = '';
-            options.forEach(opt => {
+
+            if (tipo === 'Entrada' || tipo === 'Devolução') {
                 const el = document.createElement('option');
-                el.value = opt;
-                el.innerText = opt;
+                el.value = 'Geral';
+                el.innerText = 'Geral';
                 subSelect.appendChild(el);
-            });
+            } else {
+                const options = subLocationsMap[mainLoc] || ['Geral'];
+                options.forEach(opt => {
+                    const el = document.createElement('option');
+                    el.value = opt;
+                    el.innerText = opt;
+                    subSelect.appendChild(el);
+                });
+            }
         }
 
         function loadSavedConfig() {
