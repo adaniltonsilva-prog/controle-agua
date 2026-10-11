@@ -74,7 +74,6 @@
 
         <!-- 1. TELA – MENU PRINCIPAL -->
         <section id="screen1" class="screen-content space-y-6">
-            <!-- BANNER AZUL DE ACOLHIMENTO -->
             <div class="banner-blue text-white p-8 rounded-2xl shadow-md flex justify-between items-center relative overflow-hidden">
                 <div class="space-y-2 z-10">
                     <span class="bg-white/20 text-xs uppercase font-bold px-3 py-1 rounded-full tracking-wider">1. TELA – MENU PRINCIPAL</span>
@@ -86,9 +85,7 @@
                 </div>
             </div>
 
-            <!-- GRELHA DE CARTÕES PRINCIPAIS -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- LANÇAMENTOS -->
                 <div onclick="switchScreen('screen2')" class="card-menu cursor-pointer bg-[#0f5298] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
                     <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
                         <i class="fa-solid fa-pen-to-square"></i>
@@ -100,7 +97,6 @@
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-blue-200">ACESSAR &rarr;</div>
                 </div>
 
-                <!-- ESTOQUE -->
                 <div onclick="switchScreen('screen4')" class="card-menu cursor-pointer bg-[#0e8a44] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
                     <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
                         <i class="fa-solid fa-cubes"></i>
@@ -112,7 +108,6 @@
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-emerald-200">ACESSAR &rarr;</div>
                 </div>
 
-                <!-- DASHBOARD -->
                 <div onclick="switchScreen('screen5')" class="card-menu cursor-pointer bg-[#d9530f] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
                     <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
                         <i class="fa-solid fa-chart-column"></i>
@@ -124,7 +119,6 @@
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-amber-200">ACESSAR &rarr;</div>
                 </div>
 
-                <!-- BASE DE DADOS -->
                 <div onclick="switchScreen('screen6')" class="card-menu cursor-pointer bg-[#6f42c1] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
                     <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
                         <i class="fa-solid fa-database"></i>
@@ -136,7 +130,6 @@
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-purple-200">ACESSAR &rarr;</div>
                 </div>
 
-                <!-- CONFIGURAÇÕES -->
                 <div onclick="alert('Sistema conectado e integrado ao Google Sheets!')" class="card-menu cursor-pointer bg-[#495057] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
                     <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
                         <i class="fa-solid fa-gear"></i>
@@ -148,7 +141,6 @@
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
                 </div>
 
-                <!-- SAIR / RESET -->
                 <div onclick="if(confirm('Deseja recarregar os dados da nuvem?')) loadDataFromSheet();" class="card-menu cursor-pointer bg-[#dc3545] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
                     <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
                         <i class="fa-solid fa-power-off"></i>
@@ -325,7 +317,6 @@
                 <span class="bg-blue-800 text-xs px-3 py-1 rounded-md text-blue-100">Posição e Indicadores de Galões</span>
             </div>
 
-            <!-- POSIÇÃO ATUAL DO ESTOQUE -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="border rounded-2xl p-4 shadow-sm space-y-3">
                     <div class="bg-[#0f5298] text-white p-2 rounded-lg font-bold text-xs uppercase flex items-center gap-2">
@@ -364,7 +355,6 @@
                 </div>
             </div>
 
-            <!-- MOVIMENTAÇÃO DE ESTOQUE -->
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
                     <h3 class="text-xs font-bold uppercase text-slate-700">MOVIMENTAÇÃO DO ESTOQUE (PERÍODO)</h3>
@@ -389,11 +379,12 @@
                 </div>
             </div>
 
-            <!-- GRÁFICO E ÚLTIMAS MOVIMENTAÇÕES -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="md:col-span-2 border rounded-2xl p-4 shadow-sm">
                     <h4 class="text-xs font-bold uppercase text-slate-700 mb-4">EVOLUÇÃO DO ESTOQUE (GALÕES CHEIOS)</h4>
-                    <canvas id="chartEvolucaoEstoque" class="h-52"></canvas>
+                    <div class="relative h-60 w-full">
+                        <canvas id="chartEvolucaoEstoque"></canvas>
+                    </div>
                 </div>
                 <div class="border rounded-2xl p-4 shadow-sm space-y-3">
                     <h4 class="text-xs font-bold uppercase text-slate-700">ÚLTIMAS MOVIMENTAÇÕES</h4>
@@ -510,26 +501,34 @@
                 </div>
             </div>
 
-            <!-- GRELHA DE GRÁFICOS -->
+            <!-- GRELHA DE GRÁFICOS COM ALTURA RIGOROSAMENTE CONTROLADA -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="border rounded-2xl p-4 shadow-sm">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-4">CONSUMO DIÁRIO (GALÕES)</h4>
-                    <canvas id="chartConsumoDiario" class="h-48"></canvas>
+                <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">CONSUMO DIÁRIO (GALÕES)</h4>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chartConsumoDiario"></canvas>
+                    </div>
                 </div>
 
-                <div class="border rounded-2xl p-4 shadow-sm">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-4">CONSUMO POR LOCAL (MÊS)</h4>
-                    <canvas id="chartConsumoLocal" class="h-48"></canvas>
+                <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">CONSUMO POR LOCAL (MÊS)</h4>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chartConsumoLocal"></canvas>
+                    </div>
                 </div>
 
-                <div class="border rounded-2xl p-4 shadow-sm">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-4">ENTRADAS X DEVOLUÇÕES (GALÕES)</h4>
-                    <canvas id="chartEntradasDevolucoes" class="h-48"></canvas>
+                <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">ENTRADAS X DEVOLUÇÕES (GALÕES)</h4>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chartEntradasDevolucoes"></canvas>
+                    </div>
                 </div>
 
-                <div class="border rounded-2xl p-4 shadow-sm">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-4">CONSUMO MENSAL (GALÕES)</h4>
-                    <canvas id="chartConsumoMensal" class="h-48"></canvas>
+                <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">CONSUMO MENSAL (GALÕES)</h4>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chartConsumoMensal"></canvas>
+                    </div>
                 </div>
             </div>
         </section>
@@ -553,7 +552,6 @@
                 </div>
             </div>
 
-            <!-- PESQUISA E FILTROS -->
             <div class="flex flex-wrap justify-between items-center gap-4 bg-slate-50 p-4 rounded-xl border">
                 <input type="text" id="db-search" oninput="filterDatabase()" placeholder="Pesquisar por local, detalhe, observação..." class="p-2.5 border rounded-lg text-sm w-full md:w-80 bg-white">
                 <div class="flex items-center gap-2 text-xs font-bold">
@@ -567,7 +565,6 @@
                 </div>
             </div>
 
-            <!-- TABELA COMPLETA -->
             <div class="overflow-x-auto border rounded-xl shadow-sm">
                 <table class="w-full text-sm text-left text-slate-700">
                     <thead class="bg-[#0b5394] text-white uppercase text-xs font-bold">
@@ -589,7 +586,7 @@
 
     </main>
 
-    <!-- LÓGICA DE PROGRAMAÇÃO JAVASCRIPT -->
+    <!-- LÓGICA JAVASCRIPT CORRIGIDA -->
     <script>
         let database = [];
         const batchLocations = ['Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Área de Vivência', 'Refeitório', 'Repúblicas'];
@@ -908,18 +905,24 @@
         let chartEvolucao, chartDiario, chartLocal, chartEntradasDev, chartMensal;
 
         function initCharts() {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' } }
+            };
+
             const ctxEvol = document.getElementById('chartEvolucaoEstoque').getContext('2d');
             chartEvolucao = new Chart(ctxEvol, {
                 type: 'line',
                 data: {
                     labels: ['01/09', '05/09', '10/09', '15/09', '20/09', '25/09', '30/09'],
                     datasets: [
-                        { label: 'Site', data: [1000, 1050, 920, 1020, 850, 930, 928], borderColor: '#0284c7', fill: false },
-                        { label: 'Alaj. 01', data: [380, 390, 310, 360, 310, 340, 329], borderColor: '#059669', fill: false },
-                        { label: 'Alaj. 03', data: [510, 490, 520, 480, 500, 505, 390], borderColor: '#ea580c', fill: false }
+                        { label: 'Site', data: [1000, 1050, 920, 1020, 850, 930, 928], borderColor: '#0f5298', fill: false },
+                        { label: 'Alaj. 01', data: [380, 390, 310, 360, 310, 340, 329], borderColor: '#0e8a44', fill: false },
+                        { label: 'Alaj. 03', data: [510, 490, 520, 480, 500, 505, 390], borderColor: '#d9530f', fill: false }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: chartOptions
             });
 
             const ctxDiario = document.getElementById('chartConsumoDiario').getContext('2d');
@@ -929,7 +932,7 @@
                     labels: Array.from({length: 30}, (_, i) => String(i + 1).padStart(2, '0')),
                     datasets: [{ label: 'Site', data: Array.from({length: 30}, () => Math.floor(Math.random() * 200) + 150), backgroundColor: '#0f5298' }]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: chartOptions
             });
 
             const ctxLocal = document.getElementById('chartConsumoLocal').getContext('2d');
@@ -937,9 +940,9 @@
                 type: 'doughnut',
                 data: {
                     labels: ['Site', 'Alojamento 01', 'Alojamento 03'],
-                    datasets: [{ data: [60, 20, 20], backgroundColor: ['#0f5298', '#059669', '#d97706'] }]
+                    datasets: [{ data: [60, 20, 20], backgroundColor: ['#0f5298', '#0e8a44', '#d9530f'] }]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: chartOptions
             });
 
             const ctxEntDev = document.getElementById('chartEntradasDevolucoes').getContext('2d');
@@ -948,11 +951,11 @@
                 data: {
                     labels: Array.from({length: 15}, (_, i) => String(i*2 + 1).padStart(2, '0')),
                     datasets: [
-                        { label: 'Entradas', data: Array.from({length: 15}, () => Math.floor(Math.random() * 60) + 100), borderColor: '#059669', fill: false },
-                        { label: 'Devolução', data: Array.from({length: 15}, () => Math.floor(Math.random() * 70) + 90), borderColor: '#ea580c', fill: false }
+                        { label: 'Entradas', data: Array.from({length: 15}, () => Math.floor(Math.random() * 60) + 100), borderColor: '#0e8a44', fill: false },
+                        { label: 'Devoluções', data: Array.from({length: 15}, () => Math.floor(Math.random() * 70) + 90), borderColor: '#d9530f', fill: false }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: chartOptions
             });
 
             const ctxMensal = document.getElementById('chartConsumoMensal').getContext('2d');
@@ -962,7 +965,7 @@
                     labels: ['Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set'],
                     datasets: [{ label: 'Galões', data: [15000, 12800, 13200, 14500, 14255, 11750], backgroundColor: '#0f5298' }]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: chartOptions
             });
         }
 
