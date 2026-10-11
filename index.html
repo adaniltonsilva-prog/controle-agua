@@ -141,13 +141,14 @@
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="resetSystemData()" class="card-menu cursor-pointer bg-[#dc3545] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
+                <!-- CARTÃO DE OPÇÕES: SAIR OU RESET -->
+                <div onclick="openExitModal()" class="card-menu cursor-pointer bg-[#dc3545] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
                     <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
                         <i class="fa-solid fa-power-off"></i>
                     </div>
                     <div>
                         <h3 class="text-xl font-bold uppercase tracking-wide">SAIR / RESET</h3>
-                        <p class="text-xs text-red-100 mt-1">Zerar Cache e Reiniciar</p>
+                        <p class="text-xs text-red-100 mt-1">Encerrar Sessão ou Limpar Cache</p>
                     </div>
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-red-200">EXECUTAR &rarr;</div>
                 </div>
@@ -413,7 +414,7 @@
             </div>
         </section>
 
-        <!-- 5. TELA – DASHBOARD COM SELETOR DE PERÍODO POR DIAS ESPECÍFICOS -->
+        <!-- 5. TELA – DASHBOARD -->
         <section id="screen5" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
             <div class="bg-[#0b5394] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
                 <div>
@@ -423,7 +424,6 @@
                     <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
                 </div>
                 <div class="flex flex-wrap gap-3 text-xs font-semibold items-center">
-                    <!-- SELETOR DE PERÍODO PERSONALIZADO (DATA INICIAL E FINAL) -->
                     <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg">
                         <span>DE:</span>
                         <input type="date" id="dash-date-start" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none">
@@ -431,7 +431,6 @@
                         <input type="date" id="dash-date-end" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none">
                     </div>
 
-                    <!-- FILTRO DE LOCAL DINÂMICO -->
                     <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg">
                         <span>LOCAL:</span>
                         <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold">
@@ -604,6 +603,35 @@
 
     </main>
 
+    <!-- MODAL DE SELEÇÃO: SAIR VS RESET DE CACHE -->
+    <div id="modal-exit-options" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-6 relative border text-center">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
+                <i class="fa-solid fa-power-off"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-slate-800 uppercase">Sair ou Reiniciar</h3>
+                <p class="text-xs text-slate-500 mt-1">Escolha a ação que deseja executar abaixo:</p>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <button onclick="closeExitModal(); switchScreen('screen1');" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold p-3.5 rounded-2xl text-sm flex items-center justify-center gap-2 shadow transition">
+                    <i class="fa-solid fa-house"></i> Voltar ao Menu Principal
+                </button>
+
+                <button onclick="executeResetCache()" class="w-full bg-[#dc3545] hover:bg-red-700 text-white font-bold p-3.5 rounded-2xl text-sm flex items-center justify-center gap-2 shadow transition">
+                    <i class="fa-solid fa-rotate text-xs"></i> Zerar Cache Local e Recarregar Dados
+                </button>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="closeExitModal()" class="text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-wider">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE CONFIGURAÇÕES -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 space-y-6 relative border max-h-[90vh] overflow-y-auto">
@@ -680,7 +708,7 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT COM SELETOR DE PERÍODO CUSTOMIZADO -->
+    <!-- LÓGICA JAVASCRIPT -->
     <script>
         let database = [];
 
@@ -712,7 +740,6 @@
             document.getElementById('single-data').value = today;
             document.getElementById('batch-data').value = today;
 
-            // PREENCHE PERÍODO PADRÃO NO DASHBOARD (DO DIA 1 ATÉ HOJE)
             document.getElementById('dash-date-start').value = firstDayOfMonth;
             document.getElementById('dash-date-end').value = today;
 
@@ -723,6 +750,25 @@
             loadDataFromSheet();
             initCharts();
         });
+
+        // MODAL DE AÇÕES DE SAÍDA E RESET
+        function openExitModal() {
+            document.getElementById('modal-exit-options').classList.remove('hidden');
+        }
+
+        function closeExitModal() {
+            document.getElementById('modal-exit-options').classList.add('hidden');
+        }
+
+        function executeResetCache() {
+            if(confirm('Tem certeza de que deseja apagar o cache local do navegador? Todos os dados serão recarregados do Google Sheets.')) {
+                localStorage.clear();
+                database = [];
+                closeExitModal();
+                loadDataFromSheet();
+                alert('Cache limpo e dados atualizados da nuvem com sucesso!');
+            }
+        }
 
         function updateSubLocations() {
             const tipo = document.getElementById('single-tipo').value;
@@ -931,17 +977,6 @@
                 } catch(e) {
                     console.error("Erro ao enviar:", e);
                 }
-            }
-        }
-
-        function resetSystemData() {
-            if(confirm('Tem certeza de que deseja zerar os registros salvos localmente e reiniciar?')) {
-                localStorage.clear();
-                database = [];
-                renderRecentTable();
-                updateStockUI();
-                updateDashboard();
-                alert('Cache e memória zerados com sucesso!');
             }
         }
 
@@ -1219,7 +1254,6 @@
             });
         }
 
-        // LÓGICA DO DASHBOARD FILTRADA POR DATAS ESPECÍFICAS E LOCAL
         function updateDashboard() {
             const selectedFilterLoc = document.getElementById('dash-filter-local').value;
             const startDateVal = document.getElementById('dash-date-start').value;
@@ -1228,7 +1262,6 @@
             let totalConsumo = 0, totalEntradas = 0, totalDevolucoes = 0;
             const stock = calculateStock();
 
-            // CÁLCULO DA QUANTIDADE DE DIAS NO INTERVALO SELECIONADO
             let diasIntervalo = 30;
             if (startDateVal && endDateVal) {
                 const dtStart = new Date(startDateVal);
@@ -1242,7 +1275,6 @@
                 const q = parseInt(r.Quantidade) || 0;
                 const matchesLoc = selectedFilterLoc === 'Todos' || r.LocalPrincipal === selectedFilterLoc;
                 
-                // FILTRO DE INTERVALO DE DATAS DE LANÇAMENTO
                 let matchesDate = true;
                 if (r.Data && startDateVal && endDateVal) {
                     matchesDate = r.Data >= startDateVal && r.Data <= endDateVal;
@@ -1263,8 +1295,6 @@
             }
 
             const totalLitros = totalConsumo * systemConfig.volumeGalao;
-            
-            // MÉDIA DIÁRIA RECALCULADA PELO NÚMERO DE DIAS DO INTERVALO SELECIONADO
             const mediaDiaria = Math.round(totalConsumo / diasIntervalo);
             const mediaDiariaLitros = Math.round(totalLitros / diasIntervalo);
             const litrosPessoaDia = systemConfig.efetivo > 0 ? (totalLitros / (systemConfig.efetivo * diasIntervalo)).toFixed(1) : "0,0";
