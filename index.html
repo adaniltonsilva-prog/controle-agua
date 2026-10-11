@@ -258,31 +258,44 @@
             </div>
         </section>
 
-        <!-- 3. TELA – CONSUMO ALOJAMENTO 01 -->
+        <!-- 3. TELA – CONSUMO POR ALOJAMENTO (MULTILOCAL) -->
         <section id="screen3" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
-            <div class="bg-[#0b5394] text-white p-4 rounded-xl flex justify-between items-center">
-                <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
-                    <i class="fa-solid fa-building"></i> 3. TELA – LANÇAMENTO DE CONSUMO – ALOJAMENTO 01
+            <div class="bg-[#0b5394] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
+                <h2 id="batch-screen-title" class="text-lg font-bold flex items-center gap-2 uppercase">
+                    <i class="fa-solid fa-building"></i> 3. TELA – LANÇAMENTO DE CONSUMO DETALHADO
                 </h2>
-                <div class="flex items-center gap-2 bg-blue-800 px-3 py-1 rounded-md text-xs font-semibold">
-                    <span>DATA</span>
-                    <input type="date" id="batch-data" class="bg-white text-slate-800 p-1 rounded text-xs">
+                
+                <!-- SELETOR DINÂMICO DE ALOJAMENTO / LOCAL -->
+                <div class="flex items-center gap-4 bg-blue-800 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                    <div class="flex items-center gap-2">
+                        <span>LOCAL:</span>
+                        <select id="batch-local-select" onchange="changeBatchLocation()" class="bg-white text-slate-800 p-1 rounded font-bold">
+                            <option value="Alojamento 01">Alojamento 01</option>
+                            <option value="Alojamento 03">Alojamento 03</option>
+                            <option value="Site">Site</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span>DATA:</span>
+                        <input type="date" id="batch-data" class="bg-white text-slate-800 p-1 rounded text-xs font-semibold">
+                    </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="space-y-3">
                     <h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-2">CONSUMO POR LOCAL</h3>
-                    <div id="batch-inputs" class="space-y-2"></div>
+                    <div id="batch-inputs" class="space-y-2 max-h-[400px] overflow-y-auto pr-2"></div>
                 </div>
 
                 <div class="bg-[#fff9e6] border border-amber-200 p-6 rounded-2xl flex flex-col justify-between">
                     <div>
                         <h3 class="text-xs font-bold uppercase text-amber-900 border-b border-amber-200 pb-2 mb-4">RESUMO DO LANÇAMENTO</h3>
-                        <div id="batch-summary" class="space-y-2 text-sm"></div>
+                        <div id="batch-summary" class="space-y-2 text-sm max-h-[300px] overflow-y-auto pr-1"></div>
                     </div>
                     <div class="border-t border-amber-200 pt-4 flex justify-between items-center mt-6">
-                        <span class="text-lg font-bold uppercase text-amber-900">TOTAL</span>
+                        <span id="batch-total-label" class="text-lg font-bold uppercase text-amber-900">TOTAL ALOJAMENTO 01</span>
                         <span id="batch-total" class="text-3xl font-black text-amber-950">0</span>
                     </div>
                 </div>
@@ -611,12 +624,11 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT ATUALIZADA -->
+    <!-- LÓGICA JAVASCRIPT COMPLETA E ATUALIZADA -->
     <script>
         let database = [];
-        const batchLocations = ['Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Área de Vivência', 'Refeitório', 'Repúblicas'];
 
-        // Dicionário Dinâmico de Sub-locais
+        // MAPA COMPLETO DE SUB-LOCAIS POR DADO PRINCIPAL
         const subLocationsMap = {
             'Site': [
                 'Bebedouros', 'Carpas', 'Refeitório', 'Prédio ADM', 'Sala de Controle', 'Geral'
@@ -649,7 +661,7 @@
             initCharts();
         });
 
-        // REGRA SOLICITADA: Entrada ou Devolução -> Apenas "Geral". Consumo -> Lista de sub-locais.
+        // TELA 2: REGRA PARA ENTRADA/DEVOLUÇÃO -> GERAL. CONSUMO -> LISTA COMPLETA
         function updateSubLocations() {
             const tipo = document.getElementById('single-tipo').value;
             const mainLoc = document.getElementById('single-local').value;
@@ -671,6 +683,93 @@
                     subSelect.appendChild(el);
                 });
             }
+        }
+
+        // TELA 3: ALTERA O LOCAL NO MODO MULTILOCAL (BATCH)
+        function changeBatchLocation() {
+            const selectedLoc = document.getElementById('batch-local-select').value;
+            document.getElementById('batch-total-label').innerText = `TOTAL ${selectedLoc.toUpperCase()}`;
+            buildBatchInputs();
+        }
+
+        function buildBatchInputs() {
+            const selectedLoc = document.getElementById('batch-local-select').value;
+            const container = document.getElementById('batch-inputs');
+            container.innerHTML = '';
+
+            const subLocs = subLocationsMap[selectedLoc] || ['Geral'];
+
+            subLocs.forEach(loc => {
+                container.innerHTML += `
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <span class="text-xs font-semibold text-slate-700 flex items-center gap-2">
+                            <i class="fa-solid fa-house text-blue-600"></i> ${loc}
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <input type="number" min="0" data-loc="${loc}" oninput="updateBatchSummary()" class="batch-qtd-input w-20 p-1.5 border rounded-lg text-center font-bold text-xs" placeholder="0">
+                            <span class="text-xs text-slate-500">galões</span>
+                        </div>
+                    </div>
+                `;
+            });
+            updateBatchSummary();
+        }
+
+        function updateBatchSummary() {
+            const inputs = document.querySelectorAll('.batch-qtd-input');
+            const summary = document.getElementById('batch-summary');
+            summary.innerHTML = '';
+            let total = 0;
+
+            inputs.forEach(inp => {
+                const val = parseInt(inp.value) || 0;
+                total += val;
+                if(val > 0) {
+                    summary.innerHTML += `
+                        <div class="flex justify-between border-b pb-1">
+                            <span>${inp.dataset.loc}:</span>
+                            <strong>${val} galões</strong>
+                        </div>
+                    `;
+                }
+            });
+
+            document.getElementById('batch-total').innerText = total;
+        }
+
+        function submitBatch() {
+            const selectedLoc = document.getElementById('batch-local-select').value;
+            const date = document.getElementById('batch-data').value;
+            const inputs = document.querySelectorAll('.batch-qtd-input');
+            const records = [];
+
+            inputs.forEach(inp => {
+                const val = parseInt(inp.value) || 0;
+                if(val > 0) {
+                    records.push({
+                        Data: date,
+                        Tipo: 'Consumo',
+                        LocalPrincipal: selectedLoc,
+                        LocalDetalhe: inp.dataset.loc,
+                        Quantidade: val,
+                        Observacao: `Consumo Detalhado ${selectedLoc}`
+                    });
+                }
+            });
+
+            if(records.length === 0) {
+                alert('Preencha ao menos uma quantidade.');
+                return;
+            }
+
+            saveRecords(records);
+            alert(`Consumo de ${selectedLoc} registrado com sucesso!`);
+            clearBatch();
+        }
+
+        function clearBatch() {
+            document.querySelectorAll('.batch-qtd-input').forEach(i => i.value = '');
+            updateBatchSummary();
         }
 
         function loadSavedConfig() {
@@ -708,6 +807,7 @@
             const activeNav = document.getElementById(`nav-${screenId}`);
             if(activeNav) activeNav.classList.add('active');
 
+            if(screenId === 'screen3') buildBatchInputs();
             if(screenId === 'screen5') updateDashboard();
             if(screenId === 'screen4') updateStockUI();
             if(screenId === 'screen6') renderFullDatabaseTable();
@@ -778,81 +878,6 @@
             document.getElementById('form-single').reset();
             document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
             updateSubLocations();
-        }
-
-        function buildBatchInputs() {
-            const container = document.getElementById('batch-inputs');
-            container.innerHTML = '';
-            batchLocations.forEach(loc => {
-                container.innerHTML += `
-                    <div class="flex items-center justify-between border-b pb-2">
-                        <span class="text-xs font-semibold text-slate-700 flex items-center gap-2">
-                            <i class="fa-solid fa-house text-blue-600"></i> ${loc}
-                        </span>
-                        <div class="flex items-center gap-2">
-                            <input type="number" min="0" data-loc="${loc}" oninput="updateBatchSummary()" class="batch-qtd-input w-20 p-1.5 border rounded-lg text-center font-bold text-xs" placeholder="0">
-                            <span class="text-xs text-slate-500">galões</span>
-                        </div>
-                    </div>
-                `;
-            });
-            updateBatchSummary();
-        }
-
-        function updateBatchSummary() {
-            const inputs = document.querySelectorAll('.batch-qtd-input');
-            const summary = document.getElementById('batch-summary');
-            summary.innerHTML = '';
-            let total = 0;
-
-            inputs.forEach(inp => {
-                const val = parseInt(inp.value) || 0;
-                total += val;
-                if(val > 0) {
-                    summary.innerHTML += `
-                        <div class="flex justify-between border-b pb-1">
-                            <span>${inp.dataset.loc}:</span>
-                            <strong>${val} galões</strong>
-                        </div>
-                    `;
-                }
-            });
-
-            document.getElementById('batch-total').innerText = total;
-        }
-
-        function submitBatch() {
-            const date = document.getElementById('batch-data').value;
-            const inputs = document.querySelectorAll('.batch-qtd-input');
-            const records = [];
-
-            inputs.forEach(inp => {
-                const val = parseInt(inp.value) || 0;
-                if(val > 0) {
-                    records.push({
-                        Data: date,
-                        Tipo: 'Consumo',
-                        LocalPrincipal: 'Alojamento 01',
-                        LocalDetalhe: inp.dataset.loc,
-                        Quantidade: val,
-                        Observacao: 'Consumo Detalhado Aloj. 01'
-                    });
-                }
-            });
-
-            if(records.length === 0) {
-                alert('Preencha ao menos uma quantidade.');
-                return;
-            }
-
-            saveRecords(records);
-            alert('Consumo registrado com sucesso!');
-            clearBatch();
-        }
-
-        function clearBatch() {
-            document.querySelectorAll('.batch-qtd-input').forEach(i => i.value = '');
-            updateBatchSummary();
         }
 
         function renderRecentTable() {
