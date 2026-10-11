@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONTROLE DE ÁGUA - SITE E ALOJAMENTOS</title>
+    <title>CONTROLE DE ÁGUA - Site e Alojamentos</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -13,149 +13,210 @@
     <!-- SheetJS (XLSX Export) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        .header-banner { background-color: #0c3866; color: white; border-bottom: 2px solid #082545; }
-        .bg-card-blue { background-color: #0b4f8c; }
-        .bg-card-green { background-color: #2e7d32; }
-        .bg-card-orange { background-color: #d35400; }
-        .bg-card-purple { background-color: #6c3483; }
-        .bg-card-slate { background-color: #566573; }
-        .bg-card-red { background-color: #c0392b; }
-        .table-header { background-color: #0b3c5d; color: white; }
-        .active-tab { border-bottom: 4px solid #3182ce; color: #2b6cb0; font-weight: bold; background-color: #ebf8ff; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #e2e8f0; }
+        .nav-item { transition: all 0.2s; }
+        .nav-item.active { background-color: #1d4ed8; color: white; font-weight: 600; }
+        .card-menu { transition: transform 0.2s, box-shadow 0.2s; }
+        .card-menu:hover { transform: translateY(-3px); }
+        .table-custom-header { background-color: #0c4a6e; color: white; }
     </style>
 </head>
-<body class="bg-slate-300 font-sans p-2 md:p-4 text-slate-800">
+<body class="text-slate-800 min-h-screen flex flex-col">
 
     <!-- SUAS CONFIGURAÇÕES DE API CONECTADAS DA PLANILHA -->
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
     </script>
 
-    <div class="max-w-[1600px] mx-auto space-y-3">
+    <!-- TOP HEADER / NAV BAR -->
+    <header class="bg-[#0f5298] text-white px-6 py-3 shadow-md">
+        <div class="max-w-[1500px] mx-auto flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#0f5298]">
+                    <i class="fa-solid fa-bottle-water text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold uppercase tracking-wide leading-tight">CONTROLE DE ÁGUA</h1>
+                    <p class="text-xs text-blue-200">Site e Alojamentos</p>
+                </div>
+            </div>
 
-        <!-- NAVEGAÇÃO DE TELAS NA BARRA SUPERIOR -->
-        <div class="bg-white rounded-lg shadow border border-slate-400 p-1.5 flex flex-wrap gap-1 text-xs md:text-sm">
-            <button onclick="switchScreen('screen1')" id="nav-screen1" class="px-3 py-2 rounded flex items-center gap-2 font-bold active-tab">
-                <i class="fa-solid fa-house"></i> 1. MENU PRINCIPAL
-            </button>
-            <button onclick="switchScreen('screen2')" id="nav-screen2" class="px-3 py-2 rounded flex items-center gap-2 font-bold text-slate-700 hover:bg-slate-100">
-                <i class="fa-solid fa-pen-to-square"></i> 2. LANÇAMENTOS
-            </button>
-            <button onclick="switchScreen('screen3')" id="nav-screen3" class="px-3 py-2 rounded flex items-center gap-2 font-bold text-slate-700 hover:bg-slate-100">
-                <i class="fa-solid fa-list-check"></i> 3. CONSUMO - ALOJ. 01
-            </button>
-            <button onclick="switchScreen('screen4')" id="nav-screen4" class="px-3 py-2 rounded flex items-center gap-2 font-bold text-slate-700 hover:bg-slate-100">
-                <i class="fa-solid fa-boxes-stacked"></i> 4. ESTOQUE
-            </button>
-            <button onclick="switchScreen('screen5')" id="nav-screen5" class="px-3 py-2 rounded flex items-center gap-2 font-bold text-slate-700 hover:bg-slate-100">
-                <i class="fa-solid fa-chart-line"></i> 5. DASHBOARD
-            </button>
-            <button onclick="exportToExcel()" class="ml-auto px-4 py-2 bg-emerald-700 text-white rounded font-bold hover:bg-emerald-800 flex items-center gap-2">
-                <i class="fa-solid fa-file-excel"></i> RELATÓRIO EXCEL
+            <!-- MENU NAVEGAÇÃO -->
+            <nav class="flex items-center gap-1 text-sm font-medium">
+                <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-item active px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700">
+                    <i class="fa-solid fa-house text-xs"></i> Menu
+                </button>
+                <button onclick="switchScreen('screen2')" id="nav-screen2" class="nav-item px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700">
+                    <i class="fa-solid fa-pen-to-square text-xs"></i> Lançamentos
+                </button>
+                <button onclick="switchScreen('screen4')" id="nav-screen4" class="nav-item px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700">
+                    <i class="fa-solid fa-boxes-stacked text-xs"></i> Estoque
+                </button>
+                <button onclick="switchScreen('screen5')" id="nav-screen5" class="nav-item px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700">
+                    <i class="fa-solid fa-chart-line text-xs"></i> Dashboard
+                </button>
+                <button onclick="switchScreen('screen6')" id="nav-screen6" class="nav-item px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700">
+                    <i class="fa-solid fa-database text-xs"></i> Base de Dados
+                </button>
+            </nav>
+
+            <button onclick="exportToExcel()" class="bg-[#059669] hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 shadow">
+                <i class="fa-solid fa-file-excel"></i> Exportar Excel
             </button>
         </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-[1500px] w-full mx-auto p-4 md:p-6 flex-1">
 
         <!-- 1. TELA – MENU PRINCIPAL -->
-        <section id="screen1" class="screen-content bg-slate-200 rounded-lg p-2 border-2 border-slate-500 shadow-md">
-            <div class="header-banner p-3 rounded-t-md font-bold text-sm tracking-wider uppercase">
-                1. TELA – MENU PRINCIPAL
+        <section id="screen1" class="screen-content space-y-6">
+            <!-- BLUE HERO BANNER -->
+            <div class="bg-gradient-to-r from-sky-500 via-blue-600 to-blue-700 text-white p-8 rounded-2xl shadow-md flex justify-between items-center relative overflow-hidden">
+                <div class="space-y-2 z-10">
+                    <span class="bg-white/20 text-xs uppercase font-bold px-3 py-1 rounded-full tracking-wider">1. TELA – MENU PRINCIPAL</span>
+                    <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tight">CONTROLE DE ÁGUA</h2>
+                    <p class="text-blue-100 text-sm md:text-base font-medium">Gestão Integrada de Consumo e Estoque de Galões</p>
+                </div>
+                <div class="hidden md:block opacity-30 text-white z-0">
+                    <i class="fa-solid fa-bottle-water text-9xl"></i>
+                </div>
             </div>
-            <div class="bg-gradient-to-b from-blue-100 to-sky-200 p-6 rounded-b-md border-x border-b border-slate-400 text-center">
-                <div class="flex justify-center items-center gap-4 mb-4">
-                    <i class="fa-solid fa-bottle-water text-6xl text-sky-600"></i>
-                    <div class="text-left">
-                        <h1 class="text-3xl md:text-5xl font-extrabold text-blue-950 tracking-wide uppercase">CONTROLE DE ÁGUA</h1>
-                        <p class="text-sky-800 font-bold tracking-widest text-base">SITE E ALOJAMENTOS</p>
+
+            <!-- GRID CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- CARD LANÇAMENTOS -->
+                <div onclick="switchScreen('screen2')" class="card-menu cursor-pointer bg-[#0f5298] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
+                    <div class="flex justify-between items-start">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </div>
                     </div>
+                    <div>
+                        <h3 class="text-xl font-bold uppercase tracking-wide">LANÇAMENTOS</h3>
+                        <p class="text-xs text-blue-100 mt-1">Entrada, Devolução e Consumo</p>
+                    </div>
+                    <div class="text-right text-xs font-bold uppercase tracking-wider text-blue-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-8">
-                    <!-- BOTÃO LANÇAMENTOS -->
-                    <button onclick="switchScreen('screen2')" class="bg-card-blue hover:opacity-90 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center space-y-2 border-b-4 border-blue-950">
-                        <i class="fa-solid fa-file-lines text-4xl"></i>
-                        <span class="text-xl font-black uppercase">LANÇAMENTOS</span>
-                        <span class="text-xs text-blue-200">Entrada, Devolução e Consumo</span>
-                    </button>
+                <!-- CARD ESTOQUE -->
+                <div onclick="switchScreen('screen4')" class="card-menu cursor-pointer bg-[#059669] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
+                    <div class="flex justify-between items-start">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold uppercase tracking-wide">ESTOQUE</h3>
+                        <p class="text-xs text-emerald-100 mt-1">Consulta e Movimentação</p>
+                    </div>
+                    <div class="text-right text-xs font-bold uppercase tracking-wider text-emerald-200">ACESSAR &rarr;</div>
+                </div>
 
-                    <!-- BOTÃO ESTOQUE -->
-                    <button onclick="switchScreen('screen4')" class="bg-card-green hover:opacity-90 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center space-y-2 border-b-4 border-green-950">
-                        <i class="fa-solid fa-cubes text-4xl"></i>
-                        <span class="text-xl font-black uppercase">ESTOQUE</span>
-                        <span class="text-xs text-green-200">Consulta e Movimentação</span>
-                    </button>
+                <!-- CARD DASHBOARD -->
+                <div onclick="switchScreen('screen5')" class="card-menu cursor-pointer bg-[#d97706] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
+                    <div class="flex justify-between items-start">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-chart-column"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold uppercase tracking-wide">DASHBOARD</h3>
+                        <p class="text-xs text-amber-100 mt-1">Gráficos e Indicadores</p>
+                    </div>
+                    <div class="text-right text-xs font-bold uppercase tracking-wider text-amber-200">ACESSAR &rarr;</div>
+                </div>
 
-                    <!-- BOTÃO DASHBOARD -->
-                    <button onclick="switchScreen('screen5')" class="bg-card-orange hover:opacity-90 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center space-y-2 border-b-4 border-orange-950">
-                        <i class="fa-solid fa-chart-column text-4xl"></i>
-                        <span class="text-xl font-black uppercase">DASHBOARD</span>
-                        <span class="text-xs text-orange-200">Gráficos e Indicadores</span>
-                    </button>
+                <!-- CARD BASE DE DADOS -->
+                <div onclick="switchScreen('screen6')" class="card-menu cursor-pointer bg-[#7c3aed] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
+                    <div class="flex justify-between items-start">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-database"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold uppercase tracking-wide">BASE DE DADOS</h3>
+                        <p class="text-xs text-purple-100 mt-1">Registros de Lançamentos</p>
+                    </div>
+                    <div class="text-right text-xs font-bold uppercase tracking-wider text-purple-200">ACESSAR &rarr;</div>
+                </div>
 
-                    <!-- BOTÃO BASE DE DADOS -->
-                    <button onclick="exportToExcel()" class="bg-card-purple hover:opacity-90 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center space-y-2 border-b-4 border-purple-950">
-                        <i class="fa-solid fa-database text-4xl"></i>
-                        <span class="text-xl font-black uppercase">BASE DE DADOS</span>
-                        <span class="text-xs text-purple-200">Registros de Lançamentos</span>
-                    </button>
+                <!-- CARD CONFIGURAÇÕES -->
+                <div onclick="alert('Sistema conectado e integrado ao Google Sheets!')" class="card-menu cursor-pointer bg-[#475569] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
+                    <div class="flex justify-between items-start">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-gear"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold uppercase tracking-wide">CONFIGURAÇÕES</h3>
+                        <p class="text-xs text-slate-200 mt-1">Parâmetros do Sistema</p>
+                    </div>
+                    <div class="text-right text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
+                </div>
 
-                    <!-- BOTÃO CONFIGURAÇÕES -->
-                    <button onclick="alert('Sistema conectado e funcional com o Google Sheets!')" class="bg-card-slate hover:opacity-90 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center space-y-2 border-b-4 border-slate-900">
-                        <i class="fa-solid fa-gear text-4xl"></i>
-                        <span class="text-xl font-black uppercase">CONFIGURAÇÕES</span>
-                        <span class="text-xs text-slate-300">Parâmetros do Sistema</span>
-                    </button>
-
-                    <!-- BOTÃO SAIR -->
-                    <button onclick="window.close()" class="bg-card-red hover:opacity-90 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center space-y-2 border-b-4 border-red-950">
-                        <i class="fa-solid fa-power-off text-4xl"></i>
-                        <span class="text-xl font-black uppercase">SAIR</span>
-                        <span class="text-xs text-red-200">Fechar o Sistema</span>
-                    </button>
+                <!-- CARD SAIR / RESET -->
+                <div onclick="if(confirm('Deseja limpar os dados locais em cache e recarregar da nuvem?')) loadDataFromSheet();" class="card-menu cursor-pointer bg-[#dc2626] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
+                    <div class="flex justify-between items-start">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-power-off"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold uppercase tracking-wide">SAIR / RESET</h3>
+                        <p class="text-xs text-red-100 mt-1">Reiniciar Dados do Sistema</p>
+                    </div>
+                    <div class="text-right text-xs font-bold uppercase tracking-wider text-red-200">EXECUTAR &rarr;</div>
                 </div>
             </div>
         </section>
 
         <!-- 2. TELA – LANÇAMENTOS -->
-        <section id="screen2" class="screen-content hidden bg-slate-200 rounded-lg p-2 border-2 border-slate-500 shadow-md">
-            <div class="header-banner p-3 rounded-t-md font-bold text-sm tracking-wider uppercase">
-                2. TELA – LANÇAMENTOS
+        <section id="screen2" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
+            <div class="bg-[#0f5298] text-white p-4 rounded-xl flex justify-between items-center">
+                <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
+                    <i class="fa-solid fa-calendar-days"></i> 2. TELA – LANÇAMENTOS
+                </h2>
+                <span class="bg-blue-800 text-xs px-3 py-1 rounded-md text-blue-100">Registro Direto ou Detalhado</span>
             </div>
-            <div class="bg-slate-100 p-4 rounded-b-md border-x border-b border-slate-400 space-y-4">
-                <form id="form-single" onsubmit="handleSingleSubmit(event)" class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="flex flex-col">
-                        <label class="text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-2">
-                            <i class="fa-solid fa-calendar-days text-blue-900"></i> DATA DO LANÇAMENTO
+
+            <form id="form-single" onsubmit="handleSingleSubmit(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-calendar text-blue-600"></i> DATA DO LANÇAMENTO
                         </label>
-                        <input type="date" id="single-data" required class="p-2 border border-slate-400 rounded bg-slate-50 font-semibold text-center">
+                        <input type="date" id="single-data" required class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
                     </div>
 
-                    <div class="flex flex-col">
-                        <label class="text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-2">
-                            <i class="fa-solid fa-droplet text-sky-600"></i> TIPO DE LANÇAMENTO
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-droplet text-blue-600"></i> TIPO DE LANÇAMENTO
                         </label>
-                        <select id="single-tipo" class="p-2 border border-slate-400 rounded bg-slate-50 font-semibold">
+                        <select id="single-tipo" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
                             <option value="Consumo">Consumo</option>
                             <option value="Entrada">Entrada</option>
                             <option value="Devolução">Devolução</option>
                         </select>
                     </div>
 
-                    <div class="flex flex-col">
-                        <label class="text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-2">
-                            <i class="fa-solid fa-house-chimney text-blue-900"></i> LOCAL PRINCIPAL
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-house text-blue-600"></i> LOCAL PRINCIPAL
                         </label>
-                        <select id="single-local" class="p-2 border border-slate-400 rounded bg-slate-50 font-semibold">
+                        <select id="single-local" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
                             <option value="Alojamento 01">Alojamento 01</option>
                             <option value="Alojamento 03">Alojamento 03</option>
                             <option value="Site">Site</option>
                         </select>
                     </div>
 
-                    <div class="flex flex-col">
-                        <label class="text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-2">
-                            <i class="fa-solid fa-sitemap text-blue-900"></i> LOCAL DE CONSUMO
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-sitemap text-blue-600"></i> LOCAL DE CONSUMO (DETALHE)
                         </label>
-                        <select id="single-detalhe" class="p-2 border border-slate-400 rounded bg-slate-50 font-semibold">
+                        <select id="single-detalhe" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
                             <option value="Módulo 01">Módulo 01</option>
                             <option value="Módulo 02">Módulo 02</option>
                             <option value="Módulo 03">Módulo 03</option>
@@ -166,687 +227,11 @@
                             <option value="-">-</option>
                         </select>
                     </div>
-
-                    <div class="md:col-span-2 bg-sky-50 p-3 rounded border border-sky-200 flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="flex items-center gap-3 w-full md:w-auto">
-                            <i class="fa-solid fa-bottle-water text-4xl text-sky-600"></i>
-                            <div>
-                                <label class="text-xs font-bold uppercase text-slate-700 block">QUANTIDADE (GALÕES)</label>
-                                <input type="number" id="single-qtd" min="1" required placeholder="35" class="p-2 border border-slate-400 rounded text-center text-2xl font-black w-32 bg-white">
-                            </div>
-                        </div>
-
-                        <div class="flex-1 w-full">
-                            <label class="text-xs font-bold uppercase text-slate-700 block mb-1">OBSERVAÇÃO (OPCIONAL)</label>
-                            <input type="text" id="single-obs" placeholder="Ex: Lançamento referente ao turno da manhã" class="w-full p-2 border border-slate-400 rounded bg-white">
-                        </div>
-                    </div>
-
-                    <div class="md:col-span-2 flex flex-wrap gap-3 pt-2">
-                        <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-6 py-2.5 rounded flex items-center gap-2 shadow">
-                            <i class="fa-solid fa-check"></i> REGISTRAR
-                        </button>
-                        <button type="reset" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded flex items-center gap-2 shadow">
-                            <i class="fa-solid fa-broom"></i> LIMPAR
-                        </button>
-                        <button type="button" onclick="switchScreen('screen3')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-2.5 rounded flex items-center gap-2 shadow ml-auto">
-                            <i class="fa-solid fa-plus"></i> NOVO LANÇAMENTO
-                        </button>
-                    </div>
-                </form>
-
-                <!-- TABELA ÚLTIMOS LANÇAMENTOS -->
-                <div class="bg-white p-3 rounded-lg border border-slate-300 shadow-sm">
-                    <h3 class="text-xs font-bold uppercase text-slate-700 mb-2">ÚLTIMOS LANÇAMENTOS</h3>
-                    <div class="overflow-x-auto border rounded">
-                        <table class="w-full text-xs text-center border-collapse">
-                            <thead class="table-header uppercase font-bold">
-                                <tr>
-                                    <th class="p-2 border">Data</th>
-                                    <th class="p-2 border">Tipo</th>
-                                    <th class="p-2 border">Local</th>
-                                    <th class="p-2 border">Detalhe</th>
-                                    <th class="p-2 border">Quantidade</th>
-                                    <th class="p-2 border">Observação</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-recent-body" class="divide-y divide-slate-200"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 3. TELA – LANÇAMENTO DE CONSUMO – ALOJAMENTO 01 -->
-        <section id="screen3" class="screen-content hidden bg-slate-200 rounded-lg p-2 border-2 border-slate-500 shadow-md">
-            <div class="header-banner p-3 rounded-t-md font-bold text-sm tracking-wider uppercase">
-                3. TELA – LANÇAMENTO DE CONSUMO – ALOJAMENTO 01
-            </div>
-            <div class="bg-slate-100 p-4 rounded-b-md border-x border-b border-slate-400 space-y-4">
-                <div class="bg-emerald-700 text-white p-3 rounded-md font-bold flex items-center gap-2 shadow">
-                    <i class="fa-solid fa-house"></i> LANÇAMENTO DE CONSUMO – ALOJAMENTO 01
                 </div>
 
-                <div class="flex items-center justify-between bg-white p-3 rounded-md border">
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold uppercase">DATA</span>
-                        <input type="date" id="batch-data" class="p-1 border rounded text-xs font-semibold">
-                    </div>
-                    <div class="bg-slate-200 px-4 py-2 rounded text-right border">
-                        <span class="text-xs font-bold uppercase block text-slate-600">TOTAL ALOJAMENTO 01</span>
-                        <span id="batch-total-header" class="text-xl font-black text-blue-900">150 <span class="text-xs font-normal">Galões</span></span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-sky-50 p-4 rounded-lg border border-sky-200">
-                        <h4 class="text-xs font-bold uppercase text-blue-900 mb-3 border-b border-sky-200 pb-1">CONSUMO POR LOCAL</h4>
-                        <div id="batch-inputs" class="space-y-2"></div>
-                    </div>
-
-                    <div class="bg-amber-50 p-4 rounded-lg border border-amber-200 flex flex-col justify-between">
-                        <div>
-                            <h4 class="text-xs font-bold uppercase text-amber-900 mb-3 border-b border-amber-200 pb-1">RESUMO DO LANÇAMENTO</h4>
-                            <div id="batch-summary" class="space-y-1.5 text-xs"></div>
-                        </div>
-                        <div class="border-t border-amber-300 pt-3 flex justify-between items-center mt-4">
-                            <span class="font-black text-amber-900 uppercase">TOTAL</span>
-                            <span id="batch-total" class="text-2xl font-black text-amber-950">150</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-wrap gap-3 pt-2">
-                    <button onclick="submitBatch()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-6 py-2.5 rounded flex items-center gap-2 shadow">
-                        <i class="fa-solid fa-check"></i> REGISTRAR CONSUMO
-                    </button>
-                    <button onclick="clearBatch()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded flex items-center gap-2 shadow">
-                        <i class="fa-solid fa-broom"></i> LIMPAR
-                    </button>
-                    <button onclick="switchScreen('screen1')" class="bg-slate-600 hover:bg-slate-700 text-white font-bold px-6 py-2.5 rounded flex items-center gap-2 shadow">
-                        <i class="fa-solid fa-reply"></i> VOLTAR
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- 4. TELA – ESTOQUE -->
-        <section id="screen4" class="screen-content hidden bg-slate-200 rounded-lg p-2 border-2 border-slate-500 shadow-md">
-            <div class="header-banner p-3 rounded-t-md font-bold text-sm tracking-wider uppercase">
-                4. TELA – ESTOQUE
-            </div>
-            <div class="bg-slate-100 p-4 rounded-b-md border-x border-b border-slate-400 space-y-4">
-                <!-- CARDS RESUMO DO ESTOQUE -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-white rounded-lg border border-slate-300 shadow overflow-hidden">
-                        <div class="bg-blue-800 text-white p-2 font-bold text-center uppercase text-xs flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-bottle-water"></i> SITE
-                        </div>
-                        <div class="p-3 space-y-2 text-xs">
-                            <div class="flex justify-between border-b pb-1"><span>GALÕES CHEIOS</span> <strong id="st-site-cheios" class="text-base font-bold">928</strong></div>
-                            <div class="flex justify-between border-b pb-1"><span>GALÕES VAZIOS</span> <strong id="st-site-vazios" class="text-base font-bold">250</strong></div>
-                            <div class="flex justify-between border-b pb-1"><span>ESTOQUE MÍNIMO</span> <strong>300</strong></div>
-                            <div class="flex justify-between items-center pt-1"><span>STATUS</span> <span class="flex items-center gap-1 font-bold text-emerald-700"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> NORMAL</span></div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg border border-slate-300 shadow overflow-hidden">
-                        <div class="bg-emerald-800 text-white p-2 font-bold text-center uppercase text-xs flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-house"></i> ALOJAMENTO 01
-                        </div>
-                        <div class="p-3 space-y-2 text-xs">
-                            <div class="flex justify-between border-b pb-1"><span>GALÕES CHEIOS</span> <strong id="st-aloj1-cheios" class="text-base font-bold">340</strong></div>
-                            <div class="flex justify-between border-b pb-1"><span>GALÕES VAZIOS</span> <strong id="st-aloj1-vazios" class="text-base font-bold">180</strong></div>
-                            <div class="flex justify-between border-b pb-1"><span>ESTOQUE MÍNIMO</span> <strong>200</strong></div>
-                            <div class="flex justify-between items-center pt-1"><span>STATUS</span> <span class="flex items-center gap-1 font-bold text-emerald-700"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> NORMAL</span></div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg border border-slate-300 shadow overflow-hidden">
-                        <div class="bg-amber-700 text-white p-2 font-bold text-center uppercase text-xs flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-house"></i> ALOJAMENTO 03
-                        </div>
-                        <div class="p-3 space-y-2 text-xs">
-                            <div class="flex justify-between border-b pb-1"><span>GALÕES CHEIOS</span> <strong id="st-aloj3-cheios" class="text-base font-bold">501</strong></div>
-                            <div class="flex justify-between border-b pb-1"><span>GALÕES VAZIOS</span> <strong id="st-aloj3-vazios" class="text-base font-bold">320</strong></div>
-                            <div class="flex justify-between border-b pb-1"><span>ESTOQUE MÍNIMO</span> <strong>200</strong></div>
-                            <div class="flex justify-between items-center pt-1"><span>STATUS</span> <span class="flex items-center gap-1 font-bold text-emerald-700"><span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> NORMAL</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TABELA MOVIMENTAÇÃO DE ESTOQUE -->
-                <div class="bg-white p-3 rounded-lg border border-slate-300 shadow-sm">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-xs font-bold uppercase text-slate-700">MOVIMENTAÇÃO DO ESTOQUE (PERÍODO)</h3>
-                        <select class="text-xs border p-1 rounded font-semibold bg-slate-50"><option>Setembro/2026</option></select>
-                    </div>
-                    <div class="overflow-x-auto border rounded">
-                        <table class="w-full text-xs text-center border-collapse">
-                            <thead class="table-header uppercase font-bold">
-                                <tr>
-                                    <th class="p-2 border">Local</th>
-                                    <th class="p-2 border">Estoque Inicial</th>
-                                    <th class="p-2 border">Entradas (Cheios)</th>
-                                    <th class="p-2 border">Consumo</th>
-                                    <th class="p-2 border">Devolução (Vazios)</th>
-                                    <th class="p-2 border">Estoque Atual</th>
-                                    <th class="p-2 border">Estoque Mínimo</th>
-                                    <th class="p-2 border">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="stock-summary-table" class="divide-y divide-slate-200"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- GRÁFICO EVOLUÇÃO + ÚLTIMAS MOVIMENTAÇÕES -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="md:col-span-2 bg-white p-3 rounded-lg border border-slate-300 shadow-sm">
-                        <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">EVOLUÇÃO DO ESTOQUE (GALÕES CHEIOS)</h4>
-                        <canvas id="chartEvolucaoEstoque" class="h-48"></canvas>
-                    </div>
-                    <div class="bg-white p-3 rounded-lg border border-slate-300 shadow-sm">
-                        <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">ÚLTIMAS MOVIMENTAÇÕES</h4>
-                        <div class="overflow-x-auto border rounded">
-                            <table class="w-full text-xs text-center">
-                                <thead class="table-header font-bold text-[10px] uppercase">
-                                    <tr>
-                                        <th class="p-1 border">Data</th>
-                                        <th class="p-1 border">Tipo</th>
-                                        <th class="p-1 border">Local</th>
-                                        <th class="p-1 border">Qtd</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="stock-last-moves" class="divide-y text-[11px]"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 5. TELA – DASHBOARD -->
-        <section id="screen5" class="screen-content hidden bg-slate-200 rounded-lg p-2 border-2 border-slate-500 shadow-md">
-            <div class="header-banner p-3 rounded-t-md font-bold text-sm tracking-wider uppercase">
-                5. TELA – DASHBOARD
-            </div>
-            <div class="bg-slate-100 p-4 rounded-b-md border-x border-b border-slate-400 space-y-4">
-                <!-- FILTROS SUPERIORES -->
-                <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-2.5 rounded-lg border text-xs font-bold">
-                    <div class="flex items-center gap-2">
-                        <span>PERÍODO</span>
-                        <select class="border p-1 rounded bg-slate-50"><option>Setembro/2026</option></select>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span>LOCAL</span>
-                        <select class="border p-1 rounded bg-slate-50"><option>Todos</option></select>
-                    </div>
-                    <div class="flex items-center gap-2 text-slate-600">
-                        <i class="fa-solid fa-calendar-days text-base"></i>
-                        <i class="fa-solid fa-chart-pie text-base"></i>
-                    </div>
-                </div>
-
-                <!-- METRICAS / KPIS PAINEL -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div class="bg-sky-600 text-white p-3 rounded-lg shadow flex items-center justify-between">
-                        <div>
-                            <p class="text-[10px] font-bold uppercase">CONSUMO TOTAL</p>
-                            <h3 id="dash-consumo-total" class="text-xl font-black">11.750</h3>
-                            <p id="dash-litros-total" class="text-[10px] text-sky-200">235.000 litros</p>
-                        </div>
-                        <i class="fa-solid fa-droplet text-3xl opacity-50"></i>
-                    </div>
-
-                    <div class="bg-emerald-600 text-white p-3 rounded-lg shadow flex items-center justify-between">
-                        <div>
-                            <p class="text-[10px] font-bold uppercase">ENTRADAS (CHEIOS)</p>
-                            <h3 id="dash-entradas" class="text-xl font-black">1.850</h3>
-                            <p class="text-[10px] text-emerald-200">Galões</p>
-                        </div>
-                        <i class="fa-solid fa-arrow-right-to-bracket text-3xl opacity-50"></i>
-                    </div>
-
-                    <div class="bg-amber-600 text-white p-3 rounded-lg shadow flex items-center justify-between">
-                        <div>
-                            <p class="text-[10px] font-bold uppercase">DEVOLUÇÕES (VAZIOS)</p>
-                            <h3 id="dash-devolucoes" class="text-xl font-black">1.770</h3>
-                            <p class="text-[10px] text-amber-200">Galões</p>
-                        </div>
-                        <i class="fa-solid fa-arrow-up text-3xl opacity-50"></i>
-                    </div>
-
-                    <div class="bg-purple-700 text-white p-3 rounded-lg shadow flex items-center justify-between">
-                        <div>
-                            <p class="text-[10px] font-bold uppercase">ESTOQUE ATUAL (CHEIOS)</p>
-                            <h3 id="dash-estoque-atual" class="text-xl font-black">1.769</h3>
-                            <p class="text-[10px] text-purple-200">Galões</p>
-                        </div>
-                        <i class="fa-solid fa-cubes text-3xl opacity-50"></i>
-                    </div>
-
-                    <div class="bg-teal-600 text-white p-3 rounded-lg shadow flex items-center justify-between">
-                        <div>
-                            <p class="text-[10px] font-bold uppercase">MÉDIA DIÁRIA</p>
-                            <h3 class="text-xl font-black">392 <span class="text-[10px] font-normal">Galões/dia</span></h3>
-                            <p class="text-[10px] text-teal-200">7.840 litros/dia</p>
-                        </div>
-                        <i class="fa-solid fa-chart-line text-3xl opacity-50"></i>
-                    </div>
-
-                    <div class="bg-rose-600 text-white p-3 rounded-lg shadow flex items-center justify-between">
-                        <div>
-                            <p class="text-[10px] font-bold uppercase">EFETIVO MÉDIO</p>
-                            <h3 class="text-xl font-black">500</h3>
-                            <p class="text-[10px] text-rose-200">Pessoas</p>
-                        </div>
-                        <i class="fa-solid fa-users text-3xl opacity-50"></i>
-                    </div>
-
-                    <div class="bg-blue-700 text-white p-3 rounded-lg shadow flex items-center justify-between">
-                        <div>
-                            <p class="text-[10px] font-bold uppercase">LITROS / PESSOA / DIA</p>
-                            <h3 class="text-xl font-black">15,7</h3>
-                            <p class="text-[10px] text-blue-200">L/pessoa/dia</p>
-                        </div>
-                        <i class="fa-solid fa-user text-3xl opacity-50"></i>
-                    </div>
-
-                    <div class="bg-amber-700 text-white p-3 rounded-lg shadow flex items-center justify-between">
-                        <div>
-                            <p class="text-[10px] font-bold uppercase">META</p>
-                            <h3 class="text-xl font-black">2,7</h3>
-                            <p class="text-[10px] text-amber-200">L/pessoa/dia</p>
-                        </div>
-                        <i class="fa-solid fa-bullseye text-3xl opacity-50"></i>
-                    </div>
-                </div>
-
-                <!-- 4 GRÁFICOS DO DASHBOARD -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-white p-3 rounded-lg border shadow-sm">
-                        <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO DIÁRIO (GALÕES)</h4>
-                        <canvas id="chartConsumoDiario" class="h-44"></canvas>
-                    </div>
-
-                    <div class="bg-white p-3 rounded-lg border shadow-sm">
-                        <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO POR LOCAL (MÊS)</h4>
-                        <canvas id="chartConsumoLocal" class="h-44"></canvas>
-                    </div>
-
-                    <div class="bg-white p-3 rounded-lg border shadow-sm">
-                        <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">ENTRADAS X DEVOLUÇÕES (GALÕES)</h4>
-                        <canvas id="chartEntradasDevolucoes" class="h-44"></canvas>
-                    </div>
-
-                    <div class="bg-white p-3 rounded-lg border shadow-sm">
-                        <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO MENSAL (GALÕES)</h4>
-                        <canvas id="chartConsumoMensal" class="h-44"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </div>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        let database = [];
-        const batchLocations = [
-            'Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 
-            'Área de Vivência', 'Refeitório', 'Repúblicas'
-        ];
-        const defaultBatchValues = {
-            'Módulo 01': 35, 'Módulo 02': 20, 'Módulo 03': 18, 
-            'Módulo 04': 15, 'Área de Vivência': 22, 'Refeitório': 28, 'Repúblicas': 12
-        };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('single-data').value = today;
-            document.getElementById('batch-data').value = today;
-
-            buildBatchInputs();
-            loadDataFromSheet();
-            initCharts();
-        });
-
-        function switchScreen(screenId) {
-            document.querySelectorAll('.screen-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(screenId).classList.remove('hidden');
-
-            document.querySelectorAll('.active-tab').forEach(el => el.classList.remove('active-tab'));
-            document.getElementById(`nav-${screenId}`).classList.add('active-tab');
-
-            if(screenId === 'screen5') updateDashboard();
-            if(screenId === 'screen4') updateStockUI();
-        }
-
-        async function loadDataFromSheet() {
-            try {
-                if (SCRIPT_URL) {
-                    const res = await fetch(SCRIPT_URL);
-                    const data = await res.json();
-                    if(Array.isArray(data) && data.length > 0) {
-                        database = data;
-                    }
-                }
-            } catch (err) {
-                console.error("Erro no carregamento:", err);
-                const local = localStorage.getItem('controle_agua_db');
-                if(local) database = JSON.parse(local);
-            }
-            renderRecentTable();
-            updateStockUI();
-        }
-
-        async function saveRecords(records) {
-            database.push(...records);
-            localStorage.setItem('controle_agua_db', JSON.stringify(database));
-
-            renderRecentTable();
-            updateStockUI();
-
-            if (SCRIPT_URL) {
-                try {
-                    await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(records)
-                    });
-                } catch(e) {
-                    console.error("Erro ao enviar:", e);
-                }
-            }
-        }
-
-        function handleSingleSubmit(e) {
-            e.preventDefault();
-            const record = {
-                Data: document.getElementById('single-data').value,
-                Tipo: document.getElementById('single-tipo').value,
-                LocalPrincipal: document.getElementById('single-local').value,
-                LocalDetalhe: document.getElementById('single-detalhe').value,
-                Quantidade: parseInt(document.getElementById('single-qtd').value) || 0,
-                Observacao: document.getElementById('single-obs').value
-            };
-
-            saveRecords([record]);
-            alert('Lançamento registrado com sucesso!');
-            document.getElementById('form-single').reset();
-            document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
-        }
-
-        function buildBatchInputs() {
-            const container = document.getElementById('batch-inputs');
-            container.innerHTML = '';
-            batchLocations.forEach(loc => {
-                const defVal = defaultBatchValues[loc] || 0;
-                container.innerHTML += `
-                    <div class="flex items-center justify-between border-b pb-1">
-                        <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
-                            <i class="fa-solid fa-house text-blue-900"></i> ${loc}
-                        </span>
-                        <div class="flex items-center gap-1">
-                            <input type="number" min="0" value="${defVal}" data-loc="${loc}" oninput="updateBatchSummary()" class="batch-qtd-input w-16 p-1 border rounded text-center font-bold text-xs" placeholder="0">
-                            <span class="text-[10px] text-slate-500 font-semibold">galões</span>
-                        </div>
-                    </div>
-                `;
-            });
-            updateBatchSummary();
-        }
-
-        function updateBatchSummary() {
-            const inputs = document.querySelectorAll('.batch-qtd-input');
-            const summary = document.getElementById('batch-summary');
-            summary.innerHTML = '';
-            let total = 0;
-
-            inputs.forEach(inp => {
-                const val = parseInt(inp.value) || 0;
-                total += val;
-                if(val > 0) {
-                    summary.innerHTML += `
-                        <div class="flex justify-between border-b pb-1">
-                            <span>${inp.dataset.loc}:</span>
-                            <strong>${val}</strong>
-                        </div>
-                    `;
-                }
-            });
-
-            document.getElementById('batch-total').innerText = `${total}`;
-            document.getElementById('batch-total-header').innerHTML = `${total} <span class="text-xs font-normal">Galões</span>`;
-        }
-
-        function submitBatch() {
-            const date = document.getElementById('batch-data').value;
-            const inputs = document.querySelectorAll('.batch-qtd-input');
-            const records = [];
-
-            inputs.forEach(inp => {
-                const val = parseInt(inp.value) || 0;
-                if(val > 0) {
-                    records.push({
-                        Data: date,
-                        Tipo: 'Consumo',
-                        LocalPrincipal: 'Alojamento 01',
-                        LocalDetalhe: inp.dataset.loc,
-                        Quantidade: val,
-                        Observacao: 'Lançamento Consumo Aloj. 01'
-                    });
-                }
-            });
-
-            if(records.length === 0) {
-                alert('Preencha os valores.');
-                return;
-            }
-
-            saveRecords(records);
-            alert('Consumo registrado com sucesso!');
-        }
-
-        function clearBatch() {
-            document.querySelectorAll('.batch-qtd-input').forEach(i => i.value = '0');
-            updateBatchSummary();
-        }
-
-        function renderRecentTable() {
-            const tbody = document.getElementById('table-recent-body');
-            tbody.innerHTML = '';
-
-            const sample = [
-                { Data: '26/09/2026', Tipo: 'Consumo', LocalPrincipal: 'Alojamento 01', LocalDetalhe: 'Módulo 01', Quantidade: 35, Observacao: '' },
-                { Data: '26/09/2026', Tipo: 'Consumo', LocalPrincipal: 'Alojamento 01', LocalDetalhe: 'Refeitório', Quantidade: 28, Observacao: '' },
-                { Data: '25/09/2026', Tipo: 'Entrada', LocalPrincipal: 'Site', LocalDetalhe: '-', Quantidade: 300, Observacao: '' },
-                { Data: '25/09/2026', Tipo: 'Devolução', LocalPrincipal: 'Alojamento 03', LocalDetalhe: '-', Quantidade: 120, Observacao: '' },
-                { Data: '25/09/2026', Tipo: 'Consumo', LocalPrincipal: 'Site', LocalDetalhe: '-', Quantidade: 280, Observacao: '' }
-            ];
-
-            const list = database.length > 0 ? [...database].reverse().slice(0, 5) : sample;
-
-            list.forEach(r => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="p-1.5 border">${r.Data || '-'}</td>
-                        <td class="p-1.5 border font-bold ${r.Tipo === 'Consumo' ? 'text-red-600' : 'text-emerald-600'}">${r.Tipo}</td>
-                        <td class="p-1.5 border">${r.LocalPrincipal || '-'}</td>
-                        <td class="p-1.5 border">${r.LocalDetalhe || '-'}</td>
-                        <td class="p-1.5 border font-bold">${r.Quantidade || 0}</td>
-                        <td class="p-1.5 border text-slate-500">${r.Observacao || '-'}</td>
-                    </tr>
-                `;
-            });
-
-            // Preencher últimas movimentações Tela 4
-            const tbodyMoves = document.getElementById('stock-last-moves');
-            if(tbodyMoves) {
-                tbodyMoves.innerHTML = '';
-                list.forEach(r => {
-                    tbodyMoves.innerHTML += `
-                        <tr>
-                            <td class="p-1 border">${r.Data || '-'}</td>
-                            <td class="p-1 border font-bold">${r.Tipo || '-'}</td>
-                            <td class="p-1 border">${r.LocalPrincipal || '-'}</td>
-                            <td class="p-1 border font-bold">${r.Quantidade || 0}</td>
-                        </tr>
-                    `;
-                });
-            }
-        }
-
-        function calculateStock() {
-            const stock = {
-                'Site': { cheios: 928, vazios: 250, min: 300, inicial: 676, entrada: 1250, consumo: 9430, devolucao: 1100 },
-                'Alojamento 01': { cheios: 340, vazios: 180, min: 200, inicial: 354, entrada: 650, consumo: 2320, devolucao: 670 },
-                'Alojamento 03': { cheios: 501, vazios: 320, min: 200, inicial: 390, entrada: 800, consumo: 2870, devolucao: 600 }
-            };
-
-            database.forEach(r => {
-                const loc = r.LocalPrincipal;
-                const qtd = parseInt(r.Quantidade) || 0;
-
-                if(stock[loc]) {
-                    if(r.Tipo === 'Consumo') stock[loc].consumo += qtd;
-                    else if(r.Tipo === 'Entrada') stock[loc].entrada += qtd;
-                    else if(r.Tipo === 'Devolução') stock[loc].devolucao += qtd;
-                }
-            });
-
-            return stock;
-        }
-
-        function updateStockUI() {
-            const stock = calculateStock();
-
-            document.getElementById('st-site-cheios').innerText = stock['Site'].cheios;
-            document.getElementById('st-site-vazios').innerText = stock['Site'].vazios;
-
-            document.getElementById('st-aloj1-cheios').innerText = stock['Alojamento 01'].cheios;
-            document.getElementById('st-aloj1-vazios').innerText = stock['Alojamento 01'].vazios;
-
-            document.getElementById('st-aloj3-cheios').innerText = stock['Alojamento 03'].cheios;
-            document.getElementById('st-aloj3-vazios').innerText = stock['Alojamento 03'].vazios;
-
-            const tbody = document.getElementById('stock-summary-table');
-            tbody.innerHTML = '';
-            Object.keys(stock).forEach(loc => {
-                const s = stock[loc];
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="p-2 border font-bold">${loc}</td>
-                        <td class="p-2 border">${s.inicial}</td>
-                        <td class="p-2 border font-bold text-emerald-600">${s.entrada}</td>
-                        <td class="p-2 border font-bold text-red-600">${s.consumo}</td>
-                        <td class="p-2 border font-bold text-amber-600">${s.devolucao}</td>
-                        <td class="p-2 border font-extrabold text-blue-900">${s.cheios}</td>
-                        <td class="p-2 border">${s.min}</td>
-                        <td class="p-2 border font-bold text-emerald-700"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block mr-1"></span> Normal</td>
-                    </tr>
-                `;
-            });
-        }
-
-        let chartEvolucao, chartDiario, chartLocal, chartEntradasDev, chartMensal;
-
-        function initCharts() {
-            // Evolução Estoque
-            const ctxEvol = document.getElementById('chartEvolucaoEstoque').getContext('2d');
-            chartEvolucao = new Chart(ctxEvol, {
-                type: 'line',
-                data: {
-                    labels: ['01/09', '05/09', '10/09', '15/09', '20/09', '25/09', '30/09'],
-                    datasets: [
-                        { label: 'Site', data: [900, 1100, 950, 1000, 800, 850, 820], borderColor: '#0284c7', fill: false },
-                        { label: 'Aloj. 01', data: [400, 450, 380, 420, 350, 370, 340], borderColor: '#d97706', fill: false },
-                        { label: 'Aloj. 03', data: [200, 220, 210, 230, 190, 200, 180], borderColor: '#059669', fill: false }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-
-            // Consumo Diário
-            const ctxDiario = document.getElementById('chartConsumoDiario').getContext('2d');
-            chartDiario = new Chart(ctxDiario, {
-                type: 'bar',
-                data: {
-                    labels: Array.from({length: 30}, (_, i) => String(i + 1).padStart(2, '0')),
-                    datasets: [{ label: 'Galões', data: Array.from({length: 30}, () => Math.floor(Math.random() * 400) + 400), backgroundColor: '#0284c7' }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-
-            // Consumo Por Local
-            const ctxLocal = document.getElementById('chartConsumoLocal').getContext('2d');
-            chartLocal = new Chart(ctxLocal, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Site', 'Alojamento 01', 'Alojamento 03'],
-                    datasets: [{ data: [60, 20, 20], backgroundColor: ['#0284c7', '#059669', '#d97706'] }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-
-            // Entradas x Devoluções
-            const ctxEntDev = document.getElementById('chartEntradasDevolucoes').getContext('2d');
-            chartEntradasDev = new Chart(ctxEntDev, {
-                type: 'line',
-                data: {
-                    labels: Array.from({length: 15}, (_, i) => String(i*2 + 1).padStart(2, '0')),
-                    datasets: [
-                        { label: 'Entradas', data: Array.from({length: 15}, () => Math.floor(Math.random() * 100) + 150), borderColor: '#059669', fill: false },
-                        { label: 'Devoluções', data: Array.from({length: 15}, () => Math.floor(Math.random() * 80) + 100), borderColor: '#dc2626', fill: false }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-
-            // Consumo Mensal
-            const ctxMensal = document.getElementById('chartConsumoMensal').getContext('2d');
-            chartMensal = new Chart(ctxMensal, {
-                type: 'bar',
-                data: {
-                    labels: ['Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set'],
-                    datasets: [{ label: 'Galões', data: [20000, 12800, 13200, 14500, 14255, 11750], backgroundColor: '#0284c7' }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
-
-        function updateDashboard() {
-            let totalConsumo = 11750, totalEntradas = 1850, totalDevolucoes = 1770;
-            const stock = calculateStock();
-
-            database.forEach(r => {
-                const q = parseInt(r.Quantidade) || 0;
-                if(r.Tipo === 'Consumo') totalConsumo += q;
-                if(r.Tipo === 'Entrada') totalEntradas += q;
-                if(r.Tipo === 'Devolução') totalDevolucoes += q;
-            });
-
-            document.getElementById('dash-consumo-total').innerText = totalConsumo.toLocaleString();
-            document.getElementById('dash-litros-total').innerText = `${(totalConsumo * 20).toLocaleString()} litros`;
-            document.getElementById('dash-entradas').innerText = totalEntradas.toLocaleString();
-            document.getElementById('dash-devolucoes').innerText = totalDevolucoes.toLocaleString();
-
-            const totalCheios = stock['Site'].cheios + stock['Alojamento 01'].cheios + stock['Alojamento 03'].cheios;
-            document.getElementById('dash-estoque-atual').innerText = totalCheios.toLocaleString();
-        }
-
-        function exportToExcel() {
-            if(database.length === 0) {
-                alert('Nenhum dado cadastrado para exportar.');
-                return;
-            }
-            const ws = XLSX.utils.json_to_sheet(database);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Lancamentos");
-            XLSX.writeFile(wb, "Relatorio_Controle_Agua.xlsx");
-        }
-    </script>
-</body>
-</html>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-bottle-water text-blue-600"></i> QUANTIDADE (GALÕES)
+                        </label>
+                        <input type="number" id="single-qtd" min="1" placeholder="Ex: 35" required class="w-full p-2.5
