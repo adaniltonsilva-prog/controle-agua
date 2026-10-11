@@ -413,7 +413,7 @@
             </div>
         </section>
 
-        <!-- 5. TELA – DASHBOARD -->
+        <!-- 5. TELA – DASHBOARD COM SELETOR DE PERÍODO POR DIAS ESPECÍFICOS -->
         <section id="screen5" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
             <div class="bg-[#0b5394] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
                 <div>
@@ -422,13 +422,16 @@
                     </h2>
                     <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
                 </div>
-                <div class="flex gap-4 text-xs font-semibold">
+                <div class="flex flex-wrap gap-3 text-xs font-semibold items-center">
+                    <!-- SELETOR DE PERÍODO PERSONALIZADO (DATA INICIAL E FINAL) -->
                     <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg">
-                        <span>PERÍODO:</span>
-                        <select class="bg-white text-slate-800 p-1 rounded"><option>Setembro/2026</option></select>
+                        <span>DE:</span>
+                        <input type="date" id="dash-date-start" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none">
+                        <span>ATÉ:</span>
+                        <input type="date" id="dash-date-end" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none">
                     </div>
 
-                    <!-- FILTRO DE LOCAL DINÂMICO PARA O DASHBOARD -->
+                    <!-- FILTRO DE LOCAL DINÂMICO -->
                     <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg">
                         <span>LOCAL:</span>
                         <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold">
@@ -526,7 +529,7 @@
                 </div>
 
                 <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">CONSUMO POR LOCAL (MÊS)</h4>
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">CONSUMO POR LOCAL (PERÍODO)</h4>
                     <div class="relative h-64 w-full">
                         <canvas id="chartConsumoLocal"></canvas>
                     </div>
@@ -633,7 +636,7 @@
 
                 <!-- ESTOQUE INICIAL -->
                 <div>
-                    <h4 class="text-xs font-bold uppercase font-bold text-emerald-700 border-b pb-1 mb-3">ESTOQUE INICIAL (GALÕES CHEIOS)</h4>
+                    <h4 class="text-xs font-bold uppercase text-emerald-700 border-b pb-1 mb-3">ESTOQUE INICIAL (GALÕES CHEIOS)</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div>
                             <label class="block text-[11px] font-bold text-slate-700 mb-1">Site:</label>
@@ -652,7 +655,7 @@
 
                 <!-- ESTOQUE MÍNIMO -->
                 <div>
-                    <h4 class="text-xs font-bold uppercase font-bold text-amber-700 border-b pb-1 mb-3">ESTOQUE MÍNIMO DE SEGURANÇA</h4>
+                    <h4 class="text-xs font-bold uppercase text-amber-700 border-b pb-1 mb-3">ESTOQUE MÍNIMO DE SEGURANÇA</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div>
                             <label class="block text-[11px] font-bold text-slate-700 mb-1">Site:</label>
@@ -677,7 +680,7 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT COM DASHBOARD FILTRÁVEL POR LOCAL -->
+    <!-- LÓGICA JAVASCRIPT COM SELETOR DE PERÍODO CUSTOMIZADO -->
     <script>
         let database = [];
 
@@ -698,22 +701,20 @@
             efetivo: 500,
             meta: 2.7,
             volumeGalao: 20,
-            estoqueInicial: {
-                'Site': 0,
-                'Alojamento 01': 0,
-                'Alojamento 03': 0
-            },
-            estoqueMinimo: {
-                'Site': 300,
-                'Alojamento 01': 200,
-                'Alojamento 03': 200
-            }
+            estoqueInicial: { 'Site': 0, 'Alojamento 01': 0, 'Alojamento 03': 0 },
+            estoqueMinimo: { 'Site': 300, 'Alojamento 01': 200, 'Alojamento 03': 200 }
         };
 
         document.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().split('T')[0];
+            const firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+
             document.getElementById('single-data').value = today;
             document.getElementById('batch-data').value = today;
+
+            // PREENCHE PERÍODO PADRÃO NO DASHBOARD (DO DIA 1 ATÉ HOJE)
+            document.getElementById('dash-date-start').value = firstDayOfMonth;
+            document.getElementById('dash-date-end').value = today;
 
             localStorage.removeItem('controle_agua_db');
             loadSavedConfig();
@@ -1218,17 +1219,36 @@
             });
         }
 
-        // LÓGICA DO DASHBOARD TOTALMENTE FILTRÁVEL POR LOCAL
+        // LÓGICA DO DASHBOARD FILTRADA POR DATAS ESPECÍFICAS E LOCAL
         function updateDashboard() {
             const selectedFilterLoc = document.getElementById('dash-filter-local').value;
+            const startDateVal = document.getElementById('dash-date-start').value;
+            const endDateVal = document.getElementById('dash-date-end').value;
+
             let totalConsumo = 0, totalEntradas = 0, totalDevolucoes = 0;
             const stock = calculateStock();
+
+            // CÁLCULO DA QUANTIDADE DE DIAS NO INTERVALO SELECIONADO
+            let diasIntervalo = 30;
+            if (startDateVal && endDateVal) {
+                const dtStart = new Date(startDateVal);
+                const dtEnd = new Date(endDateVal);
+                const diffTime = dtEnd - dtStart;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                diasIntervalo = diffDays > 0 ? diffDays : 1;
+            }
 
             database.forEach(r => {
                 const q = parseInt(r.Quantidade) || 0;
                 const matchesLoc = selectedFilterLoc === 'Todos' || r.LocalPrincipal === selectedFilterLoc;
+                
+                // FILTRO DE INTERVALO DE DATAS DE LANÇAMENTO
+                let matchesDate = true;
+                if (r.Data && startDateVal && endDateVal) {
+                    matchesDate = r.Data >= startDateVal && r.Data <= endDateVal;
+                }
 
-                if (matchesLoc) {
+                if (matchesLoc && matchesDate) {
                     if(r.Tipo === 'Consumo') totalConsumo += q;
                     if(r.Tipo === 'Entrada') totalEntradas += q;
                     if(r.Tipo === 'Devolução') totalDevolucoes += q;
@@ -1243,9 +1263,11 @@
             }
 
             const totalLitros = totalConsumo * systemConfig.volumeGalao;
-            const mediaDiaria = Math.round(totalConsumo / 30);
-            const mediaDiariaLitros = mediaDiaria * systemConfig.volumeGalao;
-            const litrosPessoaDia = systemConfig.efetivo > 0 ? (totalLitros / (systemConfig.efetivo * 30)).toFixed(1) : "0,0";
+            
+            // MÉDIA DIÁRIA RECALCULADA PELO NÚMERO DE DIAS DO INTERVALO SELECIONADO
+            const mediaDiaria = Math.round(totalConsumo / diasIntervalo);
+            const mediaDiariaLitros = Math.round(totalLitros / diasIntervalo);
+            const litrosPessoaDia = systemConfig.efetivo > 0 ? (totalLitros / (systemConfig.efetivo * diasIntervalo)).toFixed(1) : "0,0";
 
             document.getElementById('dash-consumo-total').innerText = totalConsumo;
             document.getElementById('dash-litros-total').innerText = `${totalLitros.toLocaleString()} litros`;
