@@ -427,9 +427,16 @@
                         <span>PERÍODO:</span>
                         <select class="bg-white text-slate-800 p-1 rounded"><option>Setembro/2026</option></select>
                     </div>
+
+                    <!-- FILTRO DE LOCAL DINÂMICO PARA O DASHBOARD -->
                     <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg">
                         <span>LOCAL:</span>
-                        <select class="bg-white text-slate-800 p-1 rounded"><option>Todos</option></select>
+                        <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold">
+                            <option value="Todos">Todos</option>
+                            <option value="Site">Site</option>
+                            <option value="Alojamento 01">Alojamento 01</option>
+                            <option value="Alojamento 03">Alojamento 03</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -594,7 +601,7 @@
 
     </main>
 
-    <!-- MODAL DE CONFIGURAÇÕES COM ESTOQUES INICIAIS E MÍNIMOS -->
+    <!-- MODAL DE CONFIGURAÇÕES -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 space-y-6 relative border max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2 border-b">
@@ -670,7 +677,7 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT -->
+    <!-- LÓGICA JAVASCRIPT COM DASHBOARD FILTRÁVEL POR LOCAL -->
     <script>
         let database = [];
 
@@ -1211,16 +1218,29 @@
             });
         }
 
+        // LÓGICA DO DASHBOARD TOTALMENTE FILTRÁVEL POR LOCAL
         function updateDashboard() {
+            const selectedFilterLoc = document.getElementById('dash-filter-local').value;
             let totalConsumo = 0, totalEntradas = 0, totalDevolucoes = 0;
             const stock = calculateStock();
 
             database.forEach(r => {
                 const q = parseInt(r.Quantidade) || 0;
-                if(r.Tipo === 'Consumo') totalConsumo += q;
-                if(r.Tipo === 'Entrada') totalEntradas += q;
-                if(r.Tipo === 'Devolução') totalDevolucoes += q;
+                const matchesLoc = selectedFilterLoc === 'Todos' || r.LocalPrincipal === selectedFilterLoc;
+
+                if (matchesLoc) {
+                    if(r.Tipo === 'Consumo') totalConsumo += q;
+                    if(r.Tipo === 'Entrada') totalEntradas += q;
+                    if(r.Tipo === 'Devolução') totalDevolucoes += q;
+                }
             });
+
+            let estoqueAtualLocal = 0;
+            if (selectedFilterLoc === 'Todos') {
+                estoqueAtualLocal = stock['Site'].cheios + stock['Alojamento 01'].cheios + stock['Alojamento 03'].cheios;
+            } else if (stock[selectedFilterLoc]) {
+                estoqueAtualLocal = stock[selectedFilterLoc].cheios;
+            }
 
             const totalLitros = totalConsumo * systemConfig.volumeGalao;
             const mediaDiaria = Math.round(totalConsumo / 30);
@@ -1231,7 +1251,7 @@
             document.getElementById('dash-litros-total').innerText = `${totalLitros.toLocaleString()} litros`;
             document.getElementById('dash-entradas').innerText = totalEntradas;
             document.getElementById('dash-devolucoes').innerText = totalDevolucoes;
-            document.getElementById('dash-estoque-atual').innerText = stock['Site'].cheios + stock['Alojamento 01'].cheios + stock['Alojamento 03'].cheios;
+            document.getElementById('dash-estoque-atual').innerText = estoqueAtualLocal;
 
             document.getElementById('dash-media-diaria').innerText = mediaDiaria;
             document.getElementById('dash-media-diaria-litros').innerText = `${mediaDiariaLitros} litros/dia`;
