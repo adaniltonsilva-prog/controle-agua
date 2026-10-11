@@ -265,7 +265,6 @@
                     <i class="fa-solid fa-building"></i> 3. TELA – LANÇAMENTO DE CONSUMO DETALHADO
                 </h2>
                 
-                <!-- SELETOR DINÂMICO DE ALOJAMENTO / LOCAL -->
                 <div class="flex items-center gap-4 bg-blue-800 px-3 py-1.5 rounded-lg text-xs font-semibold">
                     <div class="flex items-center gap-2">
                         <span>LOCAL:</span>
@@ -624,21 +623,21 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT COMPLETA E ATUALIZADA -->
+    <!-- LÓGICA JAVASCRIPT COMPLETA E AJUSTADA -->
     <script>
         let database = [];
 
-        // MAPA COMPLETO DE SUB-LOCAIS POR DADO PRINCIPAL
+        // SUB-LOCAIS EXCLUSIVOS PARA CONSUMO (SEM "GERAL" E SEM "-")
         const subLocationsMap = {
             'Site': [
-                'Bebedouros', 'Carpas', 'Refeitório', 'Prédio ADM', 'Sala de Controle', 'Geral'
+                'Bebedouros', 'Carpas', 'Refeitório', 'Prédio ADM', 'Sala de Controle'
             ],
             'Alojamento 01': [
-                'Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Área de Vivência', 'Refeitório', 'Hotel / Casas', 'Geral'
+                'Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Área de Vivência', 'Refeitório', 'Hotel / Casas'
             ],
             'Alojamento 03': [
                 'Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Módulo 05', 'Módulo 06', 'Módulo 07', 'Módulo 08', 'Módulo 09',
-                'Área de Vivência', 'Refeitório', 'Ambulatório', 'Sala de Manutenção', 'Geral'
+                'Área de Vivência', 'Refeitório', 'Ambulatório', 'Sala de Manutenção'
             ]
         };
 
@@ -661,7 +660,7 @@
             initCharts();
         });
 
-        // TELA 2: REGRA PARA ENTRADA/DEVOLUÇÃO -> GERAL. CONSUMO -> LISTA COMPLETA
+        // REGRA REFINADA: ENTRADA/DEVOLUÇÃO -> GERAL | CONSUMO -> APENAS SUB-LOCAIS ESPECÍFICOS
         function updateSubLocations() {
             const tipo = document.getElementById('single-tipo').value;
             const mainLoc = document.getElementById('single-local').value;
@@ -675,7 +674,7 @@
                 el.innerText = 'Geral';
                 subSelect.appendChild(el);
             } else {
-                const options = subLocationsMap[mainLoc] || ['Geral'];
+                const options = subLocationsMap[mainLoc] || [];
                 options.forEach(opt => {
                     const el = document.createElement('option');
                     el.value = opt;
@@ -685,7 +684,6 @@
             }
         }
 
-        // TELA 3: ALTERA O LOCAL NO MODO MULTILOCAL (BATCH)
         function changeBatchLocation() {
             const selectedLoc = document.getElementById('batch-local-select').value;
             document.getElementById('batch-total-label').innerText = `TOTAL ${selectedLoc.toUpperCase()}`;
@@ -697,7 +695,7 @@
             const container = document.getElementById('batch-inputs');
             container.innerHTML = '';
 
-            const subLocs = subLocationsMap[selectedLoc] || ['Geral'];
+            const subLocs = subLocationsMap[selectedLoc] || [];
 
             subLocs.forEach(loc => {
                 container.innerHTML += `
@@ -870,7 +868,7 @@
                 LocalPrincipal: document.getElementById('single-local').value,
                 LocalDetalhe: document.getElementById('single-detalhe').value,
                 Quantidade: parseInt(document.getElementById('single-qtd').value) || 0,
-                Observacao: document.getElementById('single-obs').value || 'Geral'
+                Observacao: document.getElementById('single-obs').value || '-'
             };
 
             saveRecords([record]);
@@ -895,11 +893,11 @@
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-3">${r.Data || '-'}</td>
-                        <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || 'Geral'}</td>
-                        <td class="p-3">${r.LocalPrincipal || 'Geral'}</td>
-                        <td class="p-3">${r.LocalDetalhe || 'Geral'}</td>
+                        <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                        <td class="p-3">${r.LocalPrincipal || '-'}</td>
+                        <td class="p-3">${r.LocalDetalhe || '-'}</td>
                         <td class="p-3 text-center font-black">${r.Quantidade || 0}</td>
-                        <td class="p-3 text-xs text-slate-500">${r.Observacao || 'Geral'}</td>
+                        <td class="p-3 text-xs text-slate-500">${r.Observacao || '-'}</td>
                         <td class="p-3 text-center"><button onclick="deleteRecord(${database.length - 1 - idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>
                 `;
@@ -914,9 +912,9 @@
                     list.forEach(r => {
                         tbodyMoves.innerHTML += `
                             <tr>
-                                <td class="p-2">${r.Data || 'Geral'}</td>
-                                <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || 'Geral'}</td>
-                                <td class="p-2">${r.LocalPrincipal || 'Geral'}</td>
+                                <td class="p-2">${r.Data || '-'}</td>
+                                <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                                <td class="p-2">${r.LocalPrincipal || '-'}</td>
                                 <td class="p-2 text-center font-bold">${r.Quantidade || 0}</td>
                             </tr>
                         `;
@@ -938,12 +936,12 @@
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-3 text-slate-400 font-mono text-xs">#${1001 + idx}</td>
-                        <td class="p-3">${r.Data || 'Geral'}</td>
-                        <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || 'Geral'}</td>
-                        <td class="p-3">${r.LocalPrincipal || 'Geral'}</td>
-                        <td class="p-3">${r.LocalDetalhe || 'Geral'}</td>
+                        <td class="p-3">${r.Data || '-'}</td>
+                        <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                        <td class="p-3">${r.LocalPrincipal || '-'}</td>
+                        <td class="p-3">${r.LocalDetalhe || '-'}</td>
                         <td class="p-3 text-center font-black">${r.Quantidade || 0}</td>
-                        <td class="p-3 text-xs text-slate-500">${r.Observacao || 'Geral'}</td>
+                        <td class="p-3 text-xs text-slate-500">${r.Observacao || '-'}</td>
                         <td class="p-3 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>
                 `;
@@ -978,12 +976,12 @@
                     tbody.innerHTML += `
                         <tr class="hover:bg-slate-50">
                             <td class="p-3 text-slate-400 font-mono text-xs">#${1001 + idx}</td>
-                            <td class="p-3">${r.Data || 'Geral'}</td>
-                            <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || 'Geral'}</td>
-                            <td class="p-3">${r.LocalPrincipal || 'Geral'}</td>
-                            <td class="p-3">${r.LocalDetalhe || 'Geral'}</td>
+                            <td class="p-3">${r.Data || '-'}</td>
+                            <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                            <td class="p-3">${r.LocalPrincipal || '-'}</td>
+                            <td class="p-3">${r.LocalDetalhe || '-'}</td>
                             <td class="p-3 text-center font-black">${r.Quantidade || 0}</td>
-                            <td class="p-3 text-xs text-slate-500">${r.Observacao || 'Geral'}</td>
+                            <td class="p-3 text-xs text-slate-500">${r.Observacao || '-'}</td>
                             <td class="p-3 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
                         </tr>
                     `;
