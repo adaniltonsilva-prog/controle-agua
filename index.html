@@ -199,6 +199,7 @@
                             <i class="fa-solid fa-sitemap text-blue-600"></i> LOCAL DE CONSUMO (DETALHE)
                         </label>
                         <select id="single-detalhe" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
+                            <option value="Geral">Geral</option>
                             <option value="Módulo 01">Módulo 01</option>
                             <option value="Módulo 02">Módulo 02</option>
                             <option value="Módulo 03">Módulo 03</option>
@@ -618,7 +619,7 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT ZERADA SEM SEMENTES -->
+    <!-- LÓGICA JAVASCRIPT -->
     <script>
         let database = [];
         const batchLocations = ['Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Área de Vivência', 'Refeitório', 'Repúblicas'];
@@ -634,7 +635,7 @@
             document.getElementById('single-data').value = today;
             document.getElementById('batch-data').value = today;
 
-            localStorage.removeItem('controle_agua_db'); // FORÇA A LIMPEZA TOTAL DE CACHE DE TESTES
+            localStorage.removeItem('controle_agua_db');
             loadSavedConfig();
             buildBatchInputs();
             loadDataFromSheet();
