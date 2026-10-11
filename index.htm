@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Água - Site e Alojamentos</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (XLSX Export) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        .active-tab { background-color: #1e40af; color: white; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+
+    <!-- SEU LINK DO GOOGLE APPS SCRIPT JÁ CONECTADO -->
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
+    </script>
+
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- HEADER / NAVIGATION -->
+        <header class="bg-blue-900 text-white shadow-md p-4">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-bottle-water text-3xl text-blue-400"></i>
+                    <div>
+                        <h1 class="text-xl font-bold uppercase tracking-wider">Controle de Água</h1>
+                        <p class="text-xs text-blue-200">Site e Alojamentos</p>
+                    </div>
+                </div>
+                <div id="sync-status" class="text-xs bg-blue-800 px-3 py-1 rounded-full flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Google Sheets Conectado
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTAINER -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 space-y-6">
+            
+            <!-- MENU DE NAVEGAÇÃO SUPERIOR -->
+            <nav class="grid grid-cols-2 md:grid-cols-5 gap-2 bg-white p-2 rounded-xl shadow-sm border border-gray-200">
+                <button onclick="switchScreen('screen1')" id="nav-screen1" class="p-3 rounded-lg flex items-center justify-center gap-2 font-medium transition hover:bg-blue-50 text-gray-700 active-tab">
+                    <i class="fa-solid fa-house"></i> Menu Principal
+                </button>
+                <button onclick="switchScreen('screen2')" id="nav-screen2" class="p-3 rounded-lg flex items-center justify-center gap-2 font-medium transition hover:bg-blue-50 text-gray-700">
+                    <i class="fa-solid fa-pen-to-square"></i> Lançamentos
+                </button>
+                <button onclick="switchScreen('screen3')" id="nav-screen3" class="p-3 rounded-lg flex items-center justify-center gap-2 font-medium transition hover:bg-blue-50 text-gray-700">
+                    <i class="fa-solid fa-building"></i> Consumo Detalhado
+                </button>
+                <button onclick="switchScreen('screen4')" id="nav-screen4" class="p-3 rounded-lg flex items-center justify-center gap-2 font-medium transition hover:bg-blue-50 text-gray-700">
+                    <i class="fa-solid fa-boxes-stacked"></i> Estoque
+                </button>
+                <button onclick="switchScreen('screen5')" id="nav-screen5" class="p-3 rounded-lg flex items-center justify-center gap-2 font-medium transition hover:bg-blue-50 text-gray-700">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard
+                </button>
+            </nav>
+
+            <!-- TELA 1: MENU PRINCIPAL -->
+            <section id="screen1" class="screen-content space-y-6">
+                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                    <h2 class="text-2xl font-bold text-blue-900 mb-6 text-center">1. TELA – MENU PRINCIPAL</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <button onclick="switchScreen('screen2')" class="bg-blue-600 hover:bg-blue-700 text-white p-6 rounded-xl shadow border border-blue-700 flex flex-col items-center justify-center space-y-3 transition transform hover:-translate-y-1">
+                            <i class="fa-solid fa-file-signature text-4xl"></i>
+                            <span class="text-xl font-bold">LANÇAMENTOS</span>
+                            <span class="text-xs opacity-80">Entrada, Devolução e Consumo</span>
+                        </button>
+                        <button onclick="switchScreen('screen4')" class="bg-emerald-600 hover:bg-emerald-700 text-white p-6 rounded-xl shadow border border-emerald-700 flex flex-col items-center justify-center space-y-3 transition transform hover:-translate-y-1">
+                            <i class="fa-solid fa-boxes-stacked text-4xl"></i>
+                            <span class="text-xl font-bold">ESTOQUE</span>
+                            <span class="text-xs opacity-80">Consulta e Movimentação</span>
+                        </button>
+                        <button onclick="switchScreen('screen5')" class="bg-amber-600 hover:bg-amber-700 text-white p-6 rounded-xl shadow border border-amber-700 flex flex-col items-center justify-center space-y-3 transition transform hover:-translate-y-1">
+                            <i class="fa-solid fa-chart-pie text-4xl"></i>
+                            <span class="text-xl font-bold">DASHBOARD</span>
+                            <span class="text-xs opacity-80">Gráficos e Indicadores</span>
+                        </button>
+                        <button onclick="exportToExcel()" class="bg-purple-600 hover:bg-purple-700 text-white p-6 rounded-xl shadow border border-purple-700 flex flex-col items-center justify-center space-y-3 transition transform hover:-translate-y-1">
+                            <i class="fa-solid fa-file-excel text-4xl"></i>
+                            <span class="text-xl font-bold">EXCEL & RELATÓRIO</span>
+                            <span class="text-xs opacity-80">Exportar Banco de Dados</span>
+                        </button>
+                        <button onclick="switchScreen('screen3')" class="bg-cyan-600 hover:bg-cyan-700 text-white p-6 rounded-xl shadow border border-cyan-700 flex flex-col items-center justify-center space-y-3 transition transform hover:-translate-y-1">
+                            <i class="fa-solid fa-list-check text-4xl"></i>
+                            <span class="text-xl font-bold">CONSUMO POR LOCAL</span>
+                            <span class="text-xs opacity-80">Lançamento em Lote</span>
+                        </button>
+                        <button onclick="alert('Sistema de Controle de Água - Sincronizado com Google Sheets')" class="bg-slate-700 hover:bg-slate-800 text-white p-6 rounded-xl shadow border border-slate-800 flex flex-col items-center justify-center space-y-3 transition transform hover:-translate-y-1">
+                            <i class="fa-solid fa-gear text-4xl"></i>
+                            <span class="text-xl font-bold">CONFIGURAÇÕES</span>
+                            <span class="text-xs opacity-80">Parâmetros do Sistema</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TELA 2: LANÇAMENTOS -->
+            <section id="screen2" class="screen-content hidden space-y-6">
+                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                    <h2 class="text-xl font-bold text-blue-900 mb-4">2. TELA – LANÇAMENTOS</h2>
+                    <form id="form-single" onsubmit="handleSingleSubmit(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Data do Lançamento</label>
+                            <input type="date" id="single-data" required class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Tipo de Lançamento</label>
+                            <select id="single-tipo" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="Consumo">Consumo</option>
+                                <option value="Entrada">Entrada (Cheios)</option>
+                                <option value="Devolução">Devolução (Vazios)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Local Principal</label>
+                            <select id="single-local" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="Alojamento 01">Alojamento 01</option>
+                                <option value="Alojamento 03">Alojamento 03</option>
+                                <option value="Site">Site</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Local de Consumo (Detalhe)</label>
+                            <select id="single-detalhe" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="Módulo 01">Módulo 01</option>
+                                <option value="Módulo 02">Módulo 02</option>
+                                <option value="Módulo 03">Módulo 03</option>
+                                <option value="Módulo 04">Módulo 04</option>
+                                <option value="Área de Vivência">Área de Vivência</option>
+                                <option value="Refeitório">Refeitório</option>
+                                <option value="Repúblicas">Repúblicas</option>
+                                <option value="Geral">Geral</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Quantidade (Galões)</label>
+                            <input type="number" id="single-qtd" min="1" required class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-gray-600 mb-1">Observação (Opcional)</label>
+                            <input type="text" id="single-obs" placeholder="Ex: Entregue pela manhã" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="md:col-span-3 flex gap-3 pt-2">
+                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 shadow">
+                                <i class="fa-solid fa-check"></i> Registrar
+                            </button>
+                            <button type="reset" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 shadow">
+                                <i class="fa-solid fa-broom"></i> Limpar
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-8">
+                        <h3 class="text-md font-bold text-gray-700 mb-3">ÚLTIMOS LANÇAMENTOS</h3>
+                        <div class="overflow-x-auto border rounded-lg">
+                            <table class="w-full text-sm text-left text-gray-600">
+                                <thead class="text-xs uppercase bg-blue-900 text-white">
+                                    <tr>
+                                        <th class="p-3">Data</th>
+                                        <th class="p-3">Tipo</th>
+                                        <th class="p-3">Local</th>
+                                        <th class="p-3">Detalhe</th>
+                                        <th class="p-3">Quantidade</th>
+                                        <th class="p-3">Observação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-recent-body" class="divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TELA 3: CONSUMO DETALHADO -->
+            <section id="screen3" class="screen-content hidden space-y-6">
+                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-blue-900">3. TELA – LANÇAMENTO DE CONSUMO – ALOJAMENTO 01</h2>
+                        <div class="flex items-center gap-3">
+                            <label class="text-xs font-semibold uppercase text-gray-600">Data:</label>
+                            <input type="date" id="batch-data" class="p-2 border rounded-lg text-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="font-bold text-gray-700 mb-4 uppercase text-sm border-b pb-2">Consumo por Local</h3>
+                            <div class="space-y-3" id="batch-inputs"></div>
+                        </div>
+
+                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-gray-700 mb-4 uppercase text-sm border-b pb-2">Resumo do Lançamento</h3>
+                                <div id="batch-summary" class="space-y-2 text-sm text-gray-600"></div>
+                            </div>
+                            <div class="mt-6 pt-4 border-t flex justify-between items-center">
+                                <span class="text-lg font-bold text-gray-800">TOTAL</span>
+                                <span id="batch-total" class="text-2xl font-black text-blue-900">0 Galões</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 mt-8 pt-4 border-t">
+                        <button onclick="submitBatch()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 shadow">
+                            <i class="fa-solid fa-check"></i> Registrar Consumo
+                        </button>
+                        <button onclick="clearBatch()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 shadow">
+                            <i class="fa-solid fa-broom"></i> Limpar
+                        </button>
+                        <button onclick="switchScreen('screen1')" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 shadow">
+                            <i class="fa-solid fa-arrow-left"></i> Voltar
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TELA 4: ESTOQUE -->
+            <section id="screen4" class="screen-content hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-xl shadow-md p-5 border-t-4 border-blue-600">
+                        <h3 class="font-bold text-blue-900 text-lg mb-3">SITE</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span>Galões Cheios:</span> <strong id="st-site-cheios">0</strong></div>
+                            <div class="flex justify-between"><span>Galões Vazios:</span> <strong id="st-site-vazios">0</strong></div>
+                            <div class="flex justify-between"><span>Estoque Mínimo:</span> <strong>300</strong></div>
+                            <div class="flex justify-between items-center pt-2 border-t">
+                                <span>Status:</span> <span id="st-site-status" class="px-2 py-0.5 text-xs font-bold rounded-full bg-green-100 text-green-800">NORMAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-5 border-t-4 border-emerald-600">
+                        <h3 class="font-bold text-emerald-900 text-lg mb-3">ALOJAMENTO 01</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span>Galões Cheios:</span> <strong id="st-aloj1-cheios">0</strong></div>
+                            <div class="flex justify-between"><span>Galões Vazios:</span> <strong id="st-aloj1-vazios">0</strong></div>
+                            <div class="flex justify-between"><span>Estoque Mínimo:</span> <strong>200</strong></div>
+                            <div class="flex justify-between items-center pt-2 border-t">
+                                <span>Status:</span> <span id="st-aloj1-status" class="px-2 py-0.5 text-xs font-bold rounded-full bg-green-100 text-green-800">NORMAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-5 border-t-4 border-amber-600">
+                        <h3 class="font-bold text-amber-900 text-lg mb-3">ALOJAMENTO 03</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span>Galões Cheios:</span> <strong id="st-aloj3-cheios">0</strong></div>
+                            <div class="flex justify-between"><span>Galões Vazios:</span> <strong id="st-aloj3-vazios">0</strong></div>
+                            <div class="flex justify-between"><span>Estoque Mínimo:</span> <strong>200</strong></div>
+                            <div class="flex justify-between items-center pt-2 border-t">
+                                <span>Status:</span> <span id="st-aloj3-status" class="px-2 py-0.5 text-xs font-bold rounded-full bg-green-100 text-green-800">NORMAL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+                    <h3 class="text-md font-bold text-blue-900 mb-4">MOVIMENTAÇÃO DO ESTOQUE (PERÍODO)</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-600">
+                            <thead class="text-xs uppercase bg-blue-900 text-white">
+                                <tr>
+                                    <th class="p-3">Local</th>
+                                    <th class="p-3">Estoque Inicial</th>
+                                    <th class="p-3">Entradas (Cheios)</th>
+                                    <th class="p-3">Consumo</th>
+                                    <th class="p-3">Devolução (Vazios)</th>
+                                    <th class="p-3">Estoque Atual</th>
+                                    <th class="p-3">Estoque Mínimo</th>
+                                    <th class="p-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stock-summary-table" class="divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TELA 5: DASHBOARD -->
+            <section id="screen5" class="screen-content hidden space-y-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-blue-900 text-white p-4 rounded-xl shadow">
+                        <p class="text-xs text-blue-200 uppercase font-semibold">Consumo Total</p>
+                        <h3 id="dash-consumo-total" class="text-2xl font-bold mt-1">0</h3>
+                        <p id="dash-litros-total" class="text-xs text-blue-300">0 Litros</p>
+                    </div>
+                    <div class="bg-emerald-700 text-white p-4 rounded-xl shadow">
+                        <p class="text-xs text-emerald-200 uppercase font-semibold">Entradas (Cheios)</p>
+                        <h3 id="dash-entradas" class="text-2xl font-bold mt-1">0</h3>
+                        <p class="text-xs text-emerald-300">Galões</p>
+                    </div>
+                    <div class="bg-amber-600 text-white p-4 rounded-xl shadow">
+                        <p class="text-xs text-amber-100 uppercase font-semibold">Devoluções (Vazios)</p>
+                        <h3 id="dash-devolucoes" class="text-2xl font-bold mt-1">0</h3>
+                        <p class="text-xs text-amber-200">Galões</p>
+                    </div>
+                    <div class="bg-purple-800 text-white p-4 rounded-xl shadow">
+                        <p class="text-xs text-purple-200 uppercase font-semibold">Estoque Atual (Cheios)</p>
+                        <h3 id="dash-estoque-atual" class="text-2xl font-bold mt-1">0</h3>
+                        <p class="text-xs text-purple-300">Galões</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-5 rounded-xl shadow border">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">CONSUMO DIÁRIO (GALÕES)</h4>
+                        <canvas id="chartConsumoDiario" class="h-64"></canvas>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow border">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">CONSUMO POR LOCAL</h4>
+                        <canvas id="chartConsumoLocal" class="h-64"></canvas>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let database = [];
+        const batchLocations = [
+            'Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 
+            'Área de Vivência', 'Refeitório', 'Repúblicas'
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('single-data').value = today;
+            document.getElementById('batch-data').value = today;
+
+            buildBatchInputs();
+            loadDataFromSheet();
+            initCharts();
+        });
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active-tab'));
+            document.getElementById(`nav-${screenId}`).classList.add('active-tab');
+
+            if(screenId === 'screen5') updateDashboard();
+            if(screenId === 'screen4') updateStockUI();
+        }
+
+        async function loadDataFromSheet() {
+            try {
+                if (SCRIPT_URL) {
+                    const res = await fetch(SCRIPT_URL);
+                    const data = await res.json();
+                    if(Array.isArray(data)) {
+                        database = data;
+                    }
+                }
+            } catch (err) {
+                console.error("Erro ao carregar dados do Google Sheets:", err);
+                const local = localStorage.getItem('controle_agua_db');
+                if(local) database = JSON.parse(local);
+            }
+            renderRecentTable();
+            updateStockUI();
+        }
+
+        async function saveRecords(records) {
+            database.push(...records);
+            localStorage.setItem('controle_agua_db', JSON.stringify(database));
+
+            renderRecentTable();
+            updateStockUI();
+
+            if (SCRIPT_URL) {
+                try {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(records)
+                    });
+                } catch(e) {
+                    console.error("Erro ao enviar para Google Sheets:", e);
+                }
+            }
+        }
+
+        function handleSingleSubmit(e) {
+            e.preventDefault();
+            const record = {
+                Data: document.getElementById('single-data').value,
+                Tipo: document.getElementById('single-tipo').value,
+                LocalPrincipal: document.getElementById('single-local').value,
+                LocalDetalhe: document.getElementById('single-detalhe').value,
+                Quantidade: parseInt(document.getElementById('single-qtd').value) || 0,
+                Observacao: document.getElementById('single-obs').value
+            };
+
+            saveRecords([record]);
+            alert('Lançamento registrado com sucesso!');
+            document.getElementById('form-single').reset();
+            document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
+        }
+
+        function buildBatchInputs() {
+            const container = document.getElementById('batch-inputs');
+            container.innerHTML = '';
+            batchLocations.forEach(loc => {
+                container.innerHTML += `
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <span class="text-sm font-medium text-gray-700">${loc}</span>
+                        <div class="flex items-center gap-2">
+                            <input type="number" min="0" data-loc="${loc}" oninput="updateBatchSummary()" class="batch-qtd-input w-24 p-2 border rounded-lg text-right font-bold" placeholder="0">
+                            <span class="text-xs text-gray-500">galões</span>
+                        </div>
+                    </div>
+                `;
+            });
+            updateBatchSummary();
+        }
+
+        function updateBatchSummary() {
+            const inputs = document.querySelectorAll('.batch-qtd-input');
+            const summary = document.getElementById('batch-summary');
+            summary.innerHTML = '';
+            let total = 0;
+
+            inputs.forEach(inp => {
+                const val = parseInt(inp.value) || 0;
+                total += val;
+                if(val > 0) {
+                    summary.innerHTML += `
+                        <div class="flex justify-between">
+                            <span>${inp.dataset.loc}:</span>
+                            <strong>${val} galões</strong>
+                        </div>
+                    `;
+                }
+            });
+
+            document.getElementById('batch-total').innerText = `${total} Galões`;
+        }
+
+        function submitBatch() {
+            const date = document.getElementById('batch-data').value;
+            const inputs = document.querySelectorAll('.batch-qtd-input');
+            const records = [];
+
+            inputs.forEach(inp => {
+                const val = parseInt(inp.value) || 0;
+                if(val > 0) {
+                    records.push({
+                        Data: date,
+                        Tipo: 'Consumo',
+                        LocalPrincipal: 'Alojamento 01',
+                        LocalDetalhe: inp.dataset.loc,
+                        Quantidade: val,
+                        Observacao: 'Lançamento em Lote'
+                    });
+                }
+            });
+
+            if(records.length === 0) {
+                alert('Preencha ao menos um local com consumo.');
+                return;
+            }
+
+            saveRecords(records);
+            alert('Consumo registrado com sucesso!');
+            clearBatch();
+        }
+
+        function clearBatch() {
+            document.querySelectorAll('.batch-qtd-input').forEach(i => i.value = '');
+            updateBatchSummary();
+        }
+
+        function renderRecentTable() {
+            const tbody = document.getElementById('table-recent-body');
+            tbody.innerHTML = '';
+            const recent = [...database].reverse().slice(0, 5);
+
+            recent.forEach(r => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3">${r.Data || '-'}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 text-xs font-bold rounded-full ${r.Tipo === 'Consumo' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}">${r.Tipo}</span></td>
+                        <td class="p-3">${r.LocalPrincipal || '-'}</td>
+                        <td class="p-3">${r.LocalDetalhe || '-'}</td>
+                        <td class="p-3 font-bold">${r.Quantidade || 0}</td>
+                        <td class="p-3 text-xs text-gray-500">${r.Observacao || '-'}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function calculateStock() {
+            const stock = {
+                'Site': { cheios: 928, vazios: 250, min: 300, consumo: 0, entrada: 0, devolucao: 0 },
+                'Alojamento 01': { cheios: 340, vazios: 180, min: 200, consumo: 0, entrada: 0, devolucao: 0 },
+                'Alojamento 03': { cheios: 501, vazios: 320, min: 200, consumo: 0, entrada: 0, devolucao: 0 }
+            };
+
+            database.forEach(r => {
+                const loc = r.LocalPrincipal;
+                const qtd = parseInt(r.Quantidade) || 0;
+
+                if(stock[loc]) {
+                    if(r.Tipo === 'Consumo') {
+                        stock[loc].consumo += qtd;
+                        stock[loc].cheios -= qtd;
+                        stock[loc].vazios += qtd;
+                    } else if(r.Tipo === 'Entrada') {
+                        stock[loc].entrada += qtd;
+                        stock[loc].cheios += qtd;
+                    } else if(r.Tipo === 'Devolução') {
+                        stock[loc].devolucao += qtd;
+                        stock[loc].vazios -= qtd;
+                    }
+                }
+            });
+
+            return stock;
+        }
+
+        function updateStockUI() {
+            const stock = calculateStock();
+
+            document.getElementById('st-site-cheios').innerText = stock['Site'].cheios;
+            document.getElementById('st-site-vazios').innerText = stock['Site'].vazios;
+
+            document.getElementById('st-aloj1-cheios').innerText = stock['Alojamento 01'].cheios;
+            document.getElementById('st-aloj1-vazios').innerText = stock['Alojamento 01'].vazios;
+
+            document.getElementById('st-aloj3-cheios').innerText = stock['Alojamento 03'].cheios;
+            document.getElementById('st-aloj3-vazios').innerText = stock['Alojamento 03'].vazios;
+
+            const tbody = document.getElementById('stock-summary-table');
+            tbody.innerHTML = '';
+            Object.keys(stock).forEach(loc => {
+                const s = stock[loc];
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-3 font-bold">${loc}</td>
+                        <td class="p-3">500</td>
+                        <td class="p-3 text-green-600 font-bold">+${s.entrada}</td>
+                        <td class="p-3 text-red-600 font-bold">-${s.consumo}</td>
+                        <td class="p-3 text-amber-600 font-bold">-${s.devolucao}</td>
+                        <td class="p-3 font-extrabold text-blue-900">${s.cheios}</td>
+                        <td class="p-3">${s.min}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 text-xs font-bold rounded-full bg-green-100 text-green-800">NORMAL</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        let chartDiario, chartLocal;
+
+        function initCharts() {
+            const ctxDiario = document.getElementById('chartConsumoDiario').getContext('2d');
+            chartDiario = new Chart(ctxDiario, {
+                type: 'bar',
+                data: {
+                    labels: ['01', '02', '03', '04', '05', '06', '07'],
+                    datasets: [{ label: 'Consumo (Galões)', data: [12, 19, 3, 5, 2, 3, 10], backgroundColor: '#2563eb' }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            const ctxLocal = document.getElementById('chartConsumoLocal').getContext('2d');
+            chartLocal = new Chart(ctxLocal, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Site', 'Alojamento 01', 'Alojamento 03'],
+                    datasets: [{ data: [60, 20, 20], backgroundColor: ['#2563eb', '#059669', '#d97706'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function updateDashboard() {
+            let totalConsumo = 0, totalEntradas = 0, totalDevolucoes = 0;
+            const stock = calculateStock();
+
+            database.forEach(r => {
+                const q = parseInt(r.Quantidade) || 0;
+                if(r.Tipo === 'Consumo') totalConsumo += q;
+                if(r.Tipo === 'Entrada') totalEntradas += q;
+                if(r.Tipo === 'Devolução') totalDevolucoes += q;
+            });
+
+            document.getElementById('dash-consumo-total').innerText = totalConsumo;
+            document.getElementById('dash-litros-total').innerText = `${(totalConsumo * 20).toLocaleString()} Litros`;
+            document.getElementById('dash-entradas').innerText = totalEntradas;
+            document.getElementById('dash-devolucoes').innerText = totalDevolucoes;
+
+            const totalCheios = stock['Site'].cheios + stock['Alojamento 01'].cheios + stock['Alojamento 03'].cheios;
+            document.getElementById('dash-estoque-atual').innerText = totalCheios;
+        }
+
+        function exportToExcel() {
+            if(database.length === 0) {
+                alert('Nenhum dado cadastrado para exportar.');
+                return;
+            }
+            const ws = XLSX.utils.json_to_sheet(database);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Lancamentos");
+            XLSX.writeFile(wb, "Relatorio_Controle_Agua.xlsx");
+        }
+    </script>
+</body>
+</html>
