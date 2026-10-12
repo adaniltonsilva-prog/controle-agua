@@ -30,11 +30,10 @@
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
     </script>
 
-    <!-- TELA / MODAL DE LOGIN (COM A NOVA LOGO) -->
+    <!-- TELA / MODAL DE LOGIN -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[100] flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full p-8 space-y-6 border border-slate-800 relative text-center">
             <div class="space-y-3">
-                <!-- LOGO OFICIAL OUD PRIME -->
                 <img src="logo.png" alt="OUD PRIME Logo" class="w-36 mx-auto object-contain drop-shadow-lg" onerror="this.src='https://via.placeholder.com/150/0284c7/ffffff?text=OUD+PRIME'">
                 <p class="text-[11px] text-sky-400 font-extrabold uppercase tracking-widest">SISTEMAS INTELIGENTES PARA O SEU DIA A DIA</p>
             </div>
@@ -42,7 +41,7 @@
             <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Usuário / E-mail</label>
-                    <input type="text" id="login-user" required placeholder="Digite seu usuário..." class="w-full p-3 border border-slate-700 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-sky-500 bg-slate-800 text-white">
+                    <input type="text" id="login-user" required placeholder="admin ou operador" class="w-full p-3 border border-slate-700 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-sky-500 bg-slate-800 text-white">
                 </div>
 
                 <div>
@@ -60,15 +59,14 @@
             </form>
 
             <div class="pt-2 border-t border-slate-800 text-center text-[11px] text-slate-500">
-                Desenvolvido por <strong class="text-slate-300">[Seu Nome]</strong>
+                Desenvolvido por <strong class="text-slate-300">Adanilton Silva</strong>
             </div>
         </div>
     </div>
 
-    <!-- CABEÇALHO AZUL COM BRANDING "OUD PRIME" -->
+    <!-- CABEÇALHO AZUL -->
     <header class="bg-nav text-white px-6 py-3 shadow-md">
         <div class="max-w-[1500px] mx-auto flex flex-wrap justify-between items-center gap-4">
-            <!-- LOGO PRINCIPAL OUD PRIME -->
             <div class="flex items-center gap-3">
                 <img src="logo.png" alt="OUD PRIME" class="h-10 object-contain" onerror="this.src='https://via.placeholder.com/100/0284c7/ffffff?text=OP'">
                 <div>
@@ -179,11 +177,397 @@
             </div>
         </section>
 
-        <!-- (AS OUTRAS TELAS MANTÊM A MESMA ESTRUTURA ATUAL) -->
+        <!-- 2. TELA – LANÇAMENTOS -->
+        <section id="screen2" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
+            <div class="bg-[#0b5394] text-white p-4 rounded-xl flex justify-between items-center">
+                <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
+                    <i class="fa-solid fa-calendar-days"></i> 2. TELA – LANÇAMENTOS
+                </h2>
+                <span class="bg-blue-800 text-xs px-3 py-1 rounded-md text-blue-100">Registro Direto ou Detalhado</span>
+            </div>
+
+            <form id="form-single" onsubmit="handleSingleSubmit(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-calendar text-blue-600"></i> DATA DO LANÇAMENTO
+                        </label>
+                        <input type="date" id="single-data" required class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-droplet text-blue-600"></i> TIPO DE LANÇAMENTO
+                        </label>
+                        <select id="single-tipo" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium"></select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-house text-blue-600"></i> LOCAL PRINCIPAL
+                        </label>
+                        <select id="single-local" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium"></select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-sitemap text-blue-600"></i> LOCAL DE CONSUMO (DETALHE)
+                        </label>
+                        <select id="single-detalhe" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium"></select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-bottle-water text-blue-600"></i> QUANTIDADE (GALÕES)
+                        </label>
+                        <input type="number" id="single-qtd" min="1" placeholder="Ex: 35" required class="w-full p-2.5 border-2 border-emerald-300 bg-[#e8f8f2] text-emerald-900 font-extrabold text-xl rounded-lg">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-comment text-blue-600"></i> OBSERVAÇÃO (OPCIONAL)
+                        </label>
+                        <input type="text" id="single-obs" placeholder="Ex: Recebimento de carga, troca semanal, etc." class="w-full p-2.5 border rounded-lg text-sm bg-slate-50">
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-between items-center gap-4 pt-2">
+                    <div class="flex gap-2">
+                        <button type="submit" class="bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
+                            <i class="fa-solid fa-check"></i> Registrar
+                        </button>
+                        <button type="reset" onclick="setTimeout(updateSubLocations, 50)" class="bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
+                            <i class="fa-solid fa-broom"></i> Limpar
+                        </button>
+                    </div>
+                    <button type="button" onclick="switchScreen('screen3')" class="bg-[#d9530f] hover:bg-amber-700 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
+                        <i class="fa-solid fa-plus"></i> Novo Lançamento Detalhado por Alojamento
+                    </button>
+                </div>
+            </form>
+
+            <div class="space-y-3 pt-4 border-t">
+                <h3 class="text-xs font-bold uppercase text-slate-700 flex items-center gap-1">
+                    <i class="fa-solid fa-clock-rotate-left"></i> ÚLTIMOS LANÇAMENTOS
+                </h3>
+                <div class="overflow-x-auto border rounded-xl shadow-sm">
+                    <table class="w-full text-sm text-left text-slate-700">
+                        <thead class="bg-[#0b5394] text-white text-xs uppercase font-bold">
+                            <tr>
+                                <th class="p-3">DATA</th>
+                                <th class="p-3">TIPO</th>
+                                <th class="p-3">LOCAL</th>
+                                <th class="p-3">DETALHE</th>
+                                <th class="p-3 text-center">QUANTIDADE</th>
+                                <th class="p-3">OBSERVAÇÃO</th>
+                                <th class="p-3 text-center">AÇÕES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-recent-body" class="divide-y divide-slate-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. TELA – CONSUMO POR ALOJAMENTO -->
+        <section id="screen3" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
+            <div class="bg-[#0b5394] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
+                <h2 id="batch-screen-title" class="text-lg font-bold flex items-center gap-2 uppercase">
+                    <i class="fa-solid fa-building"></i> 3. TELA – LANÇAMENTO DE CONSUMO DETALHADO
+                </h2>
+                
+                <div class="flex items-center gap-4 bg-blue-800 px-3 py-1.5 rounded-lg text-xs font-semibold">
+                    <div class="flex items-center gap-2">
+                        <span>LOCAL:</span>
+                        <select id="batch-local-select" onchange="changeBatchLocation()" class="bg-white text-slate-800 p-1 rounded font-bold"></select>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span>DATA:</span>
+                        <input type="date" id="batch-data" class="bg-white text-slate-800 p-1 rounded text-xs font-semibold">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-2">CONSUMO POR LOCAL</h3>
+                    <div id="batch-inputs" class="space-y-2 max-h-[400px] overflow-y-auto pr-2"></div>
+                </div>
+
+                <div class="bg-[#fff9e6] border border-amber-200 p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xs font-bold uppercase text-amber-900 border-b border-amber-200 pb-2 mb-4">RESUMO DO LANÇAMENTO</h3>
+                        <div id="batch-summary" class="space-y-2 text-sm max-h-[300px] overflow-y-auto pr-1"></div>
+                    </div>
+                    <div class="border-t border-amber-200 pt-4 flex justify-between items-center mt-6">
+                        <span id="batch-total-label" class="text-lg font-bold uppercase text-amber-900">TOTAL</span>
+                        <span id="batch-total" class="text-3xl font-black text-amber-950">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t">
+                <button onclick="submitBatch()" class="bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
+                    <i class="fa-solid fa-check"></i> Registrar Consumo
+                </button>
+                <button onclick="clearBatch()" class="bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
+                    <i class="fa-solid fa-broom"></i> Limpar
+                </button>
+                <button onclick="switchScreen('screen1')" class="bg-slate-500 hover:bg-slate-600 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar
+                </button>
+            </div>
+        </section>
+
+        <!-- 4. TELA – ESTOQUE -->
+        <section id="screen4" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
+            <div class="bg-[#0b5394] text-white p-4 rounded-xl flex justify-between items-center">
+                <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
+                    <i class="fa-solid fa-cubes"></i> 4. TELA – ESTOQUE
+                </h2>
+                <span class="bg-blue-800 text-xs px-3 py-1 rounded-md text-blue-100">Posição e Indicadores de Galões</span>
+            </div>
+
+            <div id="stock-cards-container" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xs font-bold uppercase text-slate-700">MOVIMENTAÇÃO DO ESTOQUE (PERÍODO)</h3>
+                    <select class="border p-1 rounded text-xs bg-slate-50"><option>Setembro/2026</option></select>
+                </div>
+                <div class="overflow-x-auto border rounded-xl shadow-sm">
+                    <table class="w-full text-xs text-left text-slate-700">
+                        <thead class="bg-[#0b5394] text-white uppercase font-bold">
+                            <tr>
+                                <th class="p-3">LOCAL</th>
+                                <th class="p-3 text-center">ESTOQUE INICIAL</th>
+                                <th class="p-3 text-center">ENTRADAS (CHEIOS)</th>
+                                <th class="p-3 text-center">CONSUMO</th>
+                                <th class="p-3 text-center">DEVOLUÇÃO (VAZIOS)</th>
+                                <th class="p-3 text-center">ESTOQUE ATUAL</th>
+                                <th class="p-3 text-center">ESTOQUE MÍNIMO</th>
+                                <th class="p-3 text-center">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stock-summary-table" class="divide-y divide-slate-200"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-2 border rounded-2xl p-4 shadow-sm">
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-4">EVOLUÇÃO DO ESTOQUE (GALÕES CHEIOS)</h4>
+                    <div class="relative h-60 w-full">
+                        <canvas id="chartEvolucaoEstoque"></canvas>
+                    </div>
+                </div>
+                <div class="border rounded-2xl p-4 shadow-sm space-y-3">
+                    <h4 class="text-xs font-bold uppercase text-slate-700">ÚLTIMAS MOVIMENTAÇÕES</h4>
+                    <div class="overflow-x-auto border rounded-lg">
+                        <table class="w-full text-xs text-left text-slate-700">
+                            <thead class="bg-[#0b5394] text-white uppercase font-bold text-[10px]">
+                                <tr>
+                                    <th class="p-2">DATA</th>
+                                    <th class="p-2">TIPO</th>
+                                    <th class="p-2">LOCAL</th>
+                                    <th class="p-2 text-center">QTD</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stock-last-moves" class="divide-y text-[11px]"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. TELA – DASHBOARD -->
+        <section id="screen5" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
+            <div class="bg-[#0b5394] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
+                        <i class="fa-solid fa-chart-line"></i> 5. TELA – DASHBOARD
+                    </h2>
+                    <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
+                </div>
+                <div class="flex flex-wrap gap-3 text-xs font-semibold items-center">
+                    <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg">
+                        <span>DE:</span>
+                        <input type="date" id="dash-date-start" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none">
+                        <span>ATÉ:</span>
+                        <input type="date" id="dash-date-end" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none">
+                    </div>
+
+                    <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg">
+                        <span>LOCAL:</span>
+                        <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold"></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL DE KPIS -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-[#0f5298] text-white p-4 rounded-2xl shadow flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] uppercase font-bold text-sky-100">CONSUMO TOTAL</p>
+                        <h3 id="dash-consumo-total" class="text-2xl font-black mt-1">0</h3>
+                        <p id="dash-litros-total" class="text-[10px] text-sky-200">0 litros</p>
+                    </div>
+                    <i class="fa-solid fa-faucet-drip text-3xl opacity-40"></i>
+                </div>
+
+                <div class="bg-[#0e8a44] text-white p-4 rounded-2xl shadow flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] uppercase font-bold text-emerald-100">ENTRADAS (CHEIOS)</p>
+                        <h3 id="dash-entradas" class="text-2xl font-black mt-1">0</h3>
+                        <p class="text-[10px] text-emerald-200">Galões</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-down text-3xl opacity-40"></i>
+                </div>
+
+                <div class="bg-[#d9530f] text-white p-4 rounded-2xl shadow flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] uppercase font-bold text-amber-100">DEVOLUÇÕES (VAZIOS)</p>
+                        <h3 id="dash-devolucoes" class="text-2xl font-black mt-1">0</h3>
+                        <p class="text-[10px] text-amber-200">Galões</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-up text-3xl opacity-40"></i>
+                </div>
+
+                <div class="bg-[#6f42c1] text-white p-4 rounded-2xl shadow flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] uppercase font-bold text-purple-100">ESTOQUE ATUAL (CHEIOS)</p>
+                        <h3 id="dash-estoque-atual" class="text-2xl font-black mt-1">0</h3>
+                        <p class="text-[10px] text-purple-200">Galões</p>
+                    </div>
+                    <i class="fa-solid fa-cubes text-3xl opacity-40"></i>
+                </div>
+
+                <div class="bg-[#343a40] text-white p-4 rounded-2xl shadow flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] uppercase font-bold text-slate-300">MÉDIA DIÁRIA</p>
+                        <h3 id="dash-media-diaria" class="text-2xl font-black mt-1">0</h3>
+                        <p id="dash-media-diaria-litros" class="text-[10px] text-slate-300">0 litros/dia</p>
+                    </div>
+                    <i class="fa-solid fa-chart-line text-3xl opacity-40"></i>
+                </div>
+
+                <div class="bg-[#495057] text-white p-4 rounded-2xl shadow flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] uppercase font-bold text-slate-300">EFETIVO MÉDIO</p>
+                        <h3 id="dash-efetivo" class="text-2xl font-black mt-1">500</h3>
+                        <p class="text-[10px] text-slate-300">Pessoas</p>
+                    </div>
+                    <i class="fa-solid fa-users text-3xl opacity-40"></i>
+                </div>
+
+                <div class="bg-[#17a2b8] text-white p-4 rounded-2xl shadow flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] uppercase font-bold text-teal-100">LITROS / PESSOA / DIA</p>
+                        <h3 id="dash-litros-pessoa" class="text-2xl font-black mt-1">0,0</h3>
+                        <p class="text-[10px] text-teal-200">L/pessoa/dia</p>
+                    </div>
+                    <i class="fa-solid fa-user text-3xl opacity-40"></i>
+                </div>
+
+                <div class="bg-[#fd7e14] text-white p-4 rounded-2xl shadow flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] uppercase font-bold text-orange-100">META</p>
+                        <h3 id="dash-meta" class="text-2xl font-black mt-1">2,7</h3>
+                        <p class="text-[10px] text-orange-200">L/pessoa/dia</p>
+                    </div>
+                    <i class="fa-solid fa-bullseye text-3xl opacity-40"></i>
+                </div>
+            </div>
+
+            <!-- GRELHA DE GRÁFICOS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">CONSUMO DIÁRIO (GALÕES)</h4>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chartConsumoDiario"></canvas>
+                    </div>
+                </div>
+
+                <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">CONSUMO POR LOCAL (PERÍODO)</h4>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chartConsumoLocal"></canvas>
+                    </div>
+                </div>
+
+                <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">ENTRADAS X DEVOLUÇÕES (GALÕES)</h4>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chartEntradasDevolucoes"></canvas>
+                    </div>
+                </div>
+
+                <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">CONSUMO MENSAL (GALÕES)</h4>
+                    <div class="relative h-64 w-full">
+                        <canvas id="chartConsumoMensal"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. TELA – BASE DE DADOS -->
+        <section id="screen6" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
+            <div class="bg-[#6f42c1] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
+                        <i class="fa-solid fa-database"></i> BASE DE DADOS DE REGISTROS
+                    </h2>
+                    <p class="text-xs text-purple-200">Visão Geral, Filtros e Relatórios Excel / CSV</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportToExcel()" class="bg-[#0e8a44] hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-file-excel"></i> Exportar Excel (.xlsx)
+                    </button>
+                    <button onclick="exportToCSV()" class="bg-[#0f5298] hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-file-csv"></i> Exportar CSV
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-between items-center gap-4 bg-slate-50 p-4 rounded-xl border">
+                <input type="text" id="db-search" oninput="filterDatabase()" placeholder="Pesquisar por local, detalhe, observação..." class="p-2.5 border rounded-lg text-sm w-full md:w-80 bg-white">
+                <div class="flex items-center gap-2 text-xs font-bold">
+                    <span>Filtrar Tipo:</span>
+                    <select id="db-filter-tipo" onchange="filterDatabase()" class="p-2 border rounded-lg bg-white">
+                        <option value="Todos">Todos</option>
+                        <option value="Consumo">Consumo</option>
+                        <option value="Entrada">Entrada</option>
+                        <option value="Devolução">Devolução</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto border rounded-xl shadow-sm">
+                <table class="w-full text-sm text-left text-slate-700">
+                    <thead class="bg-[#0b5394] text-white uppercase text-xs font-bold">
+                        <tr>
+                            <th class="p-3">ID</th>
+                            <th class="p-3">DATA</th>
+                            <th class="p-3">TIPO</th>
+                            <th class="p-3">LOCAL PRINCIPAL</th>
+                            <th class="p-3">LOCAL DETALHE</th>
+                            <th class="p-3 text-center">QTD (GALÕES)</th>
+                            <th class="p-3">OBSERVAÇÃO</th>
+                            <th class="p-3 text-center">AÇÕES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-full-db" class="divide-y divide-slate-200"></tbody>
+                </table>
+            </div>
+        </section>
 
     </main>
 
-    <!-- RODAPÉ COM ASSINATURA E SLOGAN OUD PRIME -->
+    <!-- RODAPÉ -->
     <footer class="bg-slate-950 text-slate-400 text-xs py-5 px-6 mt-auto border-t border-slate-900">
         <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
             <div class="flex items-center gap-3">
@@ -191,10 +575,263 @@
                 <span class="text-slate-500">• Sistemas Inteligentes para o seu dia a dia</span>
             </div>
             <div>
-                Desenvolvido por <strong class="text-slate-200 font-semibold">[Seu Nome]</strong>
+                Desenvolvido por <strong class="text-slate-200 font-semibold">Adanilton Silva</strong>
             </div>
         </div>
     </footer>
 
-</body>
-</html>
+    <!-- MODAL DE CONFIGURAÇÕES -->
+    <div id="modal-config" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-6 space-y-6 relative border max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center pb-2 border-b">
+                <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-[#0b5394]"></i> Configurações e Acessos
+                </h3>
+                <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- GESTÃO DE USUÁRIOS -->
+                <div class="bg-blue-50/60 border border-blue-200 p-4 rounded-2xl space-y-4">
+                    <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-users-gear"></i> GESTÃO DE USUÁRIOS E PERMISSÕES
+                    </h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+                        <input type="text" id="add-user-name" placeholder="Nome Completo" class="p-2 border rounded-xl text-xs bg-white">
+                        <input type="text" id="add-user-login" placeholder="Login / E-mail" class="p-2 border rounded-xl text-xs bg-white">
+                        <input type="password" id="add-user-pass" placeholder="Senha" class="p-2 border rounded-xl text-xs bg-white">
+                        <select id="add-user-role" class="p-2 border rounded-xl text-xs bg-white font-bold text-slate-700">
+                            <option value="OPERADOR">Operador</option>
+                            <option value="ADM">Administrador</option>
+                        </select>
+                    </div>
+                    <button onclick="addNewUser()" class="w-full bg-[#0b5394] hover:bg-blue-800 text-white font-bold p-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-user-plus"></i> Cadastrar Novo Usuário
+                    </button>
+
+                    <div class="space-y-2 pt-2 border-t border-blue-200">
+                        <span class="text-[11px] font-bold text-slate-600 uppercase">Usuários Cadastrados no Sistema:</span>
+                        <div class="overflow-x-auto border rounded-xl bg-white shadow-sm">
+                            <table class="w-full text-xs text-left text-slate-700">
+                                <thead class="bg-slate-100 text-slate-700 font-bold uppercase text-[10px]">
+                                    <tr>
+                                        <th class="p-2">NOME</th>
+                                        <th class="p-2">LOGIN</th>
+                                        <th class="p-2 text-center">PERFIL</th>
+                                        <th class="p-2 text-center">AÇÃO</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body" class="divide-y text-[11px]"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PARÂMETROS GERAIS -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b pb-1 mb-3">PARÂMETROS GERAIS</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Efetivo de Pessoas:</label>
+                            <input type="number" id="cfg-efetivo" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Meta (L/Pessoa/Dia):</label>
+                            <input type="number" step="0.1" id="cfg-meta" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Volume do Galão (Litros):</label>
+                            <input type="number" id="cfg-volume" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CADASTRO DE LOCAIS E TIPOS -->
+                <div class="bg-slate-50 p-4 rounded-2xl border space-y-4">
+                    <h4 class="text-xs font-bold uppercase text-purple-700 border-b pb-1">CADASTRO DE OPÇÕES DO SISTEMA</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="block text-[11px] font-bold text-slate-700">Locais Principais:</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="add-main-loc-input" placeholder="Novo Local..." class="w-full p-2 border rounded-xl text-xs">
+                                <button onclick="addMainLocation()" class="bg-[#0b5394] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">Adicionar</button>
+                            </div>
+                            <div id="cfg-main-loc-list" class="flex flex-wrap gap-1.5 pt-1"></div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-[11px] font-bold text-slate-700">Tipos de Lançamento:</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="add-tipo-input" placeholder="Novo Tipo..." class="w-full p-2 border rounded-xl text-xs">
+                                <button onclick="addTipoLancamento()" class="bg-[#0b5394] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">Adicionar</button>
+                            </div>
+                            <div id="cfg-tipos-list" class="flex flex-wrap gap-1.5 pt-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 pt-2 border-t">
+                        <label class="block text-[11px] font-bold text-slate-700">Sub-Locais de Consumo (Detalhe):</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            <select id="cfg-subloc-parent-select" class="p-2 border rounded-xl text-xs bg-white font-bold"></select>
+                            <input type="text" id="add-subloc-input" placeholder="Novo Sub-Local..." class="p-2 border rounded-xl text-xs">
+                            <button onclick="addSubLocation()" class="bg-[#0e8a44] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">Adicionar</button>
+                        </div>
+                        <div id="cfg-subloc-list" class="flex flex-wrap gap-1.5 pt-1"></div>
+                    </div>
+                </div>
+
+                <!-- ESTOQUES INICIAIS E MÍNIMOS -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase font-bold text-emerald-700 border-b pb-1 mb-3">ESTOQUE INICIAL (GALÕES CHEIOS)</h4>
+                    <div id="cfg-ini-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold uppercase font-bold text-amber-700 border-b pb-1 mb-3">ESTOQUE MÍNIMO DE SEGURANÇA</h4>
+                    <div id="cfg-min-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+                </div>
+
+                <!-- LIMPEZA DE CACHE -->
+                <div class="pt-2 border-t">
+                    <button type="button" onclick="executeResetCache()" class="w-full bg-red-50 hover:bg-red-100 text-red-700 font-bold p-2.5 rounded-xl text-xs flex items-center justify-center gap-2 border border-red-200 transition">
+                        <i class="fa-solid fa-rotate text-xs"></i> Limpar Memória Cache e Atualizar do Google Sheets
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4 border-t">
+                <button onclick="closeConfigModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-sm transition">Cancelar</button>
+                <button onclick="saveConfigParameters()" class="bg-[#0b5394] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-xl text-sm shadow transition">Salvar Configurações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LÓGICA JAVASCRIPT CORRIGIDA -->
+    <script>
+        // UTILIZADORES PADRÃO PERMANENTES
+        const DEFAULT_USERS = {
+            'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
+            'operador': { pass: '1234', role: 'OPERADOR', name: 'Apontador de Campo' }
+        };
+
+        let USERS_DB = { ...DEFAULT_USERS };
+        let currentUser = null;
+        let database = [];
+
+        let mainLocations = ['Alojamento 01', 'Alojamento 03', 'Site'];
+        let tiposLancamento = ['Consumo', 'Entrada', 'Devolução'];
+        
+        let subLocationsMap = {
+            'Site': ['Bebedouros', 'Carpas', 'Refeitório', 'Prédio ADM', 'Sala de Controle'],
+            'Alojamento 01': ['Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Área de Vivência', 'Refeitório', 'Hotel / Casas'],
+            'Alojamento 03': ['Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Módulo 05', 'Módulo 06', 'Módulo 07', 'Módulo 08', 'Módulo 09', 'Área de Vivência', 'Refeitório', 'Ambulatório', 'Sala de Manutenção']
+        };
+
+        let systemConfig = {
+            efetivo: 500,
+            meta: 2.7,
+            volumeGalao: 20,
+            estoqueInicial: { 'Site': 0, 'Alojamento 01': 0, 'Alojamento 03': 0 },
+            estoqueMinimo: { 'Site': 300, 'Alojamento 01': 200, 'Alojamento 03': 200 }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedConfig();
+            checkAuthSession();
+        });
+
+        function loadSavedConfig() {
+            const saved = localStorage.getItem('controle_agua_config');
+            if(saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    systemConfig = parsed.systemConfig || systemConfig;
+                    mainLocations = parsed.mainLocations || mainLocations;
+                    tiposLancamento = parsed.tiposLancamento || tiposLancamento;
+                    subLocationsMap = parsed.subLocationsMap || subLocationsMap;
+                    if (parsed.USERS_DB && typeof parsed.USERS_DB === 'object') {
+                        USERS_DB = { ...DEFAULT_USERS, ...parsed.USERS_DB };
+                    }
+                } catch(e) {
+                    console.error("Erro ao carregar configurações:", e);
+                }
+            }
+        }
+
+        function addNewUser() {
+            const name = document.getElementById('add-user-name').value.trim();
+            const login = document.getElementById('add-user-login').value.trim().toLowerCase();
+            const pass = document.getElementById('add-user-pass').value.trim();
+            const role = document.getElementById('add-user-role').value;
+
+            if (!name || !login || !pass) {
+                alert('Preencha Nome, Login e Senha para cadastrar.');
+                return;
+            }
+
+            if (USERS_DB[login]) {
+                alert('Este login já está cadastrado no sistema.');
+                return;
+            }
+
+            USERS_DB[login] = { pass, role, name };
+            document.getElementById('add-user-name').value = '';
+            document.getElementById('add-user-login').value = '';
+            document.getElementById('add-user-pass').value = '';
+
+            renderUsersTable();
+            alert(`Usuário "${name}" cadastrado com sucesso!`);
+        }
+
+        function removeUser(loginKey) {
+            if (loginKey === 'admin') {
+                alert('O usuário "admin" principal não pode ser excluído.');
+                return;
+            }
+
+            if (confirm(`Deseja revogar o acesso do usuário "${USERS_DB[loginKey].name}"?`)) {
+                delete USERS_DB[loginKey];
+                renderUsersTable();
+            }
+        }
+
+        function renderUsersTable() {
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = '';
+
+            Object.keys(USERS_DB).forEach(key => {
+                const u = USERS_DB[key];
+                const isAdmin = u.role === 'ADM';
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2 font-bold">${u.name}</td>
+                        <td class="p-2 text-slate-500 font-mono text-[10px]">${key}</td>
+                        <td class="p-2 text-center">
+                            <span class="${isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'} font-bold px-2 py-0.5 rounded text-[10px]">
+                                ${u.role}
+                            </span>
+                        </td>
+                        <td class="p-2 text-center">
+                            ${key !== 'admin' ? `<button onclick="removeUser('${key}')" class="text-red-500 hover:text-red-700 font-bold"><i class="fa-solid fa-user-minus"></i> Excluir</button>` : `<span class="text-slate-300 text-[10px]">Protegido</span>`}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function checkAuthSession() {
+            const savedUser = localStorage.getItem('controle_agua_session');
+            if (savedUser && USERS_DB[savedUser]) {
+                currentUser = USERS_DB[savedUser];
+                document.getElementById('login-overlay').classList.add('hidden');
+                initAppUI();
+            } else {
+                document.getElementById('login-overlay').classList.remove('hidden');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('login-user').value.trim().toLowerCase();
+            const p = document.getElementById('login-pass').value.trim();
