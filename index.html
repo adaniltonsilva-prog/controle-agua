@@ -380,7 +380,9 @@
                                 <th class="p-2.5 text-center">INICIAL</th>
                                 <th class="p-2.5 text-center">ENTRADAS</th>
                                 <th class="p-2.5 text-center">CONSUMO</th>
-                                <th class="p-2.5 text-center">ATUAL</th>
+                                <th class="p-2.5 text-center">DEVOLUÇÕES</th>
+                                <th class="p-2.5 text-center">CHEIOS</th>
+                                <th class="p-2.5 text-center">VAZIOS</th>
                                 <th class="p-2.5 text-center">STATUS</th>
                             </tr>
                         </thead>
@@ -683,6 +685,11 @@
                     <div id="cfg-ini-container" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
                 </div>
 
+                <div>
+                    <h4 class="text-xs font-bold uppercase text-blue-700 border-b pb-1 mb-2">ESTOQUE INICIAL (GALÕES VAZIOS)</h4>
+                    <div id="cfg-inivaz-container" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
+                </div>
+
                 <!-- 5. ESTOQUES MÍNIMOS -->
                 <div>
                     <h4 class="text-xs font-bold uppercase text-amber-700 border-b pb-1 mb-2">ESTOQUE MÍNIMO DE SEGURANÇA</h4>
@@ -729,6 +736,7 @@
             meta: 2.7,
             volumeGalao: 20,
             estoqueInicial: { 'Site': 0, 'Alojamento 01': 0, 'Alojamento 03': 0 },
+            estoqueInicialVazios: { 'Site': 0, 'Alojamento 01': 0, 'Alojamento 03': 0 },
             estoqueMinimo: { 'Site': 300, 'Alojamento 01': 200, 'Alojamento 03': 200 }
         };
 
@@ -1155,11 +1163,25 @@
             if(iniContainer) {
                 iniContainer.innerHTML = '';
                 mainLocations.forEach(loc => {
-                    const val = systemConfig.estoqueInicial[loc] || 0;
+                    const val = (systemConfig.estoqueInicial && systemConfig.estoqueInicial[loc]) || 0;
                     iniContainer.innerHTML += `
                         <div>
                             <label class="block text-[10px] font-bold text-slate-700 mb-0.5">${loc}:</label>
                             <input type="number" id="cfg-ini-${loc}" class="w-full p-1.5 border rounded-lg text-xs font-bold text-slate-800" value="${val}">
+                        </div>
+                    `;
+                });
+            }
+
+            const iniVazContainer = document.getElementById('cfg-inivaz-container');
+            if(iniVazContainer) {
+                iniVazContainer.innerHTML = '';
+                mainLocations.forEach(loc => {
+                    const val = (systemConfig.estoqueInicialVazios && systemConfig.estoqueInicialVazios[loc]) || 0;
+                    iniVazContainer.innerHTML += `
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-700 mb-0.5">${loc}:</label>
+                            <input type="number" id="cfg-inivaz-${loc}" class="w-full p-1.5 border rounded-lg text-xs font-bold text-slate-800" value="${val}">
                         </div>
                     `;
                 });
@@ -1330,10 +1352,14 @@
             systemConfig.meta = parseFloat(document.getElementById('cfg-meta').value) || 2.7;
             systemConfig.volumeGalao = parseInt(document.getElementById('cfg-volume').value) || 20;
 
+            if(!systemConfig.estoqueInicialVazios) systemConfig.estoqueInicialVazios = {};
+
             mainLocations.forEach(loc => {
                 const iniInput = document.getElementById(`cfg-ini-${loc}`);
+                const iniVazInput = document.getElementById(`cfg-inivaz-${loc}`);
                 const minInput = document.getElementById(`cfg-min-${loc}`);
                 if (iniInput) systemConfig.estoqueInicial[loc] = parseInt(iniInput.value) || 0;
+                if (iniVazInput) systemConfig.estoqueInicialVazios[loc] = parseInt(iniVazInput.value) || 0;
                 if (minInput) systemConfig.estoqueMinimo[loc] = parseInt(minInput.value) || 200;
             });
 
@@ -1524,11 +1550,17 @@
         function calculateStock() {
             const stock = {};
             mainLocations.forEach(loc => {
+                const iniCheios = (systemConfig.estoqueInicial && systemConfig.estoqueInicial[loc]) || 0;
+                const iniVazios = (systemConfig.estoqueInicialVazios && systemConfig.estoqueInicialVazios[loc]) || 0;
                 stock[loc] = {
-                    inicial: systemConfig.estoqueInicial[loc] || 0,
-                    min: systemConfig.estoqueMinimo[loc] || 200,
-                    cheios: systemConfig.estoqueInicial[loc] || 0,
-                    vazios: 0, entrada: 0, consumo: 0, devolucao: 0
+                    inicial: iniCheios,
+                    inicialVazios: iniVazios,
+                    min: (systemConfig.estoqueMinimo && systemConfig.estoqueMinimo[loc]) || 200,
+                    cheios: iniCheios,
+                    vazios: iniVazios,
+                    entrada: 0,
+                    consumo: 0,
+                    devolucao: 0
                 };
             });
 
@@ -1537,9 +1569,19 @@
                 const qtd = parseInt(r.Quantidade) || 0;
 
                 if(stock[loc]) {
-                    if(r.Tipo === 'Consumo') { stock[loc].consumo += qtd; stock[loc].cheios -= qtd; }
-                    else if(r.Tipo === 'Entrada') { stock[loc].entrada += qtd; stock[loc].cheios += qtd; }
-                    else if(r.Tipo === 'Devolução') { stock[loc].devolucao += qtd; stock[loc].vazios -= qtd; }
+                    if(r.Tipo === 'Consumo') { 
+                        stock[loc].consumo += qtd; 
+                        stock[loc].cheios -= qtd; 
+                        stock[loc].vazios += qtd; // Consumir água transforma galão cheio em galão vazio
+                    }
+                    else if(r.Tipo === 'Entrada') { 
+                        stock[loc].entrada += qtd; 
+                        stock[loc].cheios += qtd; 
+                    }
+                    else if(r.Tipo === 'Devolução') { 
+                        stock[loc].devolucao += qtd; 
+                        stock[loc].vazios -= qtd; // Devolver galão vazio para o fornecedor
+                    }
                 }
             });
 
@@ -1581,7 +1623,9 @@
                         <td class="p-2 text-center">${s.inicial}</td>
                         <td class="p-2 text-center text-emerald-600 font-bold">+${s.entrada}</td>
                         <td class="p-2 text-center text-blue-600 font-bold">-${s.consumo}</td>
-                        <td class="p-2 text-center font-black">${s.cheios}</td>
+                        <td class="p-2 text-center text-amber-600 font-bold">-${s.devolucao}</td>
+                        <td class="p-2 text-center font-black text-slate-900">${s.cheios}</td>
+                        <td class="p-2 text-center font-black text-amber-600">${s.vazios}</td>
                         <td class="p-2 text-center">
                             <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-2 py-0.5 rounded-full text-[10px]">
                                 ● ${isNormal ? 'OK' : 'Baixo'}
