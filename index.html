@@ -300,20 +300,20 @@
 
         <!-- 3. TELA – CONSUMO DETALHADO -->
         <section id="screen3" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
-            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 w-full max-w-full">
                 <h2 id="batch-screen-title" class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
                     <i class="fa-solid fa-building"></i> 3. CONSUMO DETALHADO
                 </h2>
                 
-                <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg text-xs font-semibold w-full sm:w-auto justify-between">
-                    <div class="flex items-center gap-1.5">
+                <div class="flex flex-wrap items-center gap-2 bg-blue-800 p-2 rounded-lg text-xs font-semibold w-full sm:w-auto max-w-full">
+                    <div class="flex items-center gap-1">
                         <span>LOCAL:</span>
-                        <select id="batch-local-select" onchange="changeBatchLocation()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs"></select>
+                        <select id="batch-local-select" onchange="changeBatchLocation()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none max-w-[130px]"></select>
                     </div>
 
-                    <div class="flex items-center gap-1.5">
+                    <div class="flex items-center gap-1">
                         <span>DATA:</span>
-                        <input type="date" id="batch-data" class="bg-white text-slate-800 p-1 rounded text-xs font-semibold">
+                        <input type="date" id="batch-data" class="bg-white text-slate-800 p-1 rounded text-xs font-semibold outline-none w-28 max-w-full">
                     </div>
                 </div>
             </div>
@@ -380,31 +380,32 @@
             </div>
         </section>
 
-        <!-- 5. TELA – DASHBOARD (RESTAURADO COMPLETO) -->
+        <!-- 5. TELA – DASHBOARD (CABEÇALHO RESPONSIVO E FILTRO POR PERÍODO CORRIGIDO) -->
         <section id="screen5" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
-            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full max-w-full">
                 <div>
                     <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
                         <i class="fa-solid fa-chart-line"></i> 5. DASHBOARD COMPLETO
                     </h2>
                     <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
                 </div>
-                <div class="flex flex-wrap gap-2 text-xs font-semibold items-center w-full md:w-auto">
-                    <div class="flex items-center gap-1.5 bg-blue-800 px-2.5 py-1.5 rounded-lg w-full sm:w-auto justify-between">
+                
+                <div class="flex flex-wrap items-center gap-2 bg-blue-800 p-2 rounded-lg text-xs font-semibold w-full lg:w-auto max-w-full">
+                    <div class="flex items-center gap-1 flex-wrap sm:flex-nowrap">
                         <span>DE:</span>
-                        <input type="date" id="dash-date-start" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-[11px] outline-none">
+                        <input type="date" id="dash-date-start" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none w-28 max-w-full">
                         <span>ATÉ:</span>
-                        <input type="date" id="dash-date-end" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-[11px] outline-none">
+                        <input type="date" id="dash-date-end" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none w-28 max-w-full">
                     </div>
 
-                    <div class="flex items-center gap-1.5 bg-blue-800 px-2.5 py-1.5 rounded-lg w-full sm:w-auto justify-between">
+                    <div class="flex items-center gap-1 ml-auto sm:ml-0">
                         <span>LOCAL:</span>
-                        <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs"></select>
+                        <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none max-w-[130px]"></select>
                     </div>
                 </div>
             </div>
 
-            <!-- TODOS OS 8 CARTÕES DE KPIS RESTAURADOS -->
+            <!-- 8 CARTÕES DE KPIS -->
             <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 <div class="bg-[#0f5298] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
                     <div>
@@ -479,7 +480,7 @@
                 </div>
             </div>
 
-            <!-- TODOS OS 4 GRÁFICOS RESTAURADOS -->
+            <!-- 4 GRÁFICOS -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
                     <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO DIÁARIO (GALÕES)</h4>
@@ -560,7 +561,7 @@
         </div>
     </footer>
 
-    <!-- MODAL CONFIGURAÇÕES COMPLETO -->
+    <!-- MODAL CONFIGURAÇÕES -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3">
         <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-5 space-y-5 relative border max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2 border-b">
@@ -571,7 +572,6 @@
             </div>
 
             <div class="space-y-5">
-
                 <!-- 1. GESTÃO DE USUÁRIOS -->
                 <div class="bg-blue-50/60 border border-blue-200 p-3.5 rounded-2xl space-y-3">
                     <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1">GESTÃO DE USUÁRIOS E PERMISSÕES</h4>
@@ -684,7 +684,7 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT COM GRÁFICOS E KPIS TOTALMENTE RESTAURADOS -->
+    <!-- LÓGICA JAVASCRIPT COMPLETA COM FILTRAGEM POR PERÍODO CORRIGIDA -->
     <script>
         const BASE_USERS = {
             'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
@@ -1584,8 +1584,8 @@
             chartDiario = new Chart(ctxDiario, {
                 type: 'bar',
                 data: {
-                    labels: Array.from({length: 10}, (_, i) => String(i + 1).padStart(2, '0')),
-                    datasets: [{ label: 'Consumo', data: Array(10).fill(0), backgroundColor: '#0f5298' }]
+                    labels: [],
+                    datasets: [{ label: 'Consumo', data: [], backgroundColor: '#0f5298' }]
                 },
                 options: chartOptions
             });
@@ -1595,7 +1595,7 @@
                 type: 'doughnut',
                 data: {
                     labels: mainLocations,
-                    datasets: [{ data: mainLocations.map(() => 0), backgroundColor: ['#0f5298', '#0e8a44', '#d9530f'] }]
+                    datasets: [{ data: mainLocations.map(() => 0), backgroundColor: ['#0f5298', '#0e8a44', '#d9530f', '#6f42c1', '#fd7e14'] }]
                 },
                 options: chartOptions
             });
@@ -1604,10 +1604,10 @@
             chartEntradasDev = new Chart(ctxEntDev, {
                 type: 'line',
                 data: {
-                    labels: Array.from({length: 10}, (_, i) => String(i + 1).padStart(2, '0')),
+                    labels: [],
                     datasets: [
-                        { label: 'Entradas', data: Array(10).fill(0), borderColor: '#0e8a44', fill: false },
-                        { label: 'Devoluções', data: Array(10).fill(0), borderColor: '#d9530f', fill: false }
+                        { label: 'Entradas', data: [], borderColor: '#0e8a44', fill: false },
+                        { label: 'Devoluções', data: [], borderColor: '#d9530f', fill: false }
                     ]
                 },
                 options: chartOptions
@@ -1624,6 +1624,7 @@
             });
         }
 
+        // LÓGICA DE FILTRAGEM DE PERÍODO E ATUALIZAÇÃO DOS GRÁFICOS
         function updateDashboard() {
             const selectedFilterLoc = document.getElementById('dash-filter-local').value;
             const startDateVal = document.getElementById('dash-date-start').value;
@@ -1634,12 +1635,20 @@
 
             let diasIntervalo = 30;
             if (startDateVal && endDateVal) {
-                const dtStart = new Date(startDateVal);
-                const dtEnd = new Date(endDateVal);
+                const dtStart = new Date(startDateVal + 'T00:00:00');
+                const dtEnd = new Date(endDateVal + 'T23:59:59');
                 const diffTime = dtEnd - dtStart;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 diasIntervalo = diffDays > 0 ? diffDays : 1;
             }
+
+            const dailyConsumption = {};
+            const dailyEntradas = {};
+            const dailyDevolucoes = {};
+            const localConsumption = {};
+            const monthlyConsumption = Array(12).fill(0);
+
+            mainLocations.forEach(loc => localConsumption[loc] = 0);
 
             database.forEach(r => {
                 const q = parseInt(r.Quantidade) || 0;
@@ -1647,13 +1656,27 @@
                 
                 let matchesDate = true;
                 if (r.Data && startDateVal && endDateVal) {
-                    matchesDate = r.Data >= startDateVal && r.Data <= endDateVal;
+                    matchesDate = (r.Data >= startDateVal && r.Data <= endDateVal);
                 }
 
                 if (matchesLoc && matchesDate) {
-                    if(r.Tipo === 'Consumo') totalConsumo += q;
-                    if(r.Tipo === 'Entrada') totalEntradas += q;
-                    if(r.Tipo === 'Devolução') totalDevolucoes += q;
+                    if (r.Tipo === 'Consumo') {
+                        totalConsumo += q;
+                        dailyConsumption[r.Data] = (dailyConsumption[r.Data] || 0) + q;
+                        if (r.LocalPrincipal) {
+                            localConsumption[r.LocalPrincipal] = (localConsumption[r.LocalPrincipal] || 0) + q;
+                        }
+                        if (r.Data) {
+                            const monthIdx = new Date(r.Data + 'T00:00:00').getMonth();
+                            monthlyConsumption[monthIdx] += q;
+                        }
+                    } else if (r.Tipo === 'Entrada') {
+                        totalEntradas += q;
+                        dailyEntradas[r.Data] = (dailyEntradas[r.Data] || 0) + q;
+                    } else if (r.Tipo === 'Devolução') {
+                        totalDevolucoes += q;
+                        dailyDevolucoes[r.Data] = (dailyDevolucoes[r.Data] || 0) + q;
+                    }
                 }
             });
 
@@ -1680,6 +1703,34 @@
             document.getElementById('dash-efetivo').innerText = systemConfig.efetivo;
             document.getElementById('dash-litros-pessoa').innerText = litrosPessoaDia.toString().replace('.', ',');
             document.getElementById('dash-meta').innerText = systemConfig.meta.toString().replace('.', ',');
+
+            // ATUALIZAÇÃO DOS GRÁFICOS DINÂMICOS
+            const sortedDates = Object.keys(dailyConsumption).sort();
+            
+            if (chartDiario) {
+                chartDiario.data.labels = sortedDates.length ? sortedDates : ['Sem dados'];
+                chartDiario.data.datasets[0].data = sortedDates.length ? sortedDates.map(d => dailyConsumption[d]) : [0];
+                chartDiario.update();
+            }
+
+            if (chartLocal) {
+                chartLocal.data.labels = mainLocations;
+                chartLocal.data.datasets[0].data = mainLocations.map(loc => localConsumption[loc] || 0);
+                chartLocal.update();
+            }
+
+            if (chartEntradasDev) {
+                const allDates = Array.from(new Set([...Object.keys(dailyEntradas), ...Object.keys(dailyDevolucoes)])).sort();
+                chartEntradasDev.data.labels = allDates.length ? allDates : ['Sem dados'];
+                chartEntradasDev.data.datasets[0].data = allDates.map(d => dailyEntradas[d] || 0);
+                chartEntradasDev.data.datasets[1].data = allDates.map(d => dailyDevolucoes[d] || 0);
+                chartEntradasDev.update();
+            }
+
+            if (chartMensal) {
+                chartMensal.data.datasets[0].data = monthlyConsumption;
+                chartMensal.update();
+            }
         }
 
         function exportToExcel() {
