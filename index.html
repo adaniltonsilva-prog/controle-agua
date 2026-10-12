@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OUD PRIME - Controle de Água</title>
     
     <!-- CONEXÃO PWA (APLICATIVO MOBILE) -->
@@ -23,9 +23,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0b0f19; color: #f1f5f9; line-height: 1.25; }
+        body { font-family: 'Inter', sans-serif; background-color: #0b0f19; color: #f1f5f9; line-height: 1.25; overflow-x: hidden; }
         .bg-nav { background-color: #0f172a; border-bottom: 1px solid #1e293b; }
-        .nav-btn { transition: all 0.2s; color: #94a3b8; opacity: 0.85; }
+        .nav-btn { transition: all 0.2s; color: #94a3b8; opacity: 0.85; white-space: nowrap; }
         .nav-btn:hover { opacity: 1; color: #ffffff; background-color: rgba(255, 255, 255, 0.08); }
         .nav-btn.active { background-color: #0284c7; color: #ffffff; opacity: 1; font-weight: 700; border-radius: 8px; }
         .card-menu { transition: transform 0.2s ease, box-shadow 0.2s ease; }
@@ -33,21 +33,21 @@
         .banner-blue { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col relative bg-slate-950">
+<body class="min-h-screen flex flex-col relative bg-slate-950 max-w-full overflow-x-hidden">
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
     </script>
 
-    <!-- TELA DE LOGIN -->
-    <div id="login-overlay" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-        <div class="bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full p-8 space-y-6 border border-slate-800 relative text-center">
-            <div class="space-y-3">
-                <img src="logo.png" alt="OUD PRIME Logo" class="w-36 mx-auto object-contain drop-shadow-lg" onerror="this.src='https://via.placeholder.com/150/0284c7/ffffff?text=OUD+PRIME'">
-                <p class="text-[11px] text-sky-400 font-extrabold uppercase tracking-widest">SISTEMAS INTELIGENTES PARA O SEU DIA A DIA</p>
+    <!-- TELA DE LOGIN (CORRIGIDA E CENTRALIZADA) -->
+    <div id="login-overlay" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 w-full h-full overflow-y-auto">
+        <div class="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-6 space-y-5 border border-slate-800 my-auto text-center mx-auto">
+            <div class="space-y-2 flex flex-col items-center justify-center">
+                <img src="logo.png" alt="OUD PRIME Logo" class="max-w-[180px] w-full h-auto object-contain drop-shadow-lg mx-auto" onerror="this.src='https://via.placeholder.com/180/0284c7/ffffff?text=OUD+PRIME'">
+                <p class="text-[10px] text-sky-400 font-extrabold uppercase tracking-widest mt-2">SISTEMAS INTELIGENTES PARA O SEU DIA A DIA</p>
             </div>
 
-            <form id="login-form" class="space-y-4 text-left">
+            <form id="login-form" class="space-y-4 text-left w-full">
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Usuário / E-mail</label>
                     <input type="text" id="login-user" required placeholder="admin ou operador" class="w-full p-3 border border-slate-700 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-sky-500 bg-slate-800 text-white">
@@ -73,36 +73,45 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO DA APLICAÇÃO -->
-    <header class="bg-nav text-white px-6 py-3 shadow-md">
-        <div class="max-w-[1500px] mx-auto flex flex-wrap justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <img src="logo.png" alt="OUD PRIME" class="h-10 object-contain" onerror="this.src='https://via.placeholder.com/100/0284c7/ffffff?text=OP'">
-                <div>
-                    <h1 class="text-lg font-black uppercase tracking-wider leading-none text-white">CONTROLE DE ÁGUA</h1>
-                    <p class="text-[10px] text-sky-400 font-bold uppercase tracking-wide mt-0.5">Sistemas Inteligentes para o seu dia a dia</p>
+    <!-- CABEÇALHO DA APLICAÇÃO (RESPONSIVO MOBILE) -->
+    <header class="bg-nav text-white px-4 py-3 shadow-md w-full">
+        <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center justify-between w-full md:w-auto">
+                <div class="flex items-center gap-3">
+                    <img src="logo.png" alt="OUD PRIME" class="h-8 md:h-10 object-contain" onerror="this.src='https://via.placeholder.com/100/0284c7/ffffff?text=OP'">
+                    <div>
+                        <h1 class="text-base md:text-lg font-black uppercase tracking-wider leading-none text-white">CONTROLE DE ÁGUA</h1>
+                        <p class="text-[9px] md:text-[10px] text-sky-400 font-bold uppercase tracking-wide mt-0.5">Sistemas Inteligentes para o seu dia a dia</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 md:hidden">
+                    <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
                 </div>
             </div>
 
-            <nav class="flex items-center gap-1 text-sm">
-                <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-4 py-2 flex items-center gap-2">
+            <!-- NAVEGAÇÃO COM ROLAGEM HORIZONTAL NO MOBILE -->
+            <nav class="flex items-center gap-1.5 text-xs md:text-sm overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
+                <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-3 py-2 flex items-center gap-1.5">
                     <i class="fa-solid fa-house text-xs"></i> Menu
                 </button>
-                <button onclick="switchScreen('screen2')" id="nav-screen2" class="nav-btn px-4 py-2 flex items-center gap-2">
+                <button onclick="switchScreen('screen2')" id="nav-screen2" class="nav-btn px-3 py-2 flex items-center gap-1.5">
                     <i class="fa-solid fa-pen-to-square text-xs"></i> Lançamentos
                 </button>
-                <button onclick="switchScreen('screen4')" id="nav-screen4" class="nav-btn px-4 py-2 flex items-center gap-2">
+                <button onclick="switchScreen('screen4')" id="nav-screen4" class="nav-btn px-3 py-2 flex items-center gap-1.5">
                     <i class="fa-solid fa-boxes-stacked text-xs"></i> Estoque
                 </button>
-                <button onclick="switchScreen('screen5')" id="nav-screen5" class="nav-btn adm-only px-4 py-2 flex items-center gap-2">
+                <button onclick="switchScreen('screen5')" id="nav-screen5" class="nav-btn adm-only px-3 py-2 flex items-center gap-1.5">
                     <i class="fa-solid fa-chart-line text-xs"></i> Dashboard
                 </button>
-                <button onclick="switchScreen('screen6')" id="nav-screen6" class="nav-btn adm-only px-4 py-2 flex items-center gap-2">
-                    <i class="fa-solid fa-database text-xs"></i> Base de Dados
+                <button onclick="switchScreen('screen6')" id="nav-screen6" class="nav-btn adm-only px-3 py-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-database text-xs"></i> Base
                 </button>
             </nav>
 
-            <div class="flex items-center gap-3">
+            <div class="hidden md:flex items-center gap-3">
                 <span id="user-badge" class="bg-slate-800 text-sky-300 text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1.5 border border-slate-700">
                     <i class="fa-solid fa-user-check text-sky-400"></i> <span id="user-display-name">Ninguém</span>
                 </span>
@@ -113,72 +122,72 @@
         </div>
     </header>
 
-    <main class="max-w-[1500px] w-full mx-auto p-4 md:p-6 flex-1 text-slate-800">
+    <main class="max-w-[1500px] w-full mx-auto p-3 md:p-6 flex-1 text-slate-800">
 
         <!-- 1. TELA – MENU PRINCIPAL -->
-        <section id="screen1" class="screen-content space-y-6">
-            <div class="banner-blue text-white p-8 rounded-2xl shadow-lg flex justify-between items-center relative overflow-hidden">
-                <div class="space-y-2 z-10">
-                    <span class="bg-white/20 text-xs uppercase font-extrabold px-3 py-1 rounded-full tracking-widest">OUD PRIME • GESTÃO DE ÁGUA</span>
-                    <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tight">PAINEL OPERACIONAL</h2>
-                    <p class="text-sky-100 text-sm md:text-base font-medium">Sistemas Inteligentes para o seu dia a dia</p>
+        <section id="screen1" class="screen-content space-y-4 md:space-y-6">
+            <div class="banner-blue text-white p-5 md:p-8 rounded-2xl shadow-lg flex justify-between items-center relative overflow-hidden">
+                <div class="space-y-1.5 z-10">
+                    <span class="bg-white/20 text-[10px] md:text-xs uppercase font-extrabold px-2.5 py-0.5 rounded-full tracking-widest">OUD PRIME • GESTÃO DE ÁGUA</span>
+                    <h2 class="text-2xl md:text-5xl font-black uppercase tracking-tight">PAINEL OPERACIONAL</h2>
+                    <p class="text-sky-100 text-xs md:text-base font-medium">Sistemas Inteligentes para o seu dia a dia</p>
                 </div>
                 <div class="hidden md:block opacity-20 text-white z-0">
                     <i class="fa-solid fa-droplet text-9xl"></i>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div onclick="switchScreen('screen2')" class="card-menu cursor-pointer bg-[#0f5298] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-pen-to-square"></i></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                <div onclick="switchScreen('screen2')" class="card-menu cursor-pointer bg-[#0f5298] text-white p-5 rounded-2xl shadow-md flex flex-col justify-between h-40 md:h-48">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-pen-to-square"></i></div>
                     <div>
-                        <h3 class="text-xl font-bold uppercase tracking-wide">LANÇAMENTOS</h3>
-                        <p class="text-xs text-blue-100 mt-1">Entrada, Devolução e Consumo</p>
+                        <h3 class="text-lg md:text-xl font-bold uppercase tracking-wide">LANÇAMENTOS</h3>
+                        <p class="text-[11px] md:text-xs text-blue-100 mt-0.5">Entrada, Devolução e Consumo</p>
                     </div>
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-blue-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="switchScreen('screen4')" class="card-menu cursor-pointer bg-[#0e8a44] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-cubes"></i></div>
+                <div onclick="switchScreen('screen4')" class="card-menu cursor-pointer bg-[#0e8a44] text-white p-5 rounded-2xl shadow-md flex flex-col justify-between h-40 md:h-48">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-cubes"></i></div>
                     <div>
-                        <h3 class="text-xl font-bold uppercase tracking-wide">ESTOQUE</h3>
-                        <p class="text-xs text-emerald-100 mt-1">Consulta e Movimentação</p>
+                        <h3 class="text-lg md:text-xl font-bold uppercase tracking-wide">ESTOQUE</h3>
+                        <p class="text-[11px] md:text-xs text-emerald-100 mt-0.5">Consulta e Movimentação</p>
                     </div>
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-emerald-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="switchScreen('screen5')" class="card-menu adm-only cursor-pointer bg-[#d9530f] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-chart-column"></i></div>
+                <div onclick="switchScreen('screen5')" class="card-menu adm-only cursor-pointer bg-[#d9530f] text-white p-5 rounded-2xl shadow-md flex flex-col justify-between h-40 md:h-48">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-chart-column"></i></div>
                     <div>
-                        <h3 class="text-xl font-bold uppercase tracking-wide">DASHBOARD</h3>
-                        <p class="text-xs text-amber-100 mt-1">Gráficos e Indicadores</p>
+                        <h3 class="text-lg md:text-xl font-bold uppercase tracking-wide">DASHBOARD</h3>
+                        <p class="text-[11px] md:text-xs text-amber-100 mt-0.5">Gráficos e Indicadores</p>
                     </div>
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-amber-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="switchScreen('screen6')" class="card-menu adm-only cursor-pointer bg-[#6f42c1] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-database"></i></div>
+                <div onclick="switchScreen('screen6')" class="card-menu adm-only cursor-pointer bg-[#6f42c1] text-white p-5 rounded-2xl shadow-md flex flex-col justify-between h-40 md:h-48">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-database"></i></div>
                     <div>
-                        <h3 class="text-xl font-bold uppercase tracking-wide">BASE DE DADOS</h3>
-                        <p class="text-xs text-purple-100 mt-1">Registros de Lançamentos</p>
+                        <h3 class="text-lg md:text-xl font-bold uppercase tracking-wide">BASE DE DADOS</h3>
+                        <p class="text-[11px] md:text-xs text-purple-100 mt-0.5">Registros de Lançamentos</p>
                     </div>
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-purple-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="openConfigModal()" class="card-menu adm-only cursor-pointer bg-[#495057] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-gear"></i></div>
+                <div onclick="openConfigModal()" class="card-menu adm-only cursor-pointer bg-[#495057] text-white p-5 rounded-2xl shadow-md flex flex-col justify-between h-40 md:h-48">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-gear"></i></div>
                     <div>
-                        <h3 class="text-xl font-bold uppercase tracking-wide">CONFIGURAÇÕES</h3>
-                        <p class="text-xs text-slate-200 mt-1">Usuários, Cadastros e Parâmetros</p>
+                        <h3 class="text-lg md:text-xl font-bold uppercase tracking-wide">CONFIGURAÇÕES</h3>
+                        <p class="text-[11px] md:text-xs text-slate-200 mt-0.5">Usuários, Cadastros e Parâmetros</p>
                     </div>
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="exportToExcel()" class="card-menu adm-only cursor-pointer bg-[#17a2b8] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-file-excel"></i></div>
+                <div onclick="exportToExcel()" class="card-menu adm-only cursor-pointer bg-[#17a2b8] text-white p-5 rounded-2xl shadow-md flex flex-col justify-between h-40 md:h-48">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-file-excel"></i></div>
                     <div>
-                        <h3 class="text-xl font-bold uppercase tracking-wide">RELATÓRIOS</h3>
-                        <p class="text-xs text-teal-100 mt-1">Exportar em Excel (.xlsx)</p>
+                        <h3 class="text-lg md:text-xl font-bold uppercase tracking-wide">RELATÓRIOS</h3>
+                        <p class="text-[11px] md:text-xs text-teal-100 mt-0.5">Exportar em Excel (.xlsx)</p>
                     </div>
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-teal-200">BAIXAR &rarr;</div>
                 </div>
@@ -186,16 +195,16 @@
         </section>
 
         <!-- 2. TELA – LANÇAMENTOS -->
-        <section id="screen2" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
-            <div class="bg-[#0b5394] text-white p-4 rounded-xl flex justify-between items-center">
-                <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
-                    <i class="fa-solid fa-calendar-days"></i> 2. TELA – LANÇAMENTOS
+        <section id="screen2" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
+            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex justify-between items-center">
+                <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
+                    <i class="fa-solid fa-calendar-days"></i> 2. LANÇAMENTOS
                 </h2>
-                <span class="bg-blue-800 text-xs px-3 py-1 rounded-md text-blue-100">Registro Direto ou Detalhado</span>
+                <span class="bg-blue-800 text-[10px] md:text-xs px-2.5 py-1 rounded-md text-blue-100">Direto ou Detalhado</span>
             </div>
 
             <form id="form-single" onsubmit="handleSingleSubmit(event)" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-calendar text-blue-600"></i> DATA DO LANÇAMENTO
@@ -219,13 +228,13 @@
 
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-sitemap text-blue-600"></i> LOCAL DE CONSUMO (DETALHE)
+                            <i class="fa-solid fa-sitemap text-blue-600"></i> LOCAL DE CONSUMO
                         </label>
                         <select id="single-detalhe" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium"></select>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-bottle-water text-blue-600"></i> QUANTIDADE (GALÕES)
@@ -241,17 +250,17 @@
                     </div>
                 </div>
 
-                <div class="flex flex-wrap justify-between items-center gap-4 pt-2">
+                <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-2">
                     <div class="flex gap-2">
-                        <button type="submit" class="bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
+                        <button type="submit" class="flex-1 sm:flex-none bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
                             <i class="fa-solid fa-check"></i> Registrar
                         </button>
-                        <button type="reset" onclick="setTimeout(updateSubLocations, 50)" class="bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
+                        <button type="reset" onclick="setTimeout(updateSubLocations, 50)" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
                             <i class="fa-solid fa-broom"></i> Limpar
                         </button>
                     </div>
-                    <button type="button" onclick="switchScreen('screen3')" class="bg-[#d9530f] hover:bg-amber-700 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
-                        <i class="fa-solid fa-plus"></i> Novo Lançamento Detalhado por Alojamento
+                    <button type="button" onclick="switchScreen('screen3')" class="bg-[#d9530f] hover:bg-amber-700 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
+                        <i class="fa-solid fa-plus"></i> Lançamento por Alojamento
                     </button>
                 </div>
             </form>
@@ -261,16 +270,15 @@
                     <i class="fa-solid fa-clock-rotate-left"></i> ÚLTIMOS LANÇAMENTOS
                 </h3>
                 <div class="overflow-x-auto border rounded-xl shadow-sm">
-                    <table class="w-full text-sm text-left text-slate-700">
-                        <thead class="bg-[#0b5394] text-white text-xs uppercase font-bold">
+                    <table class="w-full text-xs md:text-sm text-left text-slate-700">
+                        <thead class="bg-[#0b5394] text-white text-[11px] uppercase font-bold">
                             <tr>
-                                <th class="p-3">DATA</th>
-                                <th class="p-3">TIPO</th>
-                                <th class="p-3">LOCAL</th>
-                                <th class="p-3">DETALHE</th>
-                                <th class="p-3 text-center">QUANTIDADE</th>
-                                <th class="p-3">OBSERVAÇÃO</th>
-                                <th class="p-3 text-center">AÇÕES</th>
+                                <th class="p-2.5">DATA</th>
+                                <th class="p-2.5">TIPO</th>
+                                <th class="p-2.5">LOCAL</th>
+                                <th class="p-2.5">DETALHE</th>
+                                <th class="p-2.5 text-center">QTD</th>
+                                <th class="p-2.5 text-center">AÇÕES</th>
                             </tr>
                         </thead>
                         <tbody id="table-recent-body" class="divide-y divide-slate-200"></tbody>
@@ -280,290 +288,192 @@
         </section>
 
         <!-- 3. TELA – CONSUMO DETALHADO -->
-        <section id="screen3" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
-            <div class="bg-[#0b5394] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
-                <h2 id="batch-screen-title" class="text-lg font-bold flex items-center gap-2 uppercase">
-                    <i class="fa-solid fa-building"></i> 3. TELA – LANÇAMENTO DE CONSUMO DETALHADO
+        <section id="screen3" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
+            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <h2 id="batch-screen-title" class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
+                    <i class="fa-solid fa-building"></i> 3. CONSUMO DETALHADO
                 </h2>
                 
-                <div class="flex items-center gap-4 bg-blue-800 px-3 py-1.5 rounded-lg text-xs font-semibold">
-                    <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg text-xs font-semibold w-full sm:w-auto justify-between">
+                    <div class="flex items-center gap-1.5">
                         <span>LOCAL:</span>
-                        <select id="batch-local-select" onchange="changeBatchLocation()" class="bg-white text-slate-800 p-1 rounded font-bold"></select>
+                        <select id="batch-local-select" onchange="changeBatchLocation()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs"></select>
                     </div>
 
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1.5">
                         <span>DATA:</span>
                         <input type="date" id="batch-data" class="bg-white text-slate-800 p-1 rounded text-xs font-semibold">
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-3">
                     <h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-2">CONSUMO POR LOCAL</h3>
-                    <div id="batch-inputs" class="space-y-2 max-h-[400px] overflow-y-auto pr-2"></div>
+                    <div id="batch-inputs" class="space-y-2 max-h-[350px] overflow-y-auto pr-1"></div>
                 </div>
 
-                <div class="bg-[#fff9e6] border border-amber-200 p-6 rounded-2xl flex flex-col justify-between">
+                <div class="bg-[#fff9e6] border border-amber-200 p-5 rounded-2xl flex flex-col justify-between">
                     <div>
-                        <h3 class="text-xs font-bold uppercase text-amber-900 border-b border-amber-200 pb-2 mb-4">RESUMO DO LANÇAMENTO</h3>
-                        <div id="batch-summary" class="space-y-2 text-sm max-h-[300px] overflow-y-auto pr-1"></div>
+                        <h3 class="text-xs font-bold uppercase text-amber-900 border-b border-amber-200 pb-2 mb-3">RESUMO DO LANÇAMENTO</h3>
+                        <div id="batch-summary" class="space-y-2 text-xs md:text-sm max-h-[200px] overflow-y-auto pr-1"></div>
                     </div>
-                    <div class="border-t border-amber-200 pt-4 flex justify-between items-center mt-6">
-                        <span id="batch-total-label" class="text-lg font-bold uppercase text-amber-900">TOTAL</span>
-                        <span id="batch-total" class="text-3xl font-black text-amber-950">0</span>
+                    <div class="border-t border-amber-200 pt-3 flex justify-between items-center mt-4">
+                        <span id="batch-total-label" class="text-base font-bold uppercase text-amber-900">TOTAL</span>
+                        <span id="batch-total" class="text-2xl font-black text-amber-950">0</span>
                     </div>
                 </div>
             </div>
 
-            <div class="flex gap-3 pt-4 border-t">
-                <button onclick="submitBatch()" class="bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
-                    <i class="fa-solid fa-check"></i> Registrar Consumo
+            <div class="flex flex-wrap gap-2 pt-3 border-t">
+                <button onclick="submitBatch()" class="flex-1 bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 text-xs md:text-sm shadow">
+                    <i class="fa-solid fa-check"></i> Registrar
                 </button>
-                <button onclick="clearBatch()" class="bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
+                <button onclick="clearBatch()" class="flex-1 bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 text-xs md:text-sm shadow">
                     <i class="fa-solid fa-broom"></i> Limpar
                 </button>
-                <button onclick="switchScreen('screen1')" class="bg-slate-500 hover:bg-slate-600 text-white font-bold px-6 py-2.5 rounded-lg flex items-center gap-2 text-sm shadow">
+                <button onclick="switchScreen('screen1')" class="w-full sm:w-auto bg-slate-500 hover:bg-slate-600 text-white font-bold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 text-xs md:text-sm shadow">
                     <i class="fa-solid fa-arrow-left"></i> Voltar
                 </button>
             </div>
         </section>
 
         <!-- 4. TELA – ESTOQUE -->
-        <section id="screen4" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
-            <div class="bg-[#0b5394] text-white p-4 rounded-xl flex justify-between items-center">
-                <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
-                    <i class="fa-solid fa-cubes"></i> 4. TELA – ESTOQUE
+        <section id="screen4" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
+            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex justify-between items-center">
+                <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
+                    <i class="fa-solid fa-cubes"></i> 4. ESTOQUE
                 </h2>
-                <span class="bg-blue-800 text-xs px-3 py-1 rounded-md text-blue-100">Posição e Indicadores de Galões</span>
+                <span class="bg-blue-800 text-[10px] md:text-xs px-2.5 py-1 rounded-md text-blue-100">Indicadores</span>
             </div>
 
-            <div id="stock-cards-container" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+            <div id="stock-cards-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"></div>
 
             <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-xs font-bold uppercase text-slate-700">MOVIMENTAÇÃO DO ESTOQUE (PERÍODO)</h3>
-                    <select class="border p-1 rounded text-xs bg-slate-50"><option>Setembro/2026</option></select>
-                </div>
+                <h3 class="text-xs font-bold uppercase text-slate-700">MOVIMENTAÇÃO DO ESTOQUE</h3>
                 <div class="overflow-x-auto border rounded-xl shadow-sm">
                     <table class="w-full text-xs text-left text-slate-700">
-                        <thead class="bg-[#0b5394] text-white uppercase font-bold">
+                        <thead class="bg-[#0b5394] text-white uppercase font-bold text-[10px]">
                             <tr>
-                                <th class="p-3">LOCAL</th>
-                                <th class="p-3 text-center">ESTOQUE INICIAL</th>
-                                <th class="p-3 text-center">ENTRADAS (CHEIOS)</th>
-                                <th class="p-3 text-center">CONSUMO</th>
-                                <th class="p-3 text-center">DEVOLUÇÃO (VAZIOS)</th>
-                                <th class="p-3 text-center">ESTOQUE ATUAL</th>
-                                <th class="p-3 text-center">ESTOQUE MÍNIMO</th>
-                                <th class="p-3 text-center">STATUS</th>
+                                <th class="p-2.5">LOCAL</th>
+                                <th class="p-2.5 text-center">INICIAL</th>
+                                <th class="p-2.5 text-center">ENTRADAS</th>
+                                <th class="p-2.5 text-center">CONSUMO</th>
+                                <th class="p-2.5 text-center">ATUAL</th>
+                                <th class="p-2.5 text-center">STATUS</th>
                             </tr>
                         </thead>
                         <tbody id="stock-summary-table" class="divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="md:col-span-2 border rounded-2xl p-4 shadow-sm">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-4">EVOLUÇÃO DO ESTOQUE (GALÕES CHEIOS)</h4>
-                    <div class="relative h-60 w-full">
-                        <canvas id="chartEvolucaoEstoque"></canvas>
-                    </div>
-                </div>
-                <div class="border rounded-2xl p-4 shadow-sm space-y-3">
-                    <h4 class="text-xs font-bold uppercase text-slate-700">ÚLTIMAS MOVIMENTAÇÕES</h4>
-                    <div class="overflow-x-auto border rounded-lg">
-                        <table class="w-full text-xs text-left text-slate-700">
-                            <thead class="bg-[#0b5394] text-white uppercase font-bold text-[10px]">
-                                <tr>
-                                    <th class="p-2">DATA</th>
-                                    <th class="p-2">TIPO</th>
-                                    <th class="p-2">LOCAL</th>
-                                    <th class="p-2 text-center">QTD</th>
-                                </tr>
-                            </thead>
-                            <tbody id="stock-last-moves" class="divide-y text-[11px]"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </section>
 
         <!-- 5. TELA – DASHBOARD -->
-        <section id="screen5" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
-            <div class="bg-[#0b5394] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
+        <section id="screen5" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
+            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                 <div>
-                    <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
-                        <i class="fa-solid fa-chart-line"></i> 5. TELA – DASHBOARD
+                    <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
+                        <i class="fa-solid fa-chart-line"></i> 5. DASHBOARD
                     </h2>
-                    <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
                 </div>
-                <div class="flex flex-wrap gap-3 text-xs font-semibold items-center">
-                    <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg">
+                <div class="flex flex-wrap gap-2 text-xs font-semibold items-center w-full md:w-auto">
+                    <div class="flex items-center gap-1.5 bg-blue-800 px-2.5 py-1.5 rounded-lg w-full sm:w-auto justify-between">
                         <span>DE:</span>
-                        <input type="date" id="dash-date-start" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none">
+                        <input type="date" id="dash-date-start" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-[11px] outline-none">
                         <span>ATÉ:</span>
-                        <input type="date" id="dash-date-end" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none">
+                        <input type="date" id="dash-date-end" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-[11px] outline-none">
                     </div>
 
-                    <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg">
+                    <div class="flex items-center gap-1.5 bg-blue-800 px-2.5 py-1.5 rounded-lg w-full sm:w-auto justify-between">
                         <span>LOCAL:</span>
-                        <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold"></select>
+                        <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs"></select>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-[#0f5298] text-white p-4 rounded-2xl shadow flex justify-between items-center">
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                <div class="bg-[#0f5298] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
                     <div>
-                        <p class="text-[10px] uppercase font-bold text-sky-100">CONSUMO TOTAL</p>
-                        <h3 id="dash-consumo-total" class="text-2xl font-black mt-1">0</h3>
-                        <p id="dash-litros-total" class="text-[10px] text-sky-200">0 litros</p>
+                        <p class="text-[9px] uppercase font-bold text-sky-100">CONSUMO TOTAL</p>
+                        <h3 id="dash-consumo-total" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
+                        <p id="dash-litros-total" class="text-[9px] text-sky-200">0 litros</p>
                     </div>
-                    <i class="fa-solid fa-faucet-drip text-3xl opacity-40"></i>
+                    <i class="fa-solid fa-faucet-drip text-2xl opacity-40"></i>
                 </div>
 
-                <div class="bg-[#0e8a44] text-white p-4 rounded-2xl shadow flex justify-between items-center">
+                <div class="bg-[#0e8a44] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
                     <div>
-                        <p class="text-[10px] uppercase font-bold text-emerald-100">ENTRADAS (CHEIOS)</p>
-                        <h3 id="dash-entradas" class="text-2xl font-black mt-1">0</h3>
-                        <p class="text-[10px] text-emerald-200">Galões</p>
+                        <p class="text-[9px] uppercase font-bold text-emerald-100">ENTRADAS</p>
+                        <h3 id="dash-entradas" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
+                        <p class="text-[9px] text-emerald-200">Galões</p>
                     </div>
-                    <i class="fa-solid fa-arrow-down text-3xl opacity-40"></i>
+                    <i class="fa-solid fa-arrow-down text-2xl opacity-40"></i>
                 </div>
 
-                <div class="bg-[#d9530f] text-white p-4 rounded-2xl shadow flex justify-between items-center">
+                <div class="bg-[#d9530f] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
                     <div>
-                        <p class="text-[10px] uppercase font-bold text-amber-100">DEVOLUÇÕES (VAZIOS)</p>
-                        <h3 id="dash-devolucoes" class="text-2xl font-black mt-1">0</h3>
-                        <p class="text-[10px] text-amber-200">Galões</p>
+                        <p class="text-[9px] uppercase font-bold text-amber-100">DEVOLUÇÕES</p>
+                        <h3 id="dash-devolucoes" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
+                        <p class="text-[9px] text-amber-200">Galões</p>
                     </div>
-                    <i class="fa-solid fa-arrow-up text-3xl opacity-40"></i>
+                    <i class="fa-solid fa-arrow-up text-2xl opacity-40"></i>
                 </div>
 
-                <div class="bg-[#6f42c1] text-white p-4 rounded-2xl shadow flex justify-between items-center">
+                <div class="bg-[#6f42c1] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
                     <div>
-                        <p class="text-[10px] uppercase font-bold text-purple-100">ESTOQUE ATUAL (CHEIOS)</p>
-                        <h3 id="dash-estoque-atual" class="text-2xl font-black mt-1">0</h3>
-                        <p class="text-[10px] text-purple-200">Galões</p>
+                        <p class="text-[9px] uppercase font-bold text-purple-100">ESTOQUE ATUAL</p>
+                        <h3 id="dash-estoque-atual" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
+                        <p class="text-[9px] text-purple-200">Galões</p>
                     </div>
-                    <i class="fa-solid fa-cubes text-3xl opacity-40"></i>
-                </div>
-
-                <div class="bg-[#343a40] text-white p-4 rounded-2xl shadow flex justify-between items-center">
-                    <div>
-                        <p class="text-[10px] uppercase font-bold text-slate-300">MÉDIA DIÁRIA</p>
-                        <h3 id="dash-media-diaria" class="text-2xl font-black mt-1">0</h3>
-                        <p id="dash-media-diaria-litros" class="text-[10px] text-slate-300">0 litros/dia</p>
-                    </div>
-                    <i class="fa-solid fa-chart-line text-3xl opacity-40"></i>
-                </div>
-
-                <div class="bg-[#495057] text-white p-4 rounded-2xl shadow flex justify-between items-center">
-                    <div>
-                        <p class="text-[10px] uppercase font-bold text-slate-300">EFETIVO MÉDIO</p>
-                        <h3 id="dash-efetivo" class="text-2xl font-black mt-1">500</h3>
-                        <p class="text-[10px] text-slate-300">Pessoas</p>
-                    </div>
-                    <i class="fa-solid fa-users text-3xl opacity-40"></i>
-                </div>
-
-                <div class="bg-[#17a2b8] text-white p-4 rounded-2xl shadow flex justify-between items-center">
-                    <div>
-                        <p class="text-[10px] uppercase font-bold text-teal-100">LITROS / PESSOA / DIA</p>
-                        <h3 id="dash-litros-pessoa" class="text-2xl font-black mt-1">0,0</h3>
-                        <p class="text-[10px] text-teal-200">L/pessoa/dia</p>
-                    </div>
-                    <i class="fa-solid fa-user text-3xl opacity-40"></i>
-                </div>
-
-                <div class="bg-[#fd7e14] text-white p-4 rounded-2xl shadow flex justify-between items-center">
-                    <div>
-                        <p class="text-[10px] uppercase font-bold text-orange-100">META</p>
-                        <h3 id="dash-meta" class="text-2xl font-black mt-1">2,7</h3>
-                        <p class="text-[10px] text-orange-200">L/pessoa/dia</p>
-                    </div>
-                    <i class="fa-solid fa-bullseye text-3xl opacity-40"></i>
+                    <i class="fa-solid fa-cubes text-2xl opacity-40"></i>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">CONSUMO DIÁRIO (GALÕES)</h4>
-                    <div class="relative h-64 w-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO DIÁRIO (GALÕES)</h4>
+                    <div class="relative h-56 w-full">
                         <canvas id="chartConsumoDiario"></canvas>
                     </div>
                 </div>
 
-                <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">CONSUMO POR LOCAL (PERÍODO)</h4>
-                    <div class="relative h-64 w-full">
+                <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO POR LOCAL</h4>
+                    <div class="relative h-56 w-full">
                         <canvas id="chartConsumoLocal"></canvas>
-                    </div>
-                </div>
-
-                <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">ENTRADAS X DEVOLUÇÕES (GALÕES)</h4>
-                    <div class="relative h-64 w-full">
-                        <canvas id="chartEntradasDevolucoes"></canvas>
-                    </div>
-                </div>
-
-                <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">CONSUMO MENSAL (GALÕES)</h4>
-                    <div class="relative h-64 w-full">
-                        <canvas id="chartConsumoMensal"></canvas>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 6. TELA – BASE DE DADOS -->
-        <section id="screen6" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
-            <div class="bg-[#6f42c1] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
+        <section id="screen6" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
+            <div class="bg-[#6f42c1] text-white p-3.5 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div>
-                    <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
-                        <i class="fa-solid fa-database"></i> BASE DE DADOS DE REGISTROS
+                    <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
+                        <i class="fa-solid fa-database"></i> BASE DE DADOS
                     </h2>
-                    <p class="text-xs text-purple-200">Visão Geral, Filtros e Relatórios Excel / CSV</p>
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="exportToExcel()" class="bg-[#0e8a44] hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 shadow">
-                        <i class="fa-solid fa-file-excel"></i> Exportar Excel (.xlsx)
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="exportToExcel()" class="flex-1 sm:flex-none bg-[#0e8a44] hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow">
+                        <i class="fa-solid fa-file-excel"></i> Excel
                     </button>
-                    <button onclick="exportToCSV()" class="bg-[#0f5298] hover:bg-sky-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 shadow">
-                        <i class="fa-solid fa-file-csv"></i> Exportar CSV
+                    <button onclick="exportToCSV()" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-sky-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow">
+                        <i class="fa-solid fa-file-csv"></i> CSV
                     </button>
-                </div>
-            </div>
-
-            <div class="flex flex-wrap justify-between items-center gap-4 bg-slate-50 p-4 rounded-xl border">
-                <input type="text" id="db-search" oninput="filterDatabase()" placeholder="Pesquisar por local, detalhe, observação..." class="p-2.5 border rounded-lg text-sm w-full md:w-80 bg-white">
-                <div class="flex items-center gap-2 text-xs font-bold">
-                    <span>Filtrar Tipo:</span>
-                    <select id="db-filter-tipo" onchange="filterDatabase()" class="p-2 border rounded-lg bg-white">
-                        <option value="Todos">Todos</option>
-                        <option value="Consumo">Consumo</option>
-                        <option value="Entrada">Entrada</option>
-                        <option value="Devolução">Devolução</option>
-                    </select>
                 </div>
             </div>
 
             <div class="overflow-x-auto border rounded-xl shadow-sm">
-                <table class="w-full text-sm text-left text-slate-700">
-                    <thead class="bg-[#0b5394] text-white uppercase text-xs font-bold">
+                <table class="w-full text-xs text-left text-slate-700">
+                    <thead class="bg-[#0b5394] text-white uppercase font-bold text-[10px]">
                         <tr>
-                            <th class="p-3">ID</th>
-                            <th class="p-3">DATA</th>
-                            <th class="p-3">TIPO</th>
-                            <th class="p-3">LOCAL PRINCIPAL</th>
-                            <th class="p-3">LOCAL DETALHE</th>
-                            <th class="p-3 text-center">QTD (GALÕES)</th>
-                            <th class="p-3">OBSERVAÇÃO</th>
-                            <th class="p-3 text-center">AÇÕES</th>
+                            <th class="p-2.5">DATA</th>
+                            <th class="p-2.5">TIPO</th>
+                            <th class="p-2.5">LOCAL</th>
+                            <th class="p-2.5 text-center">QTD</th>
+                            <th class="p-2.5 text-center">AÇÃO</th>
                         </tr>
                     </thead>
                     <tbody id="table-full-db" class="divide-y divide-slate-200"></tbody>
@@ -574,36 +484,34 @@
     </main>
 
     <!-- RODAPÉ -->
-    <footer class="bg-slate-950 text-slate-400 text-xs py-5 px-6 mt-auto border-t border-slate-900">
-        <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
-            <div class="flex items-center gap-3">
-                <strong class="text-sky-400 font-black tracking-wider text-sm">OUD PRIME</strong>
-                <span class="text-slate-500">• Sistemas Inteligentes para o seu dia a dia</span>
+    <footer class="bg-slate-950 text-slate-400 text-xs py-4 px-4 mt-auto border-t border-slate-900 w-full">
+        <div class="max-w-[1500px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left">
+            <div class="flex items-center gap-2">
+                <strong class="text-sky-400 font-black tracking-wider text-xs">OUD PRIME</strong>
+                <span class="text-slate-500 text-[11px]">• Sistemas Inteligentes</span>
             </div>
-            <div>
+            <div class="text-[11px]">
                 Desenvolvido por <strong class="text-slate-200 font-semibold">Adanilton Silva</strong>
             </div>
         </div>
     </footer>
 
     <!-- MODAL CONFIGURAÇÕES -->
-    <div id="modal-config" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-6 space-y-6 relative border max-h-[90vh] overflow-y-auto">
+    <div id="modal-config" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-5 space-y-5 relative border max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2 border-b">
-                <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-gear text-[#0b5394]"></i> Configurações e Acessos
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-[#0b5394]"></i> Configurações
                 </h3>
                 <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
             </div>
 
-            <div class="space-y-6">
+            <div class="space-y-4">
                 <!-- GESTÃO USUÁRIOS -->
-                <div class="bg-blue-50/60 border border-blue-200 p-4 rounded-2xl space-y-4">
-                    <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1 flex items-center gap-2">
-                        <i class="fa-solid fa-users-gear"></i> GESTÃO DE USUÁRIOS E PERMISSÕES
-                    </h4>
+                <div class="bg-blue-50/60 border border-blue-200 p-3.5 rounded-2xl space-y-3">
+                    <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1">GESTÃO DE USUÁRIOS</h4>
 
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <input type="text" id="add-user-name" placeholder="Nome Completo" class="p-2 border rounded-xl text-xs bg-white">
                         <input type="text" id="add-user-login" placeholder="Login / E-mail" class="p-2 border rounded-xl text-xs bg-white">
                         <input type="password" id="add-user-pass" placeholder="Senha" class="p-2 border rounded-xl text-xs bg-white">
@@ -612,109 +520,41 @@
                             <option value="ADM">Administrador</option>
                         </select>
                     </div>
-                    <button onclick="addNewUser()" class="w-full bg-[#0b5394] hover:bg-blue-800 text-white font-bold p-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-user-plus"></i> Cadastrar Novo Usuário
+                    <button onclick="addNewUser()" class="w-full bg-[#0b5394] text-white font-bold p-2 rounded-xl text-xs shadow">
+                        Cadastrar Usuário
                     </button>
 
-                    <div class="space-y-2 pt-2 border-t border-blue-200">
-                        <span class="text-[11px] font-bold text-slate-600 uppercase">Usuários Cadastrados no Sistema:</span>
-                        <div class="overflow-x-auto border rounded-xl bg-white shadow-sm">
-                            <table class="w-full text-xs text-left text-slate-700">
-                                <thead class="bg-slate-100 text-slate-700 font-bold uppercase text-[10px]">
-                                    <tr>
-                                        <th class="p-2">NOME</th>
-                                        <th class="p-2">LOGIN</th>
-                                        <th class="p-2 text-center">PERFIL</th>
-                                        <th class="p-2 text-center">AÇÃO</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="users-table-body" class="divide-y text-[11px]"></tbody>
-                            </table>
-                        </div>
+                    <div class="overflow-x-auto border rounded-xl bg-white shadow-sm pt-1">
+                        <table class="w-full text-xs text-left text-slate-700">
+                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase text-[9px]">
+                                <tr>
+                                    <th class="p-2">NOME</th>
+                                    <th class="p-2">LOGIN</th>
+                                    <th class="p-2 text-center">PERFIL</th>
+                                    <th class="p-2 text-center">AÇÃO</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body" class="divide-y text-[10px]"></tbody>
+                        </table>
                     </div>
-                </div>
-
-                <!-- PARÂMETROS GERAIS -->
-                <div>
-                    <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b pb-1 mb-3">PARÂMETROS GERAIS</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Efetivo de Pessoas:</label>
-                            <input type="number" id="cfg-efetivo" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Meta (L/Pessoa/Dia):</label>
-                            <input type="number" step="0.1" id="cfg-meta" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Volume do Galão (Litros):</label>
-                            <input type="number" id="cfg-volume" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CADASTRO LOCAIS E TIPOS -->
-                <div class="bg-slate-50 p-4 rounded-2xl border space-y-4">
-                    <h4 class="text-xs font-bold uppercase text-purple-700 border-b pb-1">CADASTRO DE OPÇÕES DO SISTEMA</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="space-y-2">
-                            <label class="block text-[11px] font-bold text-slate-700">Locais Principais:</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="add-main-loc-input" placeholder="Novo Local..." class="w-full p-2 border rounded-xl text-xs">
-                                <button onclick="addMainLocation()" class="bg-[#0b5394] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">Adicionar</button>
-                            </div>
-                            <div id="cfg-main-loc-list" class="flex flex-wrap gap-1.5 pt-1"></div>
-                        </div>
-
-                        <div class="space-y-2">
-                            <label class="block text-[11px] font-bold text-slate-700">Tipos de Lançamento:</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="add-tipo-input" placeholder="Novo Tipo..." class="w-full p-2 border rounded-xl text-xs">
-                                <button onclick="addTipoLancamento()" class="bg-[#0b5394] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">Adicionar</button>
-                            </div>
-                            <div id="cfg-tipos-list" class="flex flex-wrap gap-1.5 pt-1"></div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2 pt-2 border-t">
-                        <label class="block text-[11px] font-bold text-slate-700">Sub-Locais de Consumo (Detalhe):</label>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                            <select id="cfg-subloc-parent-select" class="p-2 border rounded-xl text-xs bg-white font-bold"></select>
-                            <input type="text" id="add-subloc-input" placeholder="Novo Sub-Local..." class="p-2 border rounded-xl text-xs">
-                            <button onclick="addSubLocation()" class="bg-[#0e8a44] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">Adicionar</button>
-                        </div>
-                        <div id="cfg-subloc-list" class="flex flex-wrap gap-1.5 pt-1"></div>
-                    </div>
-                </div>
-
-                <!-- ESTOQUES INICIAIS E MÍNIMOS -->
-                <div>
-                    <h4 class="text-xs font-bold uppercase font-bold text-emerald-700 border-b pb-1 mb-3">ESTOQUE INICIAL (GALÕES CHEIOS)</h4>
-                    <div id="cfg-ini-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
-                </div>
-
-                <div>
-                    <h4 class="text-xs font-bold uppercase font-bold text-amber-700 border-b pb-1 mb-3">ESTOQUE MÍNIMO DE SEGURANÇA</h4>
-                    <div id="cfg-min-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
                 </div>
 
                 <div class="pt-2 border-t">
-                    <button type="button" onclick="executeResetCache()" class="w-full bg-red-50 hover:bg-red-100 text-red-700 font-bold p-2.5 rounded-xl text-xs flex items-center justify-center gap-2 border border-red-200 transition">
-                        <i class="fa-solid fa-rotate text-xs"></i> Limpar Memória Cache e Atualizar do Google Sheets
+                    <button type="button" onclick="executeResetCache()" class="w-full bg-red-50 text-red-700 font-bold p-2 rounded-xl text-xs border border-red-200">
+                        Limpar Cache / Atualizar do Google Sheets
                     </button>
                 </div>
             </div>
 
-            <div class="flex justify-end gap-3 pt-4 border-t">
-                <button onclick="closeConfigModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-sm transition">Cancelar</button>
-                <button onclick="saveConfigParameters()" class="bg-[#0b5394] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-xl text-sm shadow transition">Salvar Configurações</button>
+            <div class="flex justify-end gap-2 pt-3 border-t">
+                <button onclick="closeConfigModal()" class="bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs">Cancelar</button>
+                <button onclick="saveConfigParameters()" class="bg-[#0b5394] text-white font-bold px-4 py-2 rounded-xl text-xs shadow">Salvar</button>
             </div>
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT COMPLETA E CORRIGIDA -->
+    <!-- LÓGICA JAVASCRIPT COMPLETA E ESTÁVEL -->
     <script>
-        // USUÁRIOS PADRÃO IMUTÁVEIS
         const BASE_USERS = {
             'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
             'operador': { pass: '1234', role: 'OPERADOR', name: 'Apontador de Campo' }
@@ -741,7 +581,6 @@
             estoqueMinimo: { 'Site': 300, 'Alojamento 01': 200, 'Alojamento 03': 200 }
         };
 
-        // INICIALIZAÇÃO
         document.addEventListener('DOMContentLoaded', () => {
             loadSavedConfig();
             setupLoginHandler();
@@ -762,7 +601,7 @@
                     }
                 }
             } catch(e) {
-                console.error("Erro no carregamento de configurações:", e);
+                console.error("Erro no carregamento:", e);
                 USERS_DB = { ...BASE_USERS };
             }
         }
@@ -809,7 +648,8 @@
 
         function applyUserPermissions() {
             if(!currentUser) return;
-            document.getElementById('user-display-name').innerText = `${currentUser.name} (${currentUser.role})`;
+            const badge = document.getElementById('user-display-name');
+            if(badge) badge.innerText = `${currentUser.name} (${currentUser.role})`;
             
             if (currentUser.role === 'OPERADOR') {
                 document.querySelectorAll('.adm-only').forEach(el => el.classList.add('hidden'));
@@ -843,7 +683,7 @@
             const role = document.getElementById('add-user-role').value;
 
             if (!name || !login || !pass) {
-                alert('Preencha Nome, Login e Senha para cadastrar.');
+                alert('Preencha Nome, Login e Senha.');
                 return;
             }
 
@@ -858,12 +698,12 @@
             document.getElementById('add-user-pass').value = '';
 
             renderUsersTable();
-            alert(`Usuário "${name}" cadastrado com sucesso!`);
+            alert(`Usuário "${name}" cadastrado!`);
         }
 
         function removeUser(loginKey) {
             if (loginKey === 'admin') {
-                alert('O usuário "admin" principal não pode ser excluído.');
+                alert('O usuário admin não pode ser excluído.');
                 return;
             }
 
@@ -882,15 +722,15 @@
                 const isAdmin = u.role === 'ADM';
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-2 font-bold">${u.name}</td>
-                        <td class="p-2 text-slate-500 font-mono text-[10px]">${key}</td>
-                        <td class="p-2 text-center">
-                            <span class="${isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'} font-bold px-2 py-0.5 rounded text-[10px]">
+                        <td class="p-1.5 font-bold">${u.name}</td>
+                        <td class="p-1.5 font-mono text-[9px] text-slate-500">${key}</td>
+                        <td class="p-1.5 text-center">
+                            <span class="${isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'} font-bold px-1.5 py-0.5 rounded text-[9px]">
                                 ${u.role}
                             </span>
                         </td>
-                        <td class="p-2 text-center">
-                            ${key !== 'admin' ? `<button onclick="removeUser('${key}')" class="text-red-500 hover:text-red-700 font-bold"><i class="fa-solid fa-user-minus"></i> Excluir</button>` : `<span class="text-slate-300 text-[10px]">Protegido</span>`}
+                        <td class="p-1.5 text-center">
+                            ${key !== 'admin' ? `<button onclick="removeUser('${key}')" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button>` : `<span class="text-slate-300 text-[9px]">Fix</span>`}
                         </td>
                     </tr>
                 `;
@@ -930,161 +770,26 @@
                 dashFilterSelect.appendChild(el);
             });
 
-            const cfgSubParent = document.getElementById('cfg-subloc-parent-select');
-            cfgSubParent.innerHTML = '';
-            mainLocations.forEach(loc => {
-                const el = document.createElement('option');
-                el.value = loc; el.innerText = loc;
-                cfgSubParent.appendChild(el);
-            });
-            cfgSubParent.onchange = renderSubLocTags;
-
             updateSubLocations();
             renderConfigDynamicFields();
         }
 
-        function addMainLocation() {
-            const val = document.getElementById('add-main-loc-input').value.trim();
-            if (val && !mainLocations.includes(val)) {
-                mainLocations.push(val);
-                subLocationsMap[val] = subLocationsMap[val] || [];
-                systemConfig.estoqueInicial[val] = 0;
-                systemConfig.estoqueMinimo[val] = 100;
-                document.getElementById('add-main-loc-input').value = '';
-                updateAllSelectsUI();
-                renderConfigDynamicFields();
-            }
-        }
-
-        function removeMainLocation(loc) {
-            if (confirm(`Deseja remover o local "${loc}"?`)) {
-                mainLocations = mainLocations.filter(m => m !== loc);
-                delete subLocationsMap[loc];
-                delete systemConfig.estoqueInicial[loc];
-                delete systemConfig.estoqueMinimo[loc];
-                updateAllSelectsUI();
-                renderConfigDynamicFields();
-            }
-        }
-
-        function addTipoLancamento() {
-            const val = document.getElementById('add-tipo-input').value.trim();
-            if (val && !tiposLancamento.includes(val)) {
-                tiposLancamento.push(val);
-                document.getElementById('add-tipo-input').value = '';
-                updateAllSelectsUI();
-            }
-        }
-
-        function removeTipoLancamento(t) {
-            if (['Consumo', 'Entrada', 'Devolução'].includes(t)) {
-                alert('Não é possível remover tipos padrão do sistema.');
-                return;
-            }
-            tiposLancamento = tiposLancamento.filter(item => item !== t);
-            updateAllSelectsUI();
-        }
-
-        function addSubLocation() {
-            const parentLoc = document.getElementById('cfg-subloc-parent-select').value;
-            const val = document.getElementById('add-subloc-input').value.trim();
-            if (parentLoc && val) {
-                subLocationsMap[parentLoc] = subLocationsMap[parentLoc] || [];
-                if (!subLocationsMap[parentLoc].includes(val)) {
-                    subLocationsMap[parentLoc].push(val);
-                    document.getElementById('add-subloc-input').value = '';
-                    renderSubLocTags();
-                    updateSubLocations();
-                }
-            }
-        }
-
-        function removeSubLocation(parentLoc, subLoc) {
-            if (subLocationsMap[parentLoc]) {
-                subLocationsMap[parentLoc] = subLocationsMap[parentLoc].filter(s => s !== subLoc);
-                renderSubLocTags();
-                updateSubLocations();
-            }
-        }
-
-        function renderSubLocTags() {
-            const parentLoc = document.getElementById('cfg-subloc-parent-select').value;
-            const container = document.getElementById('cfg-subloc-list');
-            container.innerHTML = '';
-            const list = subLocationsMap[parentLoc] || [];
-            list.forEach(sub => {
-                container.innerHTML += `
-                    <span class="bg-purple-100 text-purple-800 text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
-                        ${sub} <i onclick="removeSubLocation('${parentLoc}', '${sub}')" class="fa-solid fa-xmark cursor-pointer hover:text-red-600"></i>
-                    </span>
-                `;
-            });
-        }
-
         function renderConfigDynamicFields() {
             renderUsersTable();
-
-            const mainTagContainer = document.getElementById('cfg-main-loc-list');
-            mainTagContainer.innerHTML = '';
-            mainLocations.forEach(loc => {
-                mainTagContainer.innerHTML += `
-                    <span class="bg-blue-100 text-blue-800 text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
-                        ${loc} <i onclick="removeMainLocation('${loc}')" class="fa-solid fa-xmark cursor-pointer hover:text-red-600"></i>
-                    </span>
-                `;
-            });
-
-            const tipoTagContainer = document.getElementById('cfg-tipos-list');
-            tipoTagContainer.innerHTML = '';
-            tiposLancamento.forEach(t => {
-                tipoTagContainer.innerHTML += `
-                    <span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
-                        ${t} ${!['Consumo', 'Entrada', 'Devolução'].includes(t) ? `<i onclick="removeTipoLancamento('${t}')" class="fa-solid fa-xmark cursor-pointer hover:text-red-600"></i>` : ''}
-                    </span>
-                `;
-            });
-
-            renderSubLocTags();
-
-            const iniContainer = document.getElementById('cfg-ini-container');
-            iniContainer.innerHTML = '';
-            mainLocations.forEach(loc => {
-                const val = systemConfig.estoqueInicial[loc] || 0;
-                iniContainer.innerHTML += `
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">${loc}:</label>
-                        <input type="number" id="cfg-ini-${loc}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800" value="${val}">
-                    </div>
-                `;
-            });
-
-            const minContainer = document.getElementById('cfg-min-container');
-            minContainer.innerHTML = '';
-            mainLocations.forEach(loc => {
-                const val = systemConfig.estoqueMinimo[loc] || 200;
-                minContainer.innerHTML += `
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">${loc}:</label>
-                        <input type="number" id="cfg-min-${loc}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800" value="${val}">
-                    </div>
-                `;
-            });
-
             const stockCardContainer = document.getElementById('stock-cards-container');
             stockCardContainer.innerHTML = '';
             mainLocations.forEach(loc => {
                 const safeId = loc.replace(/\s+/g, '');
                 stockCardContainer.innerHTML += `
-                    <div class="border rounded-2xl p-4 shadow-sm space-y-3">
-                        <div class="bg-[#0b5394] text-white p-2 rounded-lg font-bold text-xs uppercase flex items-center gap-2">
+                    <div class="border rounded-2xl p-3 shadow-sm space-y-2">
+                        <div class="bg-[#0b5394] text-white p-1.5 rounded-lg font-bold text-xs uppercase flex items-center gap-1.5">
                             <i class="fa-solid fa-building"></i> ${loc}
                         </div>
-                        <div class="space-y-2 text-xs">
-                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE INICIAL</span> <strong id="st-${safeId}-inicial" class="text-base text-slate-800">0</strong></div>
-                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-${safeId}-cheios" class="text-base text-slate-800">0</strong></div>
-                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-${safeId}-vazios" class="text-base text-slate-800">0</strong></div>
-                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong id="st-${safeId}-minimo" class="text-base text-slate-800">0</strong></div>
-                            <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span id="st-${safeId}-status" class="bg-slate-100 text-slate-700 font-bold px-3 py-0.5 rounded-full text-xs">● ZERADO</span></div>
+                        <div class="space-y-1.5 text-xs">
+                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">INICIAL</span> <strong id="st-${safeId}-inicial" class="text-slate-800">0</strong></div>
+                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">CHEIOS</span> <strong id="st-${safeId}-cheios" class="text-slate-800">0</strong></div>
+                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">VAZIOS</span> <strong id="st-${safeId}-vazios" class="text-slate-800">0</strong></div>
+                            <div class="flex justify-between items-center pt-0.5"><span class="text-slate-500">STATUS</span> <span id="st-${safeId}-status" class="bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full text-[10px]">● ZERADO</span></div>
                         </div>
                     </div>
                 `;
@@ -1129,13 +834,13 @@
 
             subLocs.forEach(loc => {
                 container.innerHTML += `
-                    <div class="flex items-center justify-between border-b pb-2">
-                        <span class="text-xs font-semibold text-slate-700 flex items-center gap-2">
+                    <div class="flex items-center justify-between border-b pb-1.5">
+                        <span class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
                             <i class="fa-solid fa-house text-blue-600"></i> ${loc}
                         </span>
-                        <div class="flex items-center gap-2">
-                            <input type="number" min="0" data-loc="${loc}" oninput="updateBatchSummary()" class="batch-qtd-input w-20 p-1.5 border rounded-lg text-center font-bold text-xs" placeholder="0">
-                            <span class="text-xs text-slate-500">galões</span>
+                        <div class="flex items-center gap-1.5">
+                            <input type="number" min="0" data-loc="${loc}" oninput="updateBatchSummary()" class="batch-qtd-input w-16 p-1 border rounded text-center font-bold text-xs" placeholder="0">
+                            <span class="text-[11px] text-slate-500">gal.</span>
                         </div>
                     </div>
                 `;
@@ -1154,7 +859,7 @@
                 total += val;
                 if(val > 0) {
                     summary.innerHTML += `
-                        <div class="flex justify-between border-b pb-1">
+                        <div class="flex justify-between border-b pb-0.5">
                             <span>${inp.dataset.loc}:</span>
                             <strong>${val} galões</strong>
                         </div>
@@ -1205,9 +910,6 @@
                 alert('Acesso restrito ao Administrador.');
                 return;
             }
-            document.getElementById('cfg-efetivo').value = systemConfig.efetivo;
-            document.getElementById('cfg-meta').value = systemConfig.meta;
-            document.getElementById('cfg-volume').value = systemConfig.volumeGalao;
             renderConfigDynamicFields();
             document.getElementById('modal-config').classList.remove('hidden');
         }
@@ -1217,17 +919,6 @@
         }
 
         function saveConfigParameters() {
-            systemConfig.efetivo = parseInt(document.getElementById('cfg-efetivo').value) || 500;
-            systemConfig.meta = parseFloat(document.getElementById('cfg-meta').value) || 2.7;
-            systemConfig.volumeGalao = parseInt(document.getElementById('cfg-volume').value) || 20;
-
-            mainLocations.forEach(loc => {
-                const iniInput = document.getElementById(`cfg-ini-${loc}`);
-                const minInput = document.getElementById(`cfg-min-${loc}`);
-                if (iniInput) systemConfig.estoqueInicial[loc] = parseInt(iniInput.value) || 0;
-                if (minInput) systemConfig.estoqueMinimo[loc] = parseInt(minInput.value) || 200;
-            });
-
             const fullConfig = {
                 systemConfig,
                 mainLocations,
@@ -1241,16 +932,16 @@
             updateAllSelectsUI();
             updateStockUI();
             updateDashboard();
-            alert('Configurações salvas com sucesso!');
+            alert('Configurações salvas!');
         }
 
         function executeResetCache() {
-            if(confirm('Tem certeza de que deseja limpar a memória temporária do navegador? Os dados serão atualizados diretamente do Google Sheets.')) {
+            if(confirm('Tem certeza de que deseja limpar a memória cache?')) {
                 localStorage.clear();
                 database = [];
                 closeConfigModal();
                 loadDataFromSheet();
-                alert('Cache limpo com sucesso!');
+                alert('Cache limpo!');
             }
         }
 
@@ -1324,7 +1015,7 @@
             };
 
             saveRecords([record]);
-            alert('Lançamento registrado com sucesso!');
+            alert('Lançamento registrado!');
             document.getElementById('form-single').reset();
             document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
             updateSubLocations();
@@ -1337,42 +1028,22 @@
             const list = [...database].reverse().slice(0, 5);
 
             if(list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-xs text-slate-400">Nenhum lançamento registrado ainda.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-xs text-slate-400">Nenhum lançamento.</td></tr>`;
                 return;
             }
 
             list.forEach((r, idx) => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-3">${r.Data || '-'}</td>
-                        <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
-                        <td class="p-3">${r.LocalPrincipal || '-'}</td>
-                        <td class="p-3">${r.LocalDetalhe || '-'}</td>
-                        <td class="p-3 text-center font-black">${r.Quantidade || 0}</td>
-                        <td class="p-3 text-xs text-slate-500">${r.Observacao || '-'}</td>
-                        <td class="p-3 text-center"><button onclick="deleteRecord(${database.length - 1 - idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="p-2">${r.Data || '-'}</td>
+                        <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                        <td class="p-2">${r.LocalPrincipal || '-'}</td>
+                        <td class="p-2">${r.LocalDetalhe || '-'}</td>
+                        <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
+                        <td class="p-2 text-center"><button onclick="deleteRecord(${database.length - 1 - idx})" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>
                 `;
             });
-
-            const tbodyMoves = document.getElementById('stock-last-moves');
-            if(tbodyMoves) {
-                tbodyMoves.innerHTML = '';
-                if(list.length === 0) {
-                    tbodyMoves.innerHTML = `<tr><td colspan="4" class="p-2 text-center text-slate-400">Sem registros.</td></tr>`;
-                } else {
-                    list.forEach(r => {
-                        tbodyMoves.innerHTML += `
-                            <tr>
-                                <td class="p-2">${r.Data || '-'}</td>
-                                <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
-                                <td class="p-2">${r.LocalPrincipal || '-'}</td>
-                                <td class="p-2 text-center font-bold">${r.Quantidade || 0}</td>
-                            </tr>
-                        `;
-                    });
-                }
-            }
         }
 
         function renderFullDatabaseTable() {
@@ -1380,21 +1051,18 @@
             tbody.innerHTML = '';
 
             if(database.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-xs text-slate-400">Nenhum registro encontrado na base de dados.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-xs text-slate-400">Nenhum registro.</td></tr>`;
                 return;
             }
 
             database.forEach((r, idx) => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-3 text-slate-400 font-mono text-xs">#${1001 + idx}</td>
-                        <td class="p-3">${r.Data || '-'}</td>
-                        <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
-                        <td class="p-3">${r.LocalPrincipal || '-'}</td>
-                        <td class="p-3">${r.LocalDetalhe || '-'}</td>
-                        <td class="p-3 text-center font-black">${r.Quantidade || 0}</td>
-                        <td class="p-3 text-xs text-slate-500">${r.Observacao || '-'}</td>
-                        <td class="p-3 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="p-2">${r.Data || '-'}</td>
+                        <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                        <td class="p-2">${r.LocalPrincipal || '-'}</td>
+                        <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
+                        <td class="p-2 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>
                 `;
             });
@@ -1409,36 +1077,6 @@
                 updateStockUI();
                 updateDashboard();
             }
-        }
-
-        function filterDatabase() {
-            const search = document.getElementById('db-search').value.toLowerCase();
-            const filterTipo = document.getElementById('db-filter-tipo').value;
-
-            const tbody = document.getElementById('table-full-db');
-            tbody.innerHTML = '';
-
-            database.forEach((r, idx) => {
-                const matchesSearch = (r.LocalPrincipal || '').toLowerCase().includes(search) || 
-                                      (r.LocalDetalhe || '').toLowerCase().includes(search) || 
-                                      (r.Observacao || '').toLowerCase().includes(search);
-                const matchesTipo = filterTipo === 'Todos' || r.Tipo === filterTipo;
-
-                if(matchesSearch && matchesTipo) {
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50">
-                            <td class="p-3 text-slate-400 font-mono text-xs">#${1001 + idx}</td>
-                            <td class="p-3">${r.Data || '-'}</td>
-                            <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
-                            <td class="p-3">${r.LocalPrincipal || '-'}</td>
-                            <td class="p-3">${r.LocalDetalhe || '-'}</td>
-                            <td class="p-3 text-center font-black">${r.Quantidade || 0}</td>
-                            <td class="p-3 text-xs text-slate-500">${r.Observacao || '-'}</td>
-                            <td class="p-3 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
-                        </tr>
-                    `;
-                }
-            });
         }
 
         function calculateStock() {
@@ -1476,18 +1114,16 @@
                     const elIni = document.getElementById(`st-${safeId}-inicial`);
                     const elChe = document.getElementById(`st-${safeId}-cheios`);
                     const elVaz = document.getElementById(`st-${safeId}-vazios`);
-                    const elMin = document.getElementById(`st-${safeId}-minimo`);
                     const elSta = document.getElementById(`st-${safeId}-status`);
 
                     if (elIni) elIni.innerText = s.inicial;
                     if (elChe) elChe.innerText = s.cheios;
                     if (elVaz) elVaz.innerText = s.vazios;
-                    if (elMin) elMin.innerText = s.min;
 
                     if (elSta) {
                         const isNormal = s.cheios >= s.min;
-                        elSta.className = `${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-3 py-0.5 rounded-full text-xs`;
-                        elSta.innerText = `● ${isNormal ? 'Normal' : 'Abaixo do Mínimo'}`;
+                        elSta.className = `${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-2 py-0.5 rounded-full text-[10px]`;
+                        elSta.innerText = `● ${isNormal ? 'Normal' : 'Baixo'}`;
                     }
                 }
             });
@@ -1499,16 +1135,14 @@
                 const isNormal = s.cheios >= s.min;
                 tbody.innerHTML += `
                     <tr>
-                        <td class="p-3 font-bold">${loc}</td>
-                        <td class="p-3 text-center">${s.inicial}</td>
-                        <td class="p-3 text-center font-bold text-emerald-600">+${s.entrada}</td>
-                        <td class="p-3 text-center font-bold text-blue-600">-${s.consumo}</td>
-                        <td class="p-3 text-center font-bold text-amber-600">${s.devolucao}</td>
-                        <td class="p-3 text-center font-black text-slate-800 text-sm">${s.cheios}</td>
-                        <td class="p-3 text-center">${s.min}</td>
-                        <td class="p-3 text-center">
-                            <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-3 py-0.5 rounded-full text-xs">
-                                ● ${isNormal ? 'Normal' : 'Abaixo do Mínimo'}
+                        <td class="p-2 font-bold">${loc}</td>
+                        <td class="p-2 text-center">${s.inicial}</td>
+                        <td class="p-2 text-center text-emerald-600 font-bold">+${s.entrada}</td>
+                        <td class="p-2 text-center text-blue-600 font-bold">-${s.consumo}</td>
+                        <td class="p-2 text-center font-black">${s.cheios}</td>
+                        <td class="p-2 text-center">
+                            <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-2 py-0.5 rounded-full text-[10px]">
+                                ● ${isNormal ? 'OK' : 'Baixo'}
                             </span>
                         </td>
                     </tr>
@@ -1516,7 +1150,7 @@
             });
         }
 
-        let chartEvolucao, chartDiario, chartLocal, chartEntradasDev, chartMensal;
+        let chartDiario, chartLocal;
 
         function initCharts() {
             const chartOptions = {
@@ -1525,26 +1159,12 @@
                 plugins: { legend: { position: 'top' } }
             };
 
-            const ctxEvol = document.getElementById('chartEvolucaoEstoque').getContext('2d');
-            chartEvolucao = new Chart(ctxEvol, {
-                type: 'line',
-                data: {
-                    labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
-                    datasets: [
-                        { label: 'Site', data: [0, 0, 0, 0], borderColor: '#0f5298', fill: false },
-                        { label: 'Alaj. 01', data: [0, 0, 0, 0], borderColor: '#0e8a44', fill: false },
-                        { label: 'Alaj. 03', data: [0, 0, 0, 0], borderColor: '#d9530f', fill: false }
-                    ]
-                },
-                options: chartOptions
-            });
-
             const ctxDiario = document.getElementById('chartConsumoDiario').getContext('2d');
             chartDiario = new Chart(ctxDiario, {
                 type: 'bar',
                 data: {
-                    labels: Array.from({length: 15}, (_, i) => String(i + 1).padStart(2, '0')),
-                    datasets: [{ label: 'Consumo Diário', data: Array(15).fill(0), backgroundColor: '#0f5298' }]
+                    labels: Array.from({length: 10}, (_, i) => String(i + 1).padStart(2, '0')),
+                    datasets: [{ label: 'Consumo', data: Array(10).fill(0), backgroundColor: '#0f5298' }]
                 },
                 options: chartOptions
             });
@@ -1554,30 +1174,7 @@
                 type: 'doughnut',
                 data: {
                     labels: mainLocations,
-                    datasets: [{ data: mainLocations.map(() => 0), backgroundColor: ['#0f5298', '#0e8a44', '#d9530f', '#6f42c1', '#fd7e14'] }]
-                },
-                options: chartOptions
-            });
-
-            const ctxEntDev = document.getElementById('chartEntradasDevolucoes').getContext('2d');
-            chartEntradasDev = new Chart(ctxEntDev, {
-                type: 'line',
-                data: {
-                    labels: Array.from({length: 10}, (_, i) => String(i + 1).padStart(2, '0')),
-                    datasets: [
-                        { label: 'Entradas', data: Array(10).fill(0), borderColor: '#0e8a44', fill: false },
-                        { label: 'Devoluções', data: Array(10).fill(0), borderColor: '#d9530f', fill: false }
-                    ]
-                },
-                options: chartOptions
-            });
-
-            const ctxMensal = document.getElementById('chartConsumoMensal').getContext('2d');
-            chartMensal = new Chart(ctxMensal, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                    datasets: [{ label: 'Galões', data: Array(12).fill(0), backgroundColor: '#0f5298' }]
+                    datasets: [{ data: mainLocations.map(() => 0), backgroundColor: ['#0f5298', '#0e8a44', '#d9530f'] }]
                 },
                 options: chartOptions
             });
@@ -1590,15 +1187,6 @@
 
             let totalConsumo = 0, totalEntradas = 0, totalDevolucoes = 0;
             const stock = calculateStock();
-
-            let diasIntervalo = 30;
-            if (startDateVal && endDateVal) {
-                const dtStart = new Date(startDateVal);
-                const dtEnd = new Date(endDateVal);
-                const diffTime = dtEnd - dtStart;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                diasIntervalo = diffDays > 0 ? diffDays : 1;
-            }
 
             database.forEach(r => {
                 const q = parseInt(r.Quantidade) || 0;
@@ -1624,29 +1212,17 @@
             }
 
             const totalLitros = totalConsumo * systemConfig.volumeGalao;
-            const mediaDiaria = Math.round(totalConsumo / diasIntervalo);
-            const mediaDiariaLitros = Math.round(totalLitros / diasIntervalo);
-            const litrosPessoaDia = systemConfig.efetivo > 0 ? (totalLitros / (systemConfig.efetivo * diasIntervalo)).toFixed(1) : "0,0";
 
             document.getElementById('dash-consumo-total').innerText = totalConsumo;
             document.getElementById('dash-litros-total').innerText = `${totalLitros.toLocaleString()} litros`;
             document.getElementById('dash-entradas').innerText = totalEntradas;
             document.getElementById('dash-devolucoes').innerText = totalDevolucoes;
             document.getElementById('dash-estoque-atual').innerText = estoqueAtualLocal;
-
-            document.getElementById('dash-media-diaria').innerText = mediaDiaria;
-            document.getElementById('dash-media-diaria-litros').innerText = `${mediaDiariaLitros} litros/dia`;
-            document.getElementById('dash-efetivo').innerText = systemConfig.efetivo;
-            document.getElementById('dash-litros-pessoa').innerText = litrosPessoaDia.toString().replace('.', ',');
-            document.getElementById('dash-meta').innerText = systemConfig.meta.toString().replace('.', ',');
         }
 
         function exportToExcel() {
-            if (!currentUser || currentUser.role !== 'ADM') {
-                alert('Acesso restrito ao Administrador.');
-                return;
-            }
-            if(database.length === 0) { alert('Nenhum dado cadastrado para exportar.'); return; }
+            if (!currentUser || currentUser.role !== 'ADM') { alert('Acesso restrito.'); return; }
+            if(database.length === 0) { alert('Sem dados.'); return; }
             const ws = XLSX.utils.json_to_sheet(database);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Lancamentos");
@@ -1654,11 +1230,8 @@
         }
 
         function exportToCSV() {
-            if (!currentUser || currentUser.role !== 'ADM') {
-                alert('Acesso restrito ao Administrador.');
-                return;
-            }
-            if(database.length === 0) { alert('Nenhum dado cadastrado para exportar.'); return; }
+            if (!currentUser || currentUser.role !== 'ADM') { alert('Acesso restrito.'); return; }
+            if(database.length === 0) { alert('Sem dados.'); return; }
             const ws = XLSX.utils.json_to_sheet(database);
             const csv = XLSX.utils.sheet_to_csv(ws);
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
