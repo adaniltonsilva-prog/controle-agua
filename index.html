@@ -5,8 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OUD PRIME - Controle de Água</title>
     
-    <!-- CONEXÃO PWA (APLICATIVO MOBILE) -->
+    <!-- CONEXÃO PWA (APLICATIVO MOBILE EM ECRÃ INTEIRO) -->
     <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0f172a">
+
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js');
@@ -39,7 +44,7 @@
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
     </script>
 
-    <!-- TELA DE LOGIN (CORRIGIDA E CENTRALIZADA) -->
+    <!-- TELA DE LOGIN -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 w-full h-full overflow-y-auto">
         <div class="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-6 space-y-5 border border-slate-800 my-auto text-center mx-auto">
             <div class="space-y-2 flex flex-col items-center justify-center">
@@ -73,40 +78,40 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO DA APLICAÇÃO (RESPONSIVO MOBILE) -->
-    <header class="bg-nav text-white px-4 py-3 shadow-md w-full">
-        <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
+    <!-- CABEÇALHO -->
+    <header class="bg-nav text-white px-4 py-2.5 shadow-md w-full">
+        <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2 md:gap-3">
             <div class="flex items-center justify-between w-full md:w-auto">
-                <div class="flex items-center gap-3">
-                    <img src="logo.png" alt="OUD PRIME" class="h-8 md:h-10 object-contain" onerror="this.src='https://via.placeholder.com/100/0284c7/ffffff?text=OP'">
+                <div class="flex items-center gap-2.5">
+                    <img src="logo.png" alt="OUD PRIME" class="h-7 md:h-10 object-contain" onerror="this.src='https://via.placeholder.com/100/0284c7/ffffff?text=OP'">
                     <div>
-                        <h1 class="text-base md:text-lg font-black uppercase tracking-wider leading-none text-white">CONTROLE DE ÁGUA</h1>
-                        <p class="text-[9px] md:text-[10px] text-sky-400 font-bold uppercase tracking-wide mt-0.5">Sistemas Inteligentes para o seu dia a dia</p>
+                        <h1 class="text-sm md:text-lg font-black uppercase tracking-wider leading-none text-white">CONTROLE DE ÁGUA</h1>
+                        <p class="text-[8px] md:text-[10px] text-sky-400 font-bold uppercase tracking-wide mt-0.5">Sistemas Inteligentes para o seu dia a dia</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2 md:hidden">
-                    <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow">
+                    <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-lg text-xs font-bold shadow">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- NAVEGAÇÃO COM ROLAGEM HORIZONTAL NO MOBILE -->
+            <!-- NAVEGAÇÃO -->
             <nav class="flex items-center gap-1.5 text-xs md:text-sm overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
-                <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-3 py-2 flex items-center gap-1.5">
+                <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-3 py-1.5 flex items-center gap-1.5">
                     <i class="fa-solid fa-house text-xs"></i> Menu
                 </button>
-                <button onclick="switchScreen('screen2')" id="nav-screen2" class="nav-btn px-3 py-2 flex items-center gap-1.5">
+                <button onclick="switchScreen('screen2')" id="nav-screen2" class="nav-btn px-3 py-1.5 flex items-center gap-1.5">
                     <i class="fa-solid fa-pen-to-square text-xs"></i> Lançamentos
                 </button>
-                <button onclick="switchScreen('screen4')" id="nav-screen4" class="nav-btn px-3 py-2 flex items-center gap-1.5">
+                <button onclick="switchScreen('screen4')" id="nav-screen4" class="nav-btn px-3 py-1.5 flex items-center gap-1.5">
                     <i class="fa-solid fa-boxes-stacked text-xs"></i> Estoque
                 </button>
-                <button onclick="switchScreen('screen5')" id="nav-screen5" class="nav-btn adm-only px-3 py-2 flex items-center gap-1.5">
+                <button onclick="switchScreen('screen5')" id="nav-screen5" class="nav-btn adm-only px-3 py-1.5 flex items-center gap-1.5">
                     <i class="fa-solid fa-chart-line text-xs"></i> Dashboard
                 </button>
-                <button onclick="switchScreen('screen6')" id="nav-screen6" class="nav-btn adm-only px-3 py-2 flex items-center gap-1.5">
+                <button onclick="switchScreen('screen6')" id="nav-screen6" class="nav-btn adm-only px-3 py-1.5 flex items-center gap-1.5">
                     <i class="fa-solid fa-database text-xs"></i> Base
                 </button>
             </nav>
@@ -125,71 +130,74 @@
     <main class="max-w-[1500px] w-full mx-auto p-3 md:p-6 flex-1 text-slate-800">
 
         <!-- 1. TELA – MENU PRINCIPAL -->
-        <section id="screen1" class="screen-content space-y-4 md:space-y-6">
-            <div class="banner-blue text-white p-5 md:p-8 rounded-2xl shadow-lg flex justify-between items-center relative overflow-hidden">
-                <div class="space-y-1.5 z-10">
-                    <span class="bg-white/20 text-[10px] md:text-xs uppercase font-extrabold px-2.5 py-0.5 rounded-full tracking-widest">OUD PRIME • GESTÃO DE ÁGUA</span>
-                    <h2 class="text-2xl md:text-5xl font-black uppercase tracking-tight">PAINEL OPERACIONAL</h2>
-                    <p class="text-sky-100 text-xs md:text-base font-medium">Sistemas Inteligentes para o seu dia a dia</p>
+        <section id="screen1" class="screen-content space-y-3 md:space-y-6">
+            
+            <!-- BANNER AZUL REDUZIDO COMPACTO NO MOBILE -->
+            <div class="banner-blue text-white p-3.5 md:p-8 rounded-xl shadow-lg flex justify-between items-center relative overflow-hidden">
+                <div class="space-y-0.5 z-10">
+                    <span class="bg-white/20 text-[9px] md:text-xs uppercase font-extrabold px-2 py-0.5 rounded-full tracking-widest">OUD PRIME</span>
+                    <h2 class="text-lg md:text-5xl font-black uppercase tracking-tight">PAINEL OPERACIONAL</h2>
+                    <p class="text-sky-100 text-[10px] md:text-base font-medium">Sistemas Inteligentes para o seu dia a dia</p>
                 </div>
                 <div class="hidden md:block opacity-20 text-white z-0">
                     <i class="fa-solid fa-droplet text-9xl"></i>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                <div onclick="switchScreen('screen2')" class="card-menu cursor-pointer bg-[#0f5298] text-white p-5 rounded-2xl shadow-md flex flex-col justify-between h-40 md:h-48">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-pen-to-square"></i></div>
+            <!-- BOTÕES DO MENU PRINCIPAL -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
+                <div onclick="switchScreen('screen2')" class="card-menu cursor-pointer bg-[#0f5298] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                    <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-pen-to-square"></i></div>
                     <div>
-                        <h3 class="text-lg md:text-xl font-bold uppercase tracking-wide">LANÇAMENTOS</h3>
-                        <p class="text-[11px] md:text-xs text-blue-100 mt-0.5">Entrada, Devolução e Consumo</p>
+                        <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">LANÇAMENTOS</h3>
+                        <p class="text-[10px] md:text-xs text-blue-100 mt-0.5">Entrada, Devolução e Consumo</p>
                     </div>
-                    <div class="text-right text-xs font-bold uppercase tracking-wider text-blue-200">ACESSAR &rarr;</div>
+                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-blue-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="switchScreen('screen4')" class="card-menu cursor-pointer bg-[#0e8a44] text-white p-5 rounded-2xl shadow-md flex flex-col justify-between h-40 md:h-48">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-cubes"></i></div>
+                <div onclick="switchScreen('screen4')" class="card-menu cursor-pointer bg-[#0e8a44] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                    <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-cubes"></i></div>
                     <div>
-                        <h3 class="text-lg md:text-xl font-bold uppercase tracking-wide">ESTOQUE</h3>
-                        <p class="text-[11px] md:text-xs text-emerald-100 mt-0.5">Consulta e Movimentação</p>
+                        <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">ESTOQUE</h3>
+                        <p class="text-[10px] md:text-xs text-emerald-100 mt-0.5">Consulta e Movimentação</p>
                     </div>
-                    <div class="text-right text-xs font-bold uppercase tracking-wider text-emerald-200">ACESSAR &rarr;</div>
+                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-emerald-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="switchScreen('screen5')" class="card-menu adm-only cursor-pointer bg-[#d9530f] text-white p-5 rounded-2xl shadow-md flex flex-col justify-between h-40 md:h-48">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-chart-column"></i></div>
+                <div onclick="switchScreen('screen5')" class="card-menu adm-only cursor-pointer bg-[#d9530f] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                    <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-chart-column"></i></div>
                     <div>
-                        <h3 class="text-lg md:text-xl font-bold uppercase tracking-wide">DASHBOARD</h3>
-                        <p class="text-[11px] md:text-xs text-amber-100 mt-0.5">Gráficos e Indicadores</p>
+                        <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">DASHBOARD</h3>
+                        <p class="text-[10px] md:text-xs text-amber-100 mt-0.5">Gráficos e Indicadores</p>
                     </div>
-                    <div class="text-right text-xs font-bold uppercase tracking-wider text-amber-200">ACESSAR &rarr;</div>
+                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-amber-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="switchScreen('screen6')" class="card-menu adm-only cursor-pointer bg-[#6f42c1] text-white p-5 rounded-2xl shadow-md flex flex-col justify-between h-40 md:h-48">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-database"></i></div>
+                <div onclick="switchScreen('screen6')" class="card-menu adm-only cursor-pointer bg-[#6f42c1] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                    <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-database"></i></div>
                     <div>
-                        <h3 class="text-lg md:text-xl font-bold uppercase tracking-wide">BASE DE DADOS</h3>
-                        <p class="text-[11px] md:text-xs text-purple-100 mt-0.5">Registros de Lançamentos</p>
+                        <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">BASE DE DADOS</h3>
+                        <p class="text-[10px] md:text-xs text-purple-100 mt-0.5">Registros de Lançamentos</p>
                     </div>
-                    <div class="text-right text-xs font-bold uppercase tracking-wider text-purple-200">ACESSAR &rarr;</div>
+                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-purple-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="openConfigModal()" class="card-menu adm-only cursor-pointer bg-[#495057] text-white p-5 rounded-2xl shadow-md flex flex-col justify-between h-40 md:h-48">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-gear"></i></div>
+                <div onclick="openConfigModal()" class="card-menu adm-only cursor-pointer bg-[#495057] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                    <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-gear"></i></div>
                     <div>
-                        <h3 class="text-lg md:text-xl font-bold uppercase tracking-wide">CONFIGURAÇÕES</h3>
-                        <p class="text-[11px] md:text-xs text-slate-200 mt-0.5">Usuários, Cadastros e Parâmetros</p>
+                        <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">CONFIGURAÇÕES</h3>
+                        <p class="text-[10px] md:text-xs text-slate-200 mt-0.5">Usuários, Cadastros e Parâmetros</p>
                     </div>
-                    <div class="text-right text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
+                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="exportToExcel()" class="card-menu adm-only cursor-pointer bg-[#17a2b8] text-white p-5 rounded-2xl shadow-md flex flex-col justify-between h-40 md:h-48">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-file-excel"></i></div>
+                <div onclick="exportToExcel()" class="card-menu adm-only cursor-pointer bg-[#17a2b8] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                    <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-file-excel"></i></div>
                     <div>
-                        <h3 class="text-lg md:text-xl font-bold uppercase tracking-wide">RELATÓRIOS</h3>
-                        <p class="text-[11px] md:text-xs text-teal-100 mt-0.5">Exportar em Excel (.xlsx)</p>
+                        <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">RELATÓRIOS</h3>
+                        <p class="text-[10px] md:text-xs text-teal-100 mt-0.5">Exportar em Excel (.xlsx)</p>
                     </div>
-                    <div class="text-right text-xs font-bold uppercase tracking-wider text-teal-200">BAIXAR &rarr;</div>
+                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-teal-200">BAIXAR &rarr;</div>
                 </div>
             </div>
         </section>
@@ -484,7 +492,7 @@
     </main>
 
     <!-- RODAPÉ -->
-    <footer class="bg-slate-950 text-slate-400 text-xs py-4 px-4 mt-auto border-t border-slate-900 w-full">
+    <footer class="bg-slate-950 text-slate-400 text-xs py-3 px-4 mt-auto border-t border-slate-900 w-full">
         <div class="max-w-[1500px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left">
             <div class="flex items-center gap-2">
                 <strong class="text-sky-400 font-black tracking-wider text-xs">OUD PRIME</strong>
@@ -507,7 +515,6 @@
             </div>
 
             <div class="space-y-4">
-                <!-- GESTÃO USUÁRIOS -->
                 <div class="bg-blue-50/60 border border-blue-200 p-3.5 rounded-2xl space-y-3">
                     <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1">GESTÃO DE USUÁRIOS</h4>
 
