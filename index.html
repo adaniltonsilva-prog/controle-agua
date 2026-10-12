@@ -1807,25 +1807,32 @@
             const stock = calculateStock();
             const cardContainer = document.getElementById('stock-cards-container');
             const tbody = document.getElementById('stock-summary-table');
+            const criticalBanner = document.getElementById('critical-stock-banner');
+            const criticalText = document.getElementById('critical-stock-text');
+
+            const criticalLocs = [];
 
             if (cardContainer) {
                 cardContainer.innerHTML = '';
                 mainLocations.forEach(loc => {
                     const s = stock[loc] || { inicial: 0, inicialVazios: 0, min: 200, cheios: 0, vazios: 0, entrada: 0, consumo: 0, devolucao: 0 };
                     const isNormal = s.cheios >= s.min;
-                    const statusClass = isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
-                    const statusText = isNormal ? '● NORMAL' : '● BAIXO';
+                    if (!isNormal) {
+                        criticalLocs.push({ name: loc, cheios: s.cheios, min: s.min });
+                    }
+                    const statusClass = isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800 animate-pulse';
+                    const statusText = isNormal ? '● NORMAL' : '● CRÍTICO (BAIXO)';
 
                     cardContainer.innerHTML += `
-                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
-                            <div class="bg-[#0b5394] text-white p-2.5 rounded-xl font-bold text-xs uppercase flex items-center justify-between shadow">
+                        <div class="bg-slate-50 border ${isNormal ? 'border-slate-200' : 'border-rose-300 ring-2 ring-rose-400/40'} rounded-2xl p-4 shadow-sm space-y-3">
+                            <div class="${isNormal ? 'bg-[#0b5394]' : 'bg-rose-700'} text-white p-2.5 rounded-xl font-bold text-xs uppercase flex items-center justify-between shadow">
                                 <span class="flex items-center gap-1.5"><i class="fa-solid fa-building"></i> ${loc}</span>
                                 <span class="${statusClass} font-black px-2 py-0.5 rounded-full text-[10px]">${statusText}</span>
                             </div>
                             <div class="grid grid-cols-2 gap-2 text-xs">
                                 <div class="bg-white p-2 rounded-xl border border-slate-200">
                                     <span class="text-[10px] uppercase font-bold text-slate-400 block">Cheios</span>
-                                    <strong class="text-lg font-black text-slate-900">${s.cheios}</strong>
+                                    <strong class="text-lg font-black ${isNormal ? 'text-slate-900' : 'text-rose-600'}">${s.cheios}</strong>
                                 </div>
                                 <div class="bg-white p-2 rounded-xl border border-slate-200">
                                     <span class="text-[10px] uppercase font-bold text-amber-600 block">Vazios</span>
@@ -1850,6 +1857,19 @@
                 });
             }
 
+            // Gerenciar banner de estoque crítico no topo da tela
+            if (criticalBanner) {
+                if (criticalLocs.length > 0) {
+                    criticalBanner.classList.remove('hidden');
+                    if (criticalText) {
+                        const locNames = criticalLocs.map(c => `${c.name} (${c.cheios}/${c.min} gal.)`).join(', ');
+                        criticalText.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-300 text-sm"></i> <span><strong>ESTOQUE CRÍTICO:</strong> ${locNames}</span>`;
+                    }
+                } else {
+                    criticalBanner.classList.add('hidden');
+                }
+            }
+
             if (tbody) {
                 tbody.innerHTML = '';
                 mainLocations.forEach(loc => {
@@ -1862,11 +1882,11 @@
                             <td class="p-2.5 text-center text-emerald-600 font-bold">+${s.entrada}</td>
                             <td class="p-2.5 text-center text-blue-600 font-bold">-${s.consumo}</td>
                             <td class="p-2.5 text-center text-amber-600 font-bold">-${s.devolucao}</td>
-                            <td class="p-2.5 text-center font-black text-slate-900 text-sm">${s.cheios}</td>
+                            <td class="p-2.5 text-center font-black ${isNormal ? 'text-slate-900' : 'text-rose-600'} text-sm">${s.cheios}</td>
                             <td class="p-2.5 text-center font-black text-amber-600 text-sm">${s.vazios}</td>
                             <td class="p-2.5 text-center">
-                                <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-2 py-0.5 rounded-full text-[10px]">
-                                    ● ${isNormal ? 'OK' : 'Baixo'}
+                                <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'} font-bold px-2 py-0.5 rounded-full text-[10px]">
+                                    ● ${isNormal ? 'OK' : 'Crítico'}
                                 </span>
                             </td>
                         </tr>
@@ -2323,33 +2343,73 @@
             tbody.innerHTML = '';
 
             if (database.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-xs text-slate-400">Nenhum registro.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="p-3 text-center text-xs text-slate-400">Nenhum registro.</td></tr>`;
                 return;
             }
 
             database.forEach((r, idx) => {
+                const userName = r.Usuario || 'Não informado';
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-2" title="Gravado em: ${r.DataRegistro || '-'}">${formatDisplayDate(r.Data)}</td>
-                        <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                        <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : (r.Tipo === 'Entrada' ? 'text-emerald-600' : 'text-amber-600')}">${r.Tipo || '-'}</td>
                         <td class="p-2">${r.LocalPrincipal || '-'}</td>
+                        <td class="p-2 text-slate-500">${r.LocalDetalhe || '-'}</td>
                         <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
-                        <td class="p-2 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="p-2">
+                            <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-800 px-2 py-0.5 rounded-full text-[10px] font-bold border border-slate-200">
+                                <i class="fa-solid fa-user-check text-sky-600 text-[9px]"></i> ${userName}
+                            </span>
+                        </td>
+                        <td class="p-2 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 hover:text-red-700 font-bold transition p-1"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>
                 `;
             });
         }
+        // FUNÇÃO DE COMPARTILHAMENTO DE RESUMO NO WHATSAPP
+        function shareDashboardWhatsApp() {
+            const filterLoc = document.getElementById('dash-filter-local')?.value || 'Todos';
+            const startDate = document.getElementById('dash-date-start')?.value || '';
+            const endDate = document.getElementById('dash-date-end')?.value || '';
 
-        function deleteRecord(idx) {
-            showConfirmDialog('Tem certeza de que deseja excluir este registro?', () => {
-                database.splice(idx, 1);
-                localStorage.setItem('controle_agua_db', JSON.stringify(database));
-                renderRecentTable();
-                renderFullDatabaseTable();
-                updateStockUI();
-                updateDashboard();
-                showToast('Registro excluído.', 'info');
+            const consumoTotal = document.getElementById('dash-consumo-total')?.innerText || '0';
+            const litrosTotal = document.getElementById('dash-litros-total')?.innerText || '0 litros';
+            const entradas = document.getElementById('dash-entradas')?.innerText || '0';
+            const devolucoes = document.getElementById('dash-devolucoes')?.innerText || '0';
+            const estoqueAtual = document.getElementById('dash-estoque-atual')?.innerText || '0';
+            const mediaDia = document.getElementById('dash-media-diaria')?.innerText || '0';
+            const litrosPessoa = document.getElementById('dash-litros-pessoa')?.innerText || '0,0';
+
+            const periodoStr = (startDate && endDate) 
+                ? `${formatDisplayDate(startDate)} até ${formatDisplayDate(endDate)}` 
+                : 'Período Completo';
+
+            let msg = `💧 *OUD PRIME - CONTROLE DE ÁGUA*\n`;
+            msg += `📋 *RESUMO OPERACIONAL*\n`;
+            msg += `🗓️ *Período:* ${periodoStr}\n`;
+            msg += `🏢 *Local:* ${filterLoc}\n\n`;
+
+            msg += `📊 *INDICADORES:*\n`;
+            msg += `• *Consumo Total:* ${consumoTotal} galões (${litrosTotal})\n`;
+            msg += `• *Entradas (Cheios):* ${entradas} galões\n`;
+            msg += `• *Devoluções (Vazios):* ${devolucoes} galões\n`;
+            msg += `• *Estoque Atual (Cheios):* ${estoqueAtual} galões\n`;
+            msg += `• *Média Diária:* ${mediaDia} galões/dia\n`;
+            msg += `• *Consumo/Pessoa:* ${litrosPessoa} L/pessoa/dia\n\n`;
+
+            const stock = calculateStock();
+            msg += `📦 *SITUAÇÃO DO ESTOQUE:*\n`;
+            mainLocations.forEach(loc => {
+                const s = stock[loc] || { cheios: 0, vazios: 0, min: 200 };
+                const alerta = s.cheios < s.min ? '⚠️ BAIXO' : '✅ OK';
+                msg += `• ${loc}: ${s.cheios} cheios | ${s.vazios} vazios (${alerta})\n`;
             });
+
+            msg += `\n_Gerado pelo Sistema OUD PRIME em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}._`;
+
+            const encoded = encodeURIComponent(msg);
+            const waUrl = `https://api.whatsapp.com/send?text=${encoded}`;
+            window.open(waUrl, '_blank');
         }
 
         function openConfigModal() {
