@@ -64,7 +64,16 @@
 <body class="min-h-screen flex flex-col relative bg-slate-950 max-w-full overflow-x-hidden">
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
+        const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
+        const DEFAULT_MASTER_PASS = 'adanilton@master';
+
+        function getActiveScriptUrl() {
+            return localStorage.getItem('controle_agua_api_url') || DEFAULT_SCRIPT_URL;
+        }
+
+        function getMasterPass() {
+            return localStorage.getItem('controle_agua_master_pass') || DEFAULT_MASTER_PASS;
+        }
     </script>
 
     <!-- BARRA INDICADORA DE REDE E OFFLINE -->
@@ -611,11 +620,162 @@
                 <strong class="text-sky-400 font-black tracking-wider text-xs">OUD PRIME</strong>
                 <span class="text-slate-500 text-[11px]">• Sistemas Inteligentes</span>
             </div>
-            <div class="text-[11px]">
-                Desenvolvido por <strong class="text-slate-200 font-semibold">Adanilton Silva</strong>
+            <div class="text-[11px] flex items-center gap-2">
+                <span>Desenvolvido por <strong onclick="promptDevAccess()" class="text-slate-200 font-semibold cursor-pointer hover:text-sky-400 transition" title="Clique para Acesso do Desenvolvedor">Adanilton Silva</strong></span>
+                <button onclick="promptDevAccess()" title="Painel do Desenvolvedor" class="bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-amber-400 border border-slate-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1 transition">
+                    <i class="fa-solid fa-shield-halved"></i> <span>DEV</span>
+                </button>
             </div>
         </div>
     </footer>
+
+    <!-- MODAL DE AUTENTICAÇÃO COM SENHA MESTRA -->
+    <div id="modal-master-auth" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-[210] flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-amber-500/40 rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl">
+            <div class="w-12 h-12 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-2xl flex items-center justify-center text-xl mx-auto shadow-inner">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-black uppercase tracking-wide text-white">Acesso do Desenvolvedor</h3>
+                <p class="text-xs text-slate-400 mt-1">Insira a Senha Mestra para gerenciar o núcleo do sistema.</p>
+            </div>
+            <form onsubmit="verifyMasterPassword(event)" class="space-y-3">
+                <div class="relative">
+                    <input type="password" id="input-master-pass" placeholder="Senha Mestra..." required class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm outline-none focus:ring-2 focus:ring-amber-400 text-center">
+                </div>
+                <div id="master-auth-error" class="hidden text-[11px] font-bold text-red-400 bg-red-950/60 p-2 rounded-lg border border-red-800">
+                    Senha Mestra incorreta!
+                </div>
+                <div class="flex gap-2 pt-1">
+                    <button type="button" onclick="closeMasterAuthModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold p-2.5 rounded-xl text-xs transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black p-2.5 rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-key"></i> Desbloquear
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DO PAINEL DO DESENVOLVEDOR (SUPERADMIN) -->
+    <div id="modal-dev-panel" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[220] flex items-center justify-center hidden p-3">
+        <div class="bg-slate-900 border border-slate-800 text-slate-200 rounded-3xl shadow-2xl max-w-3xl w-full p-5 space-y-5 relative max-h-[92vh] overflow-y-auto">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <span class="bg-amber-500/20 text-amber-400 border border-amber-500/40 p-2 rounded-xl text-base">
+                        <i class="fa-solid fa-terminal"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-base font-black uppercase text-white flex items-center gap-2">
+                            Painel do Desenvolvedor <span class="bg-amber-500 text-slate-950 text-[10px] px-2 py-0.5 rounded-md font-extrabold uppercase">SuperAdmin</span>
+                        </h3>
+                        <p class="text-[11px] text-slate-400">Controle técnico, conexão com Google Drive e diagnósticos de banco.</p>
+                    </div>
+                </div>
+                <button onclick="closeDevModal()" class="text-slate-400 hover:text-white text-2xl font-bold leading-none">&times;</button>
+            </div>
+
+            <!-- DIAGNÓSTICOS RÁPIDOS -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl">
+                    <span class="text-[10px] font-bold uppercase text-slate-400 block">Status Conexão</span>
+                    <strong id="dev-diag-network" class="text-xs font-black text-emerald-400 flex items-center gap-1 mt-0.5">
+                        <i class="fa-solid fa-circle text-[8px]"></i> Online
+                    </strong>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl">
+                    <span class="text-[10px] font-bold uppercase text-slate-400 block">Registros em Memória</span>
+                    <strong id="dev-diag-records" class="text-xs font-black text-white mt-0.5 block">0 itens</strong>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl">
+                    <span class="text-[10px] font-bold uppercase text-slate-400 block">Fila Offline</span>
+                    <strong id="dev-diag-pending" class="text-xs font-black text-amber-400 mt-0.5 block">0 pendentes</strong>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-2xl">
+                    <span class="text-[10px] font-bold uppercase text-slate-400 block">Armazenamento Local</span>
+                    <strong id="dev-diag-storage" class="text-xs font-black text-sky-400 mt-0.5 block">0 KB</strong>
+                </div>
+            </div>
+
+            <!-- 1. CONFIGURAÇÃO DA API (SCRIPT URL DO GOOGLE SHEETS) -->
+            <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-cloud"></i> Endpoint da Nuvem (Google Apps Script URL)
+                    </h4>
+                    <button onclick="testApiPing()" id="btn-ping-test" class="text-[11px] font-bold bg-slate-700 hover:bg-slate-600 text-sky-300 px-2.5 py-1 rounded-lg flex items-center gap-1 transition">
+                        <i class="fa-solid fa-network-wired"></i> <span>Testar Ping</span>
+                    </button>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                    Você pode alterar a planilha conectada diretamente colando a URL de implantação do Apps Script abaixo, sem mexer no código:
+                </p>
+                <div class="space-y-2">
+                    <input type="text" id="dev-input-script-url" class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs font-mono text-sky-300 outline-none focus:ring-2 focus:ring-amber-400">
+                    <div class="flex flex-wrap gap-2 justify-between items-center">
+                        <span id="dev-ping-result" class="text-[11px] font-semibold text-slate-400">Aguardando teste...</span>
+                        <div class="flex gap-2">
+                            <button onclick="resetDevScriptUrl()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300">Restaurar Padrão</button>
+                            <button onclick="saveDevScriptUrl()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white shadow">Salvar Nova URL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. BACKUP TOTAL E RESTAURAÇÃO BRUTA -->
+            <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 space-y-3">
+                <h4 class="text-xs font-black uppercase text-emerald-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-database"></i> Backup & Recuperação do Sistema (Dump JSON)
+                </h4>
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                    Exporte todo o estado do banco, usuários, fila e configurações para um arquivo JSON ou restaure em qualquer emergência:
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button onclick="exportSystemBackupJson()" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white font-bold p-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow transition">
+                        <i class="fa-solid fa-file-arrow-down"></i> Baixar Backup Completo (.json)
+                    </button>
+                    <div>
+                        <input type="file" id="dev-import-file" accept=".json" onchange="importSystemBackupJson(event)" class="hidden">
+                        <button onclick="document.getElementById('dev-import-file').click()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold p-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow transition">
+                            <i class="fa-solid fa-file-arrow-up text-amber-400"></i> Restaurar Backup (.json)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. ZONA DE SEGURANÇA E SENHA MESTRA -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 space-y-2.5">
+                    <h4 class="text-xs font-black uppercase text-sky-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-key"></i> Alterar Senha Mestra
+                    </h4>
+                    <input type="password" id="dev-new-master-pass" placeholder="Nova Senha Mestra..." class="w-full p-2 bg-slate-950 border border-slate-700 rounded-xl text-xs font-semibold text-white outline-none focus:ring-2 focus:ring-sky-400">
+                    <button onclick="updateMasterPassword()" class="w-full bg-sky-700 hover:bg-sky-600 text-white font-bold p-2 rounded-xl text-xs shadow transition">
+                        Atualizar Senha Mestra
+                    </button>
+                </div>
+
+                <div class="bg-red-950/20 border border-red-900/50 rounded-2xl p-4 space-y-2.5">
+                    <h4 class="text-xs font-black uppercase text-red-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Zona de Ações Críticas
+                    </h4>
+                    <button onclick="forceSyncPendingQueue()" class="w-full bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-600/40 font-bold p-2 rounded-xl text-xs transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-rotate"></i> Forçar Transmissão da Fila Offline
+                    </button>
+                    <button onclick="executeDevHardReset()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold p-2 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow">
+                        <i class="fa-solid fa-trash-can"></i> Hard Reset (Limpar Tudo Local)
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2 border-t border-slate-800">
+                <button onclick="closeDevModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-5 py-2.5 rounded-xl text-xs transition">
+                    Fechar Painel
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL CONFIGURAÇÕES COMPLETO -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3">
@@ -990,12 +1150,14 @@
                 submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Verificando...</span>';
             }
 
+            const activeUrl = getActiveScriptUrl();
+
             // Tentativa de sincronização com timeout rápido de 2.5s para não travar o login
-            if (navigator.onLine && SCRIPT_URL) {
+            if (navigator.onLine && activeUrl) {
                 try {
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 2500);
-                    const fetchUrl = `${SCRIPT_URL}${SCRIPT_URL.includes('?') ? '&' : '?'}action=getUsers&t=${Date.now()}`;
+                    const fetchUrl = `${activeUrl}${activeUrl.includes('?') ? '&' : '?'}action=getUsers&t=${Date.now()}`;
                     const res = await fetch(fetchUrl, { cache: 'no-store', signal: controller.signal });
                     clearTimeout(timeoutId);
                     const remoteUsers = await res.json();
@@ -1113,9 +1275,10 @@
             if (!navigator.onLine || pendingQueue.length === 0) return;
 
             const recordsToSend = [...pendingQueue];
+            const activeUrl = getActiveScriptUrl();
             try {
-                if (SCRIPT_URL) {
-                    await fetch(SCRIPT_URL, {
+                if (activeUrl) {
+                    await fetch(activeUrl, {
                         method: 'POST',
                         mode: 'no-cors',
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -1269,8 +1432,9 @@
             USERS_DB[login] = { pass, role, name };
             localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
 
-            if (navigator.onLine && SCRIPT_URL) {
-                fetch(SCRIPT_URL, {
+            const activeUrl = getActiveScriptUrl();
+            if (navigator.onLine && activeUrl) {
+                fetch(activeUrl, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -1296,8 +1460,9 @@
                 delete USERS_DB[loginKey];
                 localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
                 
-                if (navigator.onLine && SCRIPT_URL) {
-                    fetch(SCRIPT_URL, {
+                const activeUrl = getActiveScriptUrl();
+                if (navigator.onLine && activeUrl) {
+                    fetch(activeUrl, {
                         method: 'POST',
                         mode: 'no-cors',
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2013,9 +2178,10 @@
             updateStockUI();
             updateDashboard();
 
-            if (navigator.onLine && SCRIPT_URL) {
+            const activeUrl = getActiveScriptUrl();
+            if (navigator.onLine && activeUrl) {
                 try {
-                    await fetch(SCRIPT_URL, {
+                    await fetch(activeUrl, {
                         method: 'POST',
                         mode: 'no-cors',
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2046,9 +2212,10 @@
                 try { database = JSON.parse(savedLocalDB) || []; } catch(e) { database = []; }
             }
 
-            if (navigator.onLine && SCRIPT_URL) {
+            const activeUrl = getActiveScriptUrl();
+            if (navigator.onLine && activeUrl) {
                 try {
-                    const fetchUrl = `${SCRIPT_URL}${SCRIPT_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
+                    const fetchUrl = `${activeUrl}${activeUrl.includes('?') ? '&' : '?'}t=${Date.now()}`;
                     const res = await fetch(fetchUrl, { cache: 'no-store' });
                     const data = await res.json();
                     
@@ -2348,6 +2515,245 @@
 
         function exportToCSV() {
             openExportModal('csv');
+        }
+
+        // FUNÇÕES DO PAINEL DO DESENVOLVEDOR (SUPERADMIN)
+        function promptDevAccess() {
+            const modal = document.getElementById('modal-master-auth');
+            const passInput = document.getElementById('input-master-pass');
+            const errorEl = document.getElementById('master-auth-error');
+            if (modal) {
+                if (passInput) passInput.value = '';
+                if (errorEl) errorEl.classList.add('hidden');
+                modal.classList.remove('hidden');
+                setTimeout(() => passInput && passInput.focus(), 100);
+            }
+        }
+
+        function closeMasterAuthModal() {
+            const modal = document.getElementById('modal-master-auth');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function verifyMasterPassword(e) {
+            if (e) e.preventDefault();
+            const passInput = document.getElementById('input-master-pass');
+            const errorEl = document.getElementById('master-auth-error');
+            if (!passInput) return;
+
+            const entered = passInput.value.trim();
+            const correctPass = getMasterPass();
+
+            if (entered === correctPass) {
+                closeMasterAuthModal();
+                openDevModal();
+            } else {
+                if (errorEl) errorEl.classList.remove('hidden');
+                showToast('Senha Mestra incorreta!', 'error');
+            }
+        }
+
+        function openDevModal() {
+            const modal = document.getElementById('modal-dev-panel');
+            if (!modal) return;
+
+            updateDevDiagnostics();
+            const urlInput = document.getElementById('dev-input-script-url');
+            if (urlInput) urlInput.value = getActiveScriptUrl();
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeDevModal() {
+            const modal = document.getElementById('modal-dev-panel');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function updateDevDiagnostics() {
+            const diagNet = document.getElementById('dev-diag-network');
+            const diagRec = document.getElementById('dev-diag-records');
+            const diagPend = document.getElementById('dev-diag-pending');
+            const diagStorage = document.getElementById('dev-diag-storage');
+
+            if (diagNet) {
+                diagNet.innerHTML = navigator.onLine 
+                    ? '<i class="fa-solid fa-circle text-[8px] text-emerald-400"></i> <span class="text-emerald-400">Online</span>'
+                    : '<i class="fa-solid fa-circle text-[8px] text-red-500"></i> <span class="text-red-400">Offline</span>';
+            }
+            if (diagRec) diagRec.innerText = `${database.length} registros`;
+            if (diagPend) diagPend.innerText = `${pendingQueue.length} pendentes`;
+
+            if (diagStorage) {
+                let totalBytes = 0;
+                for (let key in localStorage) {
+                    if (localStorage.hasOwnProperty(key)) {
+                        totalBytes += (localStorage[key].length + key.length) * 2;
+                    }
+                }
+                const kb = (totalBytes / 1024).toFixed(1);
+                diagStorage.innerText = `${kb} KB`;
+            }
+        }
+
+        async function testApiPing() {
+            const resultEl = document.getElementById('dev-ping-result');
+            const btn = document.getElementById('btn-ping-test');
+            const url = document.getElementById('dev-input-script-url').value.trim() || getActiveScriptUrl();
+
+            if (!url) {
+                if (resultEl) resultEl.innerText = 'URL vazia!';
+                return;
+            }
+
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Testando...';
+            if (resultEl) resultEl.innerHTML = '<span class="text-sky-400">Verificando latência com o Google Sheets...</span>';
+
+            const startTime = performance.now();
+            try {
+                const testUrl = `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`;
+                const res = await fetch(testUrl, { cache: 'no-store' });
+                const endTime = performance.now();
+                const latency = Math.round(endTime - startTime);
+
+                if (res.ok) {
+                    if (resultEl) resultEl.innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> Conectado com sucesso (${latency}ms)</span>`;
+                    showToast(`API conectada em ${latency}ms!`, 'success');
+                } else {
+                    if (resultEl) resultEl.innerHTML = `<span class="text-amber-400 font-bold">Resposta HTTP ${res.status} (${latency}ms)</span>`;
+                }
+            } catch (err) {
+                if (resultEl) resultEl.innerHTML = `<span class="text-red-400 font-bold"><i class="fa-solid fa-xmark"></i> Falha na conexão ou CORS restrito.</span>`;
+                showToast('Falha ao conectar com o script!', 'error');
+            } finally {
+                if (btn) btn.innerHTML = '<i class="fa-solid fa-network-wired"></i> Testar Ping';
+            }
+        }
+
+        function saveDevScriptUrl() {
+            const input = document.getElementById('dev-input-script-url');
+            if (!input) return;
+            const newUrl = input.value.trim();
+
+            if (!newUrl) {
+                showToast('A URL não pode ficar em branco.', 'error');
+                return;
+            }
+
+            localStorage.setItem('controle_agua_api_url', newUrl);
+            showToast('Endpoint do Google Sheets atualizado com sucesso!', 'success');
+            loadDataFromSheet(true);
+        }
+
+        function resetDevScriptUrl() {
+            showConfirmDialog('Restaurar para a URL padrão original do script?', () => {
+                localStorage.removeItem('controle_agua_api_url');
+                const input = document.getElementById('dev-input-script-url');
+                if (input) input.value = DEFAULT_SCRIPT_URL;
+                showToast('URL restaurada para o padrão!', 'info');
+                loadDataFromSheet(true);
+            });
+        }
+
+        function exportSystemBackupJson() {
+            const backupData = {
+                exportedAt: new Date().toISOString(),
+                exportedBy: currentUser ? currentUser.name : 'SuperAdmin',
+                systemConfig,
+                mainLocations,
+                tiposLancamento,
+                subLocationsMap,
+                users: USERS_DB,
+                records: database,
+                pendingQueue
+            };
+
+            const jsonStr = JSON.stringify(backupData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            const dateStr = new Date().toISOString().split('T')[0];
+            link.download = `OUD_PRIME_Backup_Total_${dateStr}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Backup total baixado com sucesso!', 'success');
+        }
+
+        function importSystemBackupJson(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (!parsed || typeof parsed !== 'object') {
+                        throw new Error('Arquivo de backup inválido.');
+                    }
+
+                    showConfirmDialog('Restaurar este backup? Os dados locais atuais serão substituídos.', () => {
+                        if (parsed.records && Array.isArray(parsed.records)) {
+                            database = parsed.records;
+                            localStorage.setItem('controle_agua_db', JSON.stringify(database));
+                        }
+                        if (parsed.users && typeof parsed.users === 'object') {
+                            USERS_DB = { ...BASE_USERS, ...parsed.users };
+                            localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
+                        }
+                        if (parsed.systemConfig) systemConfig = parsed.systemConfig;
+                        if (parsed.mainLocations) mainLocations = parsed.mainLocations;
+                        if (parsed.tiposLancamento) tiposLancamento = parsed.tiposLancamento;
+                        if (parsed.subLocationsMap) subLocationsMap = parsed.subLocationsMap;
+
+                        const fullConfig = { systemConfig, mainLocations, tiposLancamento, subLocationsMap, USERS_DB };
+                        localStorage.setItem('controle_agua_config', JSON.stringify(fullConfig));
+
+                        updateAllSelectsUI();
+                        updateStockUI();
+                        updateDashboard();
+                        renderRecentTable();
+                        updateDevDiagnostics();
+                        showToast('Backup restaurado com sucesso!', 'success');
+                    });
+                } catch (err) {
+                    showToast('Erro ao ler arquivo de backup: ' + err.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function updateMasterPassword() {
+            const input = document.getElementById('dev-new-master-pass');
+            if (!input) return;
+            const newPass = input.value.trim();
+
+            if (!newPass || newPass.length < 4) {
+                showToast('A senha mestra deve conter ao menos 4 caracteres.', 'error');
+                return;
+            }
+
+            localStorage.setItem('controle_agua_master_pass', newPass);
+            input.value = '';
+            showToast('Senha Mestra atualizada com sucesso!', 'success');
+        }
+
+        function forceSyncPendingQueue() {
+            if (pendingQueue.length === 0) {
+                showToast('Não há lançamentos pendentes na fila.', 'info');
+                return;
+            }
+            showToast('Iniciando transmissão forçada...', 'info');
+            syncPendingQueue();
+            setTimeout(updateDevDiagnostics, 1500);
+        }
+
+        function executeDevHardReset() {
+            showConfirmDialog('ATENÇÃO: Isso limpará toda a memória local (cache, sessões, fila e configurações). Deseja continuar?', () => {
+                localStorage.clear();
+                showToast('Hard Reset executado. O sistema será recarregado.', 'info');
+                setTimeout(() => location.reload(), 1200);
+            });
         }
     </script>
 </body>
