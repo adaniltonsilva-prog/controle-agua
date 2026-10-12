@@ -26,12 +26,11 @@
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col relative">
 
-    <!-- LINK DO GOOGLE APPS SCRIPT INTEGRADO -->
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
     </script>
 
-    <!-- CABEÇALHO AZUL DE TOPO -->
+    <!-- CABEÇALHO AZUL -->
     <header class="bg-nav text-white px-6 py-3 shadow-md">
         <div class="max-w-[1500px] mx-auto flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3">
@@ -44,7 +43,6 @@
                 </div>
             </div>
 
-            <!-- NAVEGAÇÃO SUPERIOR -->
             <nav class="flex items-center gap-1 text-sm">
                 <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-4 py-2 flex items-center gap-2">
                     <i class="fa-solid fa-house text-xs"></i> Menu
@@ -69,7 +67,6 @@
         </div>
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL DA APLICAÇÃO -->
     <main class="max-w-[1500px] w-full mx-auto p-4 md:p-6 flex-1">
 
         <!-- 1. TELA – MENU PRINCIPAL -->
@@ -87,9 +84,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div onclick="switchScreen('screen2')" class="card-menu cursor-pointer bg-[#0f5298] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-pen-to-square"></i></div>
                     <div>
                         <h3 class="text-xl font-bold uppercase tracking-wide">LANÇAMENTOS</h3>
                         <p class="text-xs text-blue-100 mt-1">Entrada, Devolução e Consumo</p>
@@ -98,9 +93,7 @@
                 </div>
 
                 <div onclick="switchScreen('screen4')" class="card-menu cursor-pointer bg-[#0e8a44] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-cubes"></i>
-                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-cubes"></i></div>
                     <div>
                         <h3 class="text-xl font-bold uppercase tracking-wide">ESTOQUE</h3>
                         <p class="text-xs text-emerald-100 mt-1">Consulta e Movimentação</p>
@@ -109,9 +102,7 @@
                 </div>
 
                 <div onclick="switchScreen('screen5')" class="card-menu cursor-pointer bg-[#d9530f] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-chart-column"></i>
-                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-chart-column"></i></div>
                     <div>
                         <h3 class="text-xl font-bold uppercase tracking-wide">DASHBOARD</h3>
                         <p class="text-xs text-amber-100 mt-1">Gráficos e Indicadores</p>
@@ -120,9 +111,7 @@
                 </div>
 
                 <div onclick="switchScreen('screen6')" class="card-menu cursor-pointer bg-[#6f42c1] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-database"></i>
-                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-database"></i></div>
                     <div>
                         <h3 class="text-xl font-bold uppercase tracking-wide">BASE DE DADOS</h3>
                         <p class="text-xs text-purple-100 mt-1">Registros de Lançamentos</p>
@@ -131,21 +120,16 @@
                 </div>
 
                 <div onclick="openConfigModal()" class="card-menu cursor-pointer bg-[#495057] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-gear"></i>
-                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-gear"></i></div>
                     <div>
                         <h3 class="text-xl font-bold uppercase tracking-wide">CONFIGURAÇÕES</h3>
-                        <p class="text-xs text-slate-200 mt-1">Parâmetros e Estoques Iniciais</p>
+                        <p class="text-xs text-slate-200 mt-1">Cadastros e Parâmetros</p>
                     </div>
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
                 </div>
 
-                <!-- NOVO CARTÃO SEGURO: RELATÓRIOS & EXPORTAÇÃO -->
                 <div onclick="exportToExcel()" class="card-menu cursor-pointer bg-[#17a2b8] text-white p-6 rounded-2xl shadow-md flex flex-col justify-between h-48">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-file-excel"></i>
-                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-file-excel"></i></div>
                     <div>
                         <h3 class="text-xl font-bold uppercase tracking-wide">RELATÓRIOS</h3>
                         <p class="text-xs text-teal-100 mt-1">Exportar em Excel (.xlsx)</p>
@@ -178,9 +162,7 @@
                             <i class="fa-solid fa-droplet text-blue-600"></i> TIPO DE LANÇAMENTO
                         </label>
                         <select id="single-tipo" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
-                            <option value="Consumo">Consumo</option>
-                            <option value="Entrada">Entrada</option>
-                            <option value="Devolução">Devolução</option>
+                            <!-- Preenchido via JS -->
                         </select>
                     </div>
 
@@ -189,9 +171,7 @@
                             <i class="fa-solid fa-house text-blue-600"></i> LOCAL PRINCIPAL
                         </label>
                         <select id="single-local" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
-                            <option value="Alojamento 01">Alojamento 01</option>
-                            <option value="Alojamento 03">Alojamento 03</option>
-                            <option value="Site">Site</option>
+                            <!-- Preenchido via JS -->
                         </select>
                     </div>
 
@@ -200,7 +180,7 @@
                             <i class="fa-solid fa-sitemap text-blue-600"></i> LOCAL DE CONSUMO (DETALHE)
                         </label>
                         <select id="single-detalhe" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
-                            <!-- Preenchido dinamicamente via JS -->
+                            <!-- Preenchido via JS -->
                         </select>
                     </div>
                 </div>
@@ -259,7 +239,7 @@
             </div>
         </section>
 
-        <!-- 3. TELA – CONSUMO POR ALOJAMENTO (MULTILOCAL) -->
+        <!-- 3. TELA – CONSUMO POR ALOJAMENTO -->
         <section id="screen3" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
             <div class="bg-[#0b5394] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
                 <h2 id="batch-screen-title" class="text-lg font-bold flex items-center gap-2 uppercase">
@@ -270,9 +250,7 @@
                     <div class="flex items-center gap-2">
                         <span>LOCAL:</span>
                         <select id="batch-local-select" onchange="changeBatchLocation()" class="bg-white text-slate-800 p-1 rounded font-bold">
-                            <option value="Alojamento 01">Alojamento 01</option>
-                            <option value="Alojamento 03">Alojamento 03</option>
-                            <option value="Site">Site</option>
+                            <!-- Preenchido via JS -->
                         </select>
                     </div>
 
@@ -295,7 +273,7 @@
                         <div id="batch-summary" class="space-y-2 text-sm max-h-[300px] overflow-y-auto pr-1"></div>
                     </div>
                     <div class="border-t border-amber-200 pt-4 flex justify-between items-center mt-6">
-                        <span id="batch-total-label" class="text-lg font-bold uppercase text-amber-900">TOTAL ALOJAMENTO 01</span>
+                        <span id="batch-total-label" class="text-lg font-bold uppercase text-amber-900">TOTAL</span>
                         <span id="batch-total" class="text-3xl font-black text-amber-950">0</span>
                     </div>
                 </div>
@@ -323,46 +301,7 @@
                 <span class="bg-blue-800 text-xs px-3 py-1 rounded-md text-blue-100">Posição e Indicadores de Galões</span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="border rounded-2xl p-4 shadow-sm space-y-3">
-                    <div class="bg-[#0f5298] text-white p-2 rounded-lg font-bold text-xs uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-building"></i> SITE
-                    </div>
-                    <div class="space-y-2 text-xs">
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE INICIAL</span> <strong id="st-site-inicial" class="text-base text-slate-800">0</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-site-cheios" class="text-base text-slate-800">0</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-site-vazios" class="text-base text-slate-800">0</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong id="st-site-minimo" class="text-base text-slate-800">300</strong></div>
-                        <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span id="st-site-status" class="bg-slate-100 text-slate-700 font-bold px-3 py-0.5 rounded-full text-xs">● ZERADO</span></div>
-                    </div>
-                </div>
-
-                <div class="border rounded-2xl p-4 shadow-sm space-y-3">
-                    <div class="bg-[#0e8a44] text-white p-2 rounded-lg font-bold text-xs uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-house"></i> ALOJAMENTO 01
-                    </div>
-                    <div class="space-y-2 text-xs">
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE INICIAL</span> <strong id="st-aloj1-inicial" class="text-base text-slate-800">0</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-aloj1-cheios" class="text-base text-slate-800">0</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-aloj1-vazios" class="text-base text-slate-800">0</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong id="st-aloj1-minimo" class="text-base text-slate-800">200</strong></div>
-                        <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span id="st-aloj1-status" class="bg-slate-100 text-slate-700 font-bold px-3 py-0.5 rounded-full text-xs">● ZERADO</span></div>
-                    </div>
-                </div>
-
-                <div class="border rounded-2xl p-4 shadow-sm space-y-3">
-                    <div class="bg-[#d9530f] text-white p-2 rounded-lg font-bold text-xs uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-house"></i> ALOJAMENTO 03
-                    </div>
-                    <div class="space-y-2 text-xs">
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE INICIAL</span> <strong id="st-aloj3-inicial" class="text-base text-slate-800">0</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-aloj3-cheios" class="text-base text-slate-800">0</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-aloj3-vazios" class="text-base text-slate-800">0</strong></div>
-                        <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong id="st-aloj3-minimo" class="text-base text-slate-800">200</strong></div>
-                        <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span id="st-aloj3-status" class="bg-slate-100 text-slate-700 font-bold px-3 py-0.5 rounded-full text-xs">● ZERADO</span></div>
-                    </div>
-                </div>
-            </div>
+            <div id="stock-cards-container" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
 
             <div class="space-y-3">
                 <div class="flex justify-between items-center">
@@ -434,10 +373,7 @@
                     <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg">
                         <span>LOCAL:</span>
                         <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold">
-                            <option value="Todos">Todos</option>
-                            <option value="Site">Site</option>
-                            <option value="Alojamento 01">Alojamento 01</option>
-                            <option value="Alojamento 03">Alojamento 03</option>
+                            <!-- Preenchido via JS -->
                         </select>
                     </div>
                 </div>
@@ -603,9 +539,9 @@
 
     </main>
 
-    <!-- MODAL DE CONFIGURAÇÕES (COM RESET PROTEGIDO NO FINAL) -->
+    <!-- MODAL DE CONFIGURAÇÕES (COM CADASTRO DE LOCAIS, TIPOS E SUB-LOCAIS) -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 space-y-6 relative border max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-6 space-y-6 relative border max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2 border-b">
                 <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-gear text-[#0b5394]"></i> Configurações do Sistema
@@ -633,49 +569,60 @@
                     </div>
                 </div>
 
-                <!-- ESTOQUE INICIAL -->
-                <div>
-                    <h4 class="text-xs font-bold uppercase text-emerald-700 border-b pb-1 mb-3">ESTOQUE INICIAL (GALÕES CHEIOS)</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Site:</label>
-                            <input type="number" id="cfg-ini-site" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0">
+                <!-- NOVA SEÇÃO: CADASTRO DINÂMICO DE LOCAIS, TIPOS E SUB-LOCAIS -->
+                <div class="bg-slate-50 p-4 rounded-2xl border space-y-4">
+                    <h4 class="text-xs font-bold uppercase text-purple-700 border-b pb-1">CADASTRO DE OPCÕES DO SISTEMA</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- 1. CADASTRO DE LOCAIS PRINCIPAIS -->
+                        <div class="space-y-2">
+                            <label class="block text-[11px] font-bold text-slate-700">Locais Principais:</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="add-main-loc-input" placeholder="Novo Local Principal..." class="w-full p-2 border rounded-xl text-xs">
+                                <button onclick="addMainLocation()" class="bg-[#0b5394] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">Adicionar</button>
+                            </div>
+                            <div id="cfg-main-loc-list" class="flex flex-wrap gap-1.5 pt-1"></div>
                         </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Alojamento 01:</label>
-                            <input type="number" id="cfg-ini-aloj1" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Alojamento 03:</label>
-                            <input type="number" id="cfg-ini-aloj3" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0">
+
+                        <!-- 2. CADASTRO DE TIPOS DE LANÇAMENTO -->
+                        <div class="space-y-2">
+                            <label class="block text-[11px] font-bold text-slate-700">Tipos de Lançamento:</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="add-tipo-input" placeholder="Novo Tipo..." class="w-full p-2 border rounded-xl text-xs">
+                                <button onclick="addTipoLancamento()" class="bg-[#0b5394] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">Adicionar</button>
+                            </div>
+                            <div id="cfg-tipos-list" class="flex flex-wrap gap-1.5 pt-1"></div>
                         </div>
                     </div>
+
+                    <!-- 3. CADASTRO DE SUB-LOCAIS DE CONSUMO -->
+                    <div class="space-y-2 pt-2 border-t">
+                        <label class="block text-[11px] font-bold text-slate-700">Sub-Locais de Consumo (Detalhe):</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            <select id="cfg-subloc-parent-select" class="p-2 border rounded-xl text-xs bg-white font-bold"></select>
+                            <input type="text" id="add-subloc-input" placeholder="Novo Sub-Local..." class="p-2 border rounded-xl text-xs">
+                            <button onclick="addSubLocation()" class="bg-[#0e8a44] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">Adicionar Sub-Local</button>
+                        </div>
+                        <div id="cfg-subloc-list" class="flex flex-wrap gap-1.5 pt-1"></div>
+                    </div>
+                </div>
+
+                <!-- ESTOQUE INICIAL -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase font-bold text-emerald-700 border-b pb-1 mb-3">ESTOQUE INICIAL (GALÕES CHEIOS)</h4>
+                    <div id="cfg-ini-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
                 </div>
 
                 <!-- ESTOQUE MÍNIMO -->
                 <div>
-                    <h4 class="text-xs font-bold uppercase text-amber-700 border-b pb-1 mb-3">ESTOQUE MÍNIMO DE SEGURANÇA</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Site:</label>
-                            <input type="number" id="cfg-min-site" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="300">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Alojamento 01:</label>
-                            <input type="number" id="cfg-min-aloj1" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="200">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Alojamento 03:</label>
-                            <input type="number" id="cfg-min-aloj3" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="200">
-                        </div>
-                    </div>
+                    <h4 class="text-xs font-bold uppercase font-bold text-amber-700 border-b pb-1 mb-3">ESTOQUE MÍNIMO DE SEGURANÇA</h4>
+                    <div id="cfg-min-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
                 </div>
 
-                <!-- ÁREA DE RESET DE CACHE PROTEGIDA -->
-                <div class="pt-4 border-t">
-                    <h4 class="text-xs font-bold uppercase text-red-600 mb-2">MANUTENÇÃO DO SISTEMA</h4>
-                    <button type="button" onclick="executeResetCache()" class="w-full bg-red-50 hover:bg-red-100 text-red-700 font-bold p-3 rounded-xl text-xs flex items-center justify-center gap-2 border border-red-200 transition">
-                        <i class="fa-solid fa-rotate text-xs"></i> Limpar Memória Cache e Atualizar Dados do Google Sheets
+                <!-- LIMPEZA DE CACHE PROTEGIDA -->
+                <div class="pt-2 border-t">
+                    <button type="button" onclick="executeResetCache()" class="w-full bg-red-50 hover:bg-red-100 text-red-700 font-bold p-2.5 rounded-xl text-xs flex items-center justify-center gap-2 border border-red-200 transition">
+                        <i class="fa-solid fa-rotate text-xs"></i> Limpar Memória Cache e Atualizar do Google Sheets
                     </button>
                 </div>
             </div>
@@ -687,21 +634,18 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT -->
+    <!-- LÓGICA JAVASCRIPT DINÂMICA -->
     <script>
         let database = [];
 
-        const subLocationsMap = {
-            'Site': [
-                'Bebedouros', 'Carpas', 'Refeitório', 'Prédio ADM', 'Sala de Controle'
-            ],
-            'Alojamento 01': [
-                'Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Área de Vivência', 'Refeitório', 'Hotel / Casas'
-            ],
-            'Alojamento 03': [
-                'Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Módulo 05', 'Módulo 06', 'Módulo 07', 'Módulo 08', 'Módulo 09',
-                'Área de Vivência', 'Refeitório', 'Ambulatório', 'Sala de Manutenção'
-            ]
+        // ESTRUTURA DINÂMICA COMPLETA DE CADASTROS
+        let mainLocations = ['Alojamento 01', 'Alojamento 03', 'Site'];
+        let tiposLancamento = ['Consumo', 'Entrada', 'Devolução'];
+        
+        let subLocationsMap = {
+            'Site': ['Bebedouros', 'Carpas', 'Refeitório', 'Prédio ADM', 'Sala de Controle'],
+            'Alojamento 01': ['Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Área de Vivência', 'Refeitório', 'Hotel / Casas'],
+            'Alojamento 03': ['Módulo 01', 'Módulo 02', 'Módulo 03', 'Módulo 04', 'Módulo 05', 'Módulo 06', 'Módulo 07', 'Módulo 08', 'Módulo 09', 'Área de Vivência', 'Refeitório', 'Ambulatório', 'Sala de Manutenção']
         };
 
         let systemConfig = {
@@ -724,20 +668,217 @@
 
             localStorage.removeItem('controle_agua_db');
             loadSavedConfig();
-            updateSubLocations();
+            updateAllSelectsUI();
             buildBatchInputs();
             loadDataFromSheet();
             initCharts();
         });
 
-        function executeResetCache() {
-            if(confirm('Tem certeza de que deseja apagar a memória cache local? O sistema atualizará os dados diretamente do Google Sheets.')) {
-                localStorage.clear();
-                database = [];
-                closeConfigModal();
-                loadDataFromSheet();
-                alert('Cache limpo com sucesso!');
+        // RECARREGA TODOS OS SELECTS DO SISTEMA COM OS NOVOS CADASTROS
+        function updateAllSelectsUI() {
+            // Select de Locais Principais (Tela 2)
+            const singleLocalSelect = document.getElementById('single-local');
+            singleLocalSelect.innerHTML = '';
+            mainLocations.forEach(loc => {
+                const el = document.createElement('option');
+                el.value = loc; el.innerText = loc;
+                singleLocalSelect.appendChild(el);
+            });
+
+            // Select de Tipos (Tela 2)
+            const singleTipoSelect = document.getElementById('single-tipo');
+            singleTipoSelect.innerHTML = '';
+            tiposLancamento.forEach(t => {
+                const el = document.createElement('option');
+                el.value = t; el.innerText = t;
+                singleTipoSelect.appendChild(el);
+            });
+
+            // Select de Local na Tela 3 (Batch)
+            const batchLocalSelect = document.getElementById('batch-local-select');
+            batchLocalSelect.innerHTML = '';
+            mainLocations.forEach(loc => {
+                const el = document.createElement('option');
+                el.value = loc; el.innerText = loc;
+                batchLocalSelect.appendChild(el);
+            });
+
+            // Select de Filtro do Dashboard (Tela 5)
+            const dashFilterSelect = document.getElementById('dash-filter-local');
+            dashFilterSelect.innerHTML = '<option value="Todos">Todos</option>';
+            mainLocations.forEach(loc => {
+                const el = document.createElement('option');
+                el.value = loc; el.innerText = loc;
+                dashFilterSelect.appendChild(el);
+            });
+
+            // Select do Modal de Configuração (Pai do Sub-local)
+            const cfgSubParent = document.getElementById('cfg-subloc-parent-select');
+            cfgSubParent.innerHTML = '';
+            mainLocations.forEach(loc => {
+                const el = document.createElement('option');
+                el.value = loc; el.innerText = loc;
+                cfgSubParent.appendChild(el);
+            });
+            cfgSubParent.onchange = renderSubLocTags;
+
+            updateSubLocations();
+            renderConfigDynamicFields();
+        }
+
+        // CADASTRO DE NOVO LOCAL PRINCIPAL
+        function addMainLocation() {
+            const val = document.getElementById('add-main-loc-input').value.trim();
+            if (val && !mainLocations.includes(val)) {
+                mainLocations.push(val);
+                subLocationsMap[val] = subLocationsMap[val] || [];
+                systemConfig.estoqueInicial[val] = 0;
+                systemConfig.estoqueMinimo[val] = 100;
+                document.getElementById('add-main-loc-input').value = '';
+                updateAllSelectsUI();
+                renderConfigDynamicFields();
             }
+        }
+
+        function removeMainLocation(loc) {
+            if (confirm(`Deseja remover o local "${loc}"?`)) {
+                mainLocations = mainLocations.filter(m => m !== loc);
+                delete subLocationsMap[loc];
+                delete systemConfig.estoqueInicial[loc];
+                delete systemConfig.estoqueMinimo[loc];
+                updateAllSelectsUI();
+                renderConfigDynamicFields();
+            }
+        }
+
+        // CADASTRO DE NOVO TIPO DE LANÇAMENTO
+        function addTipoLancamento() {
+            const val = document.getElementById('add-tipo-input').value.trim();
+            if (val && !tiposLancamento.includes(val)) {
+                tiposLancamento.push(val);
+                document.getElementById('add-tipo-input').value = '';
+                updateAllSelectsUI();
+            }
+        }
+
+        function removeTipoLancamento(t) {
+            if (['Consumo', 'Entrada', 'Devolução'].includes(t)) {
+                alert('Não é possível remover tipos padrão do sistema.');
+                return;
+            }
+            tiposLancamento = tiposLancamento.filter(item => item !== t);
+            updateAllSelectsUI();
+        }
+
+        // CADASTRO DE NOVO SUB-LOCAL
+        function addSubLocation() {
+            const parentLoc = document.getElementById('cfg-subloc-parent-select').value;
+            const val = document.getElementById('add-subloc-input').value.trim();
+            if (parentLoc && val) {
+                subLocationsMap[parentLoc] = subLocationsMap[parentLoc] || [];
+                if (!subLocationsMap[parentLoc].includes(val)) {
+                    subLocationsMap[parentLoc].push(val);
+                    document.getElementById('add-subloc-input').value = '';
+                    renderSubLocTags();
+                    updateSubLocations();
+                }
+            }
+        }
+
+        function removeSubLocation(parentLoc, subLoc) {
+            if (subLocationsMap[parentLoc]) {
+                subLocationsMap[parentLoc] = subLocationsMap[parentLoc].filter(s => s !== subLoc);
+                renderSubLocTags();
+                updateSubLocations();
+            }
+        }
+
+        function renderSubLocTags() {
+            const parentLoc = document.getElementById('cfg-subloc-parent-select').value;
+            const container = document.getElementById('cfg-subloc-list');
+            container.innerHTML = '';
+            const list = subLocationsMap[parentLoc] || [];
+            list.forEach(sub => {
+                container.innerHTML += `
+                    <span class="bg-purple-100 text-purple-800 text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                        ${sub} <i onclick="removeSubLocation('${parentLoc}', '${sub}')" class="fa-solid fa-xmark cursor-pointer hover:text-red-600"></i>
+                    </span>
+                `;
+            });
+        }
+
+        // REDESENHA TAGS E CAMPOS DE ESTOQUE DENTRO DA MODAL
+        function renderConfigDynamicFields() {
+            // Tags de Locais Principais
+            const mainTagContainer = document.getElementById('cfg-main-loc-list');
+            mainTagContainer.innerHTML = '';
+            mainLocations.forEach(loc => {
+                mainTagContainer.innerHTML += `
+                    <span class="bg-blue-100 text-blue-800 text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                        ${loc} <i onclick="removeMainLocation('${loc}')" class="fa-solid fa-xmark cursor-pointer hover:text-red-600"></i>
+                    </span>
+                `;
+            });
+
+            // Tags de Tipos
+            const tipoTagContainer = document.getElementById('cfg-tipos-list');
+            tipoTagContainer.innerHTML = '';
+            tiposLancamento.forEach(t => {
+                tipoTagContainer.innerHTML += `
+                    <span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                        ${t} ${!['Consumo', 'Entrada', 'Devolução'].includes(t) ? `<i onclick="removeTipoLancamento('${t}')" class="fa-solid fa-xmark cursor-pointer hover:text-red-600"></i>` : ''}
+                    </span>
+                `;
+            });
+
+            renderSubLocTags();
+
+            // Campos de Estoque Inicial
+            const iniContainer = document.getElementById('cfg-ini-container');
+            iniContainer.innerHTML = '';
+            mainLocations.forEach(loc => {
+                const val = systemConfig.estoqueInicial[loc] || 0;
+                iniContainer.innerHTML += `
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">${loc}:</label>
+                        <input type="number" id="cfg-ini-${loc}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800" value="${val}">
+                    </div>
+                `;
+            });
+
+            // Campos de Estoque Mínimo
+            const minContainer = document.getElementById('cfg-min-container');
+            minContainer.innerHTML = '';
+            mainLocations.forEach(loc => {
+                const val = systemConfig.estoqueMinimo[loc] || 200;
+                minContainer.innerHTML += `
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">${loc}:</label>
+                        <input type="number" id="cfg-min-${loc}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800" value="${val}">
+                    </div>
+                `;
+            });
+
+            // Cards de Estoque Dinâmicos (Tela 4)
+            const stockCardContainer = document.getElementById('stock-cards-container');
+            stockCardContainer.innerHTML = '';
+            mainLocations.forEach(loc => {
+                const safeId = loc.replace(/\s+/g, '');
+                stockCardContainer.innerHTML += `
+                    <div class="border rounded-2xl p-4 shadow-sm space-y-3">
+                        <div class="bg-[#0b5394] text-white p-2 rounded-lg font-bold text-xs uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-building"></i> ${loc}
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE INICIAL</span> <strong id="st-${safeId}-inicial" class="text-base text-slate-800">0</strong></div>
+                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-${safeId}-cheios" class="text-base text-slate-800">0</strong></div>
+                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-${safeId}-vazios" class="text-base text-slate-800">0</strong></div>
+                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong id="st-${safeId}-minimo" class="text-base text-slate-800">0</strong></div>
+                            <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span id="st-${safeId}-status" class="bg-slate-100 text-slate-700 font-bold px-3 py-0.5 rounded-full text-xs">● ZERADO</span></div>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
         function updateSubLocations() {
@@ -852,9 +993,11 @@
         function loadSavedConfig() {
             const saved = localStorage.getItem('controle_agua_config');
             if(saved) {
-                systemConfig = JSON.parse(saved);
-                if(!systemConfig.estoqueInicial) systemConfig.estoqueInicial = { 'Site': 0, 'Alojamento 01': 0, 'Alojamento 03': 0 };
-                if(!systemConfig.estoqueMinimo) systemConfig.estoqueMinimo = { 'Site': 300, 'Alojamento 01': 200, 'Alojamento 03': 200 };
+                const parsed = JSON.parse(saved);
+                systemConfig = parsed.systemConfig || systemConfig;
+                mainLocations = parsed.mainLocations || mainLocations;
+                tiposLancamento = parsed.tiposLancamento || tiposLancamento;
+                subLocationsMap = parsed.subLocationsMap || subLocationsMap;
             }
         }
 
@@ -862,15 +1005,7 @@
             document.getElementById('cfg-efetivo').value = systemConfig.efetivo;
             document.getElementById('cfg-meta').value = systemConfig.meta;
             document.getElementById('cfg-volume').value = systemConfig.volumeGalao;
-
-            document.getElementById('cfg-ini-site').value = systemConfig.estoqueInicial['Site'];
-            document.getElementById('cfg-ini-aloj1').value = systemConfig.estoqueInicial['Alojamento 01'];
-            document.getElementById('cfg-ini-aloj3').value = systemConfig.estoqueInicial['Alojamento 03'];
-
-            document.getElementById('cfg-min-site').value = systemConfig.estoqueMinimo['Site'];
-            document.getElementById('cfg-min-aloj1').value = systemConfig.estoqueMinimo['Alojamento 01'];
-            document.getElementById('cfg-min-aloj3').value = systemConfig.estoqueMinimo['Alojamento 03'];
-
+            renderConfigDynamicFields();
             document.getElementById('modal-config').classList.remove('hidden');
         }
 
@@ -883,19 +1018,36 @@
             systemConfig.meta = parseFloat(document.getElementById('cfg-meta').value) || 2.7;
             systemConfig.volumeGalao = parseInt(document.getElementById('cfg-volume').value) || 20;
 
-            systemConfig.estoqueInicial['Site'] = parseInt(document.getElementById('cfg-ini-site').value) || 0;
-            systemConfig.estoqueInicial['Alojamento 01'] = parseInt(document.getElementById('cfg-ini-aloj1').value) || 0;
-            systemConfig.estoqueInicial['Alojamento 03'] = parseInt(document.getElementById('cfg-ini-aloj3').value) || 0;
+            mainLocations.forEach(loc => {
+                const iniInput = document.getElementById(`cfg-ini-${loc}`);
+                const minInput = document.getElementById(`cfg-min-${loc}`);
+                if (iniInput) systemConfig.estoqueInicial[loc] = parseInt(iniInput.value) || 0;
+                if (minInput) systemConfig.estoqueMinimo[loc] = parseInt(minInput.value) || 200;
+            });
 
-            systemConfig.estoqueMinimo['Site'] = parseInt(document.getElementById('cfg-min-site').value) || 300;
-            systemConfig.estoqueMinimo['Alojamento 01'] = parseInt(document.getElementById('cfg-min-aloj1').value) || 200;
-            systemConfig.estoqueMinimo['Alojamento 03'] = parseInt(document.getElementById('cfg-min-aloj3').value) || 200;
+            const fullConfig = {
+                systemConfig,
+                mainLocations,
+                tiposLancamento,
+                subLocationsMap
+            };
 
-            localStorage.setItem('controle_agua_config', JSON.stringify(systemConfig));
+            localStorage.setItem('controle_agua_config', JSON.stringify(fullConfig));
             closeConfigModal();
+            updateAllSelectsUI();
             updateStockUI();
             updateDashboard();
-            alert('Configurações salvas com sucesso!');
+            alert('Configurações e cadastros salvos com sucesso!');
+        }
+
+        function executeResetCache() {
+            if(confirm('Tem certeza de que deseja apagar a memória cache local? O sistema atualizará os dados diretamente do Google Sheets.')) {
+                localStorage.clear();
+                database = [];
+                closeConfigModal();
+                loadDataFromSheet();
+                alert('Cache limpo com sucesso!');
+            }
         }
 
         function switchScreen(screenId) {
@@ -1080,26 +1232,15 @@
         }
 
         function calculateStock() {
-            const stock = {
-                'Site': { 
-                    inicial: systemConfig.estoqueInicial['Site'] || 0,
-                    min: systemConfig.estoqueMinimo['Site'] || 300,
-                    cheios: systemConfig.estoqueInicial['Site'] || 0,
-                    vazios: 0, entrada: 0, consumo: 0, devolucao: 0 
-                },
-                'Alojamento 01': { 
-                    inicial: systemConfig.estoqueInicial['Alojamento 01'] || 0,
-                    min: systemConfig.estoqueMinimo['Alojamento 01'] || 200,
-                    cheios: systemConfig.estoqueInicial['Alojamento 01'] || 0,
-                    vazios: 0, entrada: 0, consumo: 0, devolucao: 0 
-                },
-                'Alojamento 03': { 
-                    inicial: systemConfig.estoqueInicial['Alojamento 03'] || 0,
-                    min: systemConfig.estoqueMinimo['Alojamento 03'] || 200,
-                    cheios: systemConfig.estoqueInicial['Alojamento 03'] || 0,
-                    vazios: 0, entrada: 0, consumo: 0, devolucao: 0 
-                }
-            };
+            const stock = {};
+            mainLocations.forEach(loc => {
+                stock[loc] = {
+                    inicial: systemConfig.estoqueInicial[loc] || 0,
+                    min: systemConfig.estoqueMinimo[loc] || 200,
+                    cheios: systemConfig.estoqueInicial[loc] || 0,
+                    vazios: 0, entrada: 0, consumo: 0, devolucao: 0
+                };
+            });
 
             database.forEach(r => {
                 const loc = r.LocalPrincipal;
@@ -1118,20 +1259,28 @@
         function updateStockUI() {
             const stock = calculateStock();
 
-            document.getElementById('st-site-inicial').innerText = stock['Site'].inicial;
-            document.getElementById('st-site-cheios').innerText = stock['Site'].cheios;
-            document.getElementById('st-site-vazios').innerText = stock['Site'].vazios;
-            document.getElementById('st-site-minimo').innerText = stock['Site'].min;
+            mainLocations.forEach(loc => {
+                const safeId = loc.replace(/\s+/g, '');
+                const s = stock[loc];
+                if (s) {
+                    const elIni = document.getElementById(`st-${safeId}-inicial`);
+                    const elChe = document.getElementById(`st-${safeId}-cheios`);
+                    const elVaz = document.getElementById(`st-${safeId}-vazios`);
+                    const elMin = document.getElementById(`st-${safeId}-minimo`);
+                    const elSta = document.getElementById(`st-${safeId}-status`);
 
-            document.getElementById('st-aloj1-inicial').innerText = stock['Alojamento 01'].inicial;
-            document.getElementById('st-aloj1-cheios').innerText = stock['Alojamento 01'].cheios;
-            document.getElementById('st-aloj1-vazios').innerText = stock['Alojamento 01'].vazios;
-            document.getElementById('st-aloj1-minimo').innerText = stock['Alojamento 01'].min;
+                    if (elIni) elIni.innerText = s.inicial;
+                    if (elChe) elChe.innerText = s.cheios;
+                    if (elVaz) elVaz.innerText = s.vazios;
+                    if (elMin) elMin.innerText = s.min;
 
-            document.getElementById('st-aloj3-inicial').innerText = stock['Alojamento 03'].inicial;
-            document.getElementById('st-aloj3-cheios').innerText = stock['Alojamento 03'].cheios;
-            document.getElementById('st-aloj3-vazios').innerText = stock['Alojamento 03'].vazios;
-            document.getElementById('st-aloj3-minimo').innerText = stock['Alojamento 03'].min;
+                    if (elSta) {
+                        const isNormal = s.cheios >= s.min;
+                        elSta.className = `${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-3 py-0.5 rounded-full text-xs`;
+                        elSta.innerText = `● ${isNormal ? 'Normal' : 'Abaixo do Mínimo'}`;
+                    }
+                }
+            });
 
             const tbody = document.getElementById('stock-summary-table');
             tbody.innerHTML = '';
@@ -1194,8 +1343,8 @@
             chartLocal = new Chart(ctxLocal, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Site', 'Alojamento 01', 'Alojamento 03'],
-                    datasets: [{ data: [0, 0, 0], backgroundColor: ['#0f5298', '#0e8a44', '#d9530f'] }]
+                    labels: mainLocations,
+                    datasets: [{ data: mainLocations.map(() => 0), backgroundColor: ['#0f5298', '#0e8a44', '#d9530f', '#6f42c1', '#fd7e14'] }]
                 },
                 options: chartOptions
             });
@@ -1259,7 +1408,7 @@
 
             let estoqueAtualLocal = 0;
             if (selectedFilterLoc === 'Todos') {
-                estoqueAtualLocal = stock['Site'].cheios + stock['Alojamento 01'].cheios + stock['Alojamento 03'].cheios;
+                Object.keys(stock).forEach(k => estoqueAtualLocal += stock[k].cheios);
             } else if (stock[selectedFilterLoc]) {
                 estoqueAtualLocal = stock[selectedFilterLoc].cheios;
             }
