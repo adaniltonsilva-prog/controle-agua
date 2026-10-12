@@ -711,6 +711,7 @@
         </div>
     </div>
 
+    <!-- LÓGICA JAVASCRIPT COMPLETA E ESTÁVEL -->
     <script>
         const BASE_USERS = {
             'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
@@ -1200,362 +1201,18 @@
                     `;
                 });
             }
-
-            const stockCardContainer = document.getElementById('stock-cards-container');
-            if(stockCardContainer) {
-                stockCardContainer.innerHTML = '';
-                mainLocations.forEach(loc => {
-                    const safeId = loc.replace(/\s+/g, '');
-                    stockCardContainer.innerHTML += `
-                        <div class="border rounded-2xl p-3 shadow-sm space-y-2">
-                            <div class="bg-[#0b5394] text-white p-1.5 rounded-lg font-bold text-xs uppercase flex items-center gap-1.5">
-                                <i class="fa-solid fa-building"></i> ${loc}
-                            </div>
-                            <div class="space-y-1.5 text-xs">
-                                <div class="flex justify-between border-b pb-1"><span class="text-slate-500">INICIAL</span> <strong id="st-${safeId}-inicial" class="text-slate-800">0</strong></div>
-                                <div class="flex justify-between border-b pb-1"><span class="text-slate-500">CHEIOS</span> <strong id="st-${safeId}-cheios" class="text-slate-800">0</strong></div>
-                                <div class="flex justify-between border-b pb-1"><span class="text-slate-500">VAZIOS</span> <strong id="st-${safeId}-vazios" class="text-slate-800">0</strong></div>
-                                <div class="flex justify-between items-center pt-0.5"><span class="text-slate-500">STATUS</span> <span id="st-${safeId}-status" class="bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full text-[10px]">● ZERADO</span></div>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-        }
-
-        function updateSubLocations() {
-            const tipo = document.getElementById('single-tipo').value;
-            const mainLoc = document.getElementById('single-local').value;
-            const subSelect = document.getElementById('single-detalhe');
-
-            subSelect.innerHTML = '';
-
-            if (tipo === 'Entrada' || tipo === 'Devolução') {
-                const el = document.createElement('option');
-                el.value = 'Geral';
-                el.innerText = 'Geral';
-                subSelect.appendChild(el);
-            } else {
-                const options = subLocationsMap[mainLoc] || [];
-                options.forEach(opt => {
-                    const el = document.createElement('option');
-                    el.value = opt;
-                    el.innerText = opt;
-                    subSelect.appendChild(el);
-                });
-            }
-        }
-
-        function changeBatchLocation() {
-            const selectedLoc = document.getElementById('batch-local-select').value;
-            document.getElementById('batch-total-label').innerText = `TOTAL ${selectedLoc.toUpperCase()}`;
-            buildBatchInputs();
-        }
-
-        function buildBatchInputs() {
-            const selectedLoc = document.getElementById('batch-local-select').value;
-            const container = document.getElementById('batch-inputs');
-            container.innerHTML = '';
-
-            const subLocs = subLocationsMap[selectedLoc] || [];
-
-            subLocs.forEach(loc => {
-                container.innerHTML += `
-                    <div class="flex items-center justify-between border-b pb-1.5">
-                        <span class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-                            <i class="fa-solid fa-house text-blue-600"></i> ${loc}
-                        </span>
-                        <div class="flex items-center gap-1.5">
-                            <input type="number" min="0" data-loc="${loc}" oninput="updateBatchSummary()" class="batch-qtd-input w-16 p-1 border rounded text-center font-bold text-xs" placeholder="0">
-                            <span class="text-[11px] text-slate-500">gal.</span>
-                        </div>
-                    </div>
-                `;
-            });
-            updateBatchSummary();
-        }
-
-        function updateBatchSummary() {
-            const inputs = document.querySelectorAll('.batch-qtd-input');
-            const summary = document.getElementById('batch-summary');
-            summary.innerHTML = '';
-            let total = 0;
-
-            inputs.forEach(inp => {
-                const val = parseInt(inp.value) || 0;
-                total += val;
-                if(val > 0) {
-                    summary.innerHTML += `
-                        <div class="flex justify-between border-b pb-0.5">
-                            <span>${inp.dataset.loc}:</span>
-                            <strong>${val} galões</strong>
-                        </div>
-                    `;
-                }
-            });
-
-            document.getElementById('batch-total').innerText = total;
-        }
-
-        function submitBatch() {
-            const selectedLoc = document.getElementById('batch-local-select').value;
-            const date = document.getElementById('batch-data').value;
-            const inputs = document.querySelectorAll('.batch-qtd-input');
-            const records = [];
-
-            inputs.forEach(inp => {
-                const val = parseInt(inp.value) || 0;
-                if(val > 0) {
-                    records.push({
-                        Data: date,
-                        Tipo: 'Consumo',
-                        LocalPrincipal: selectedLoc,
-                        LocalDetalhe: inp.dataset.loc,
-                        Quantidade: val,
-                        Observacao: `Consumo Detalhado ${selectedLoc}`
-                    });
-                }
-            });
-
-            if(records.length === 0) {
-                alert('Preencha ao menos uma quantidade.');
-                return;
-            }
-
-            saveRecords(records);
-            clearBatch();
-        }
-
-        function clearBatch() {
-            document.querySelectorAll('.batch-qtd-input').forEach(i => i.value = '');
-            updateBatchSummary();
-        }
-
-        function openConfigModal() {
-            if (!currentUser || currentUser.role !== 'ADM') {
-                alert('Acesso restrito ao Administrador.');
-                return;
-            }
-            document.getElementById('cfg-efetivo').value = systemConfig.efetivo;
-            document.getElementById('cfg-meta').value = systemConfig.meta;
-            document.getElementById('cfg-volume').value = systemConfig.volumeGalao;
-            renderConfigDynamicFields();
-            document.getElementById('modal-config').classList.remove('hidden');
-        }
-
-        function closeConfigModal() {
-            document.getElementById('modal-config').classList.add('hidden');
-        }
-
-        function saveConfigParameters() {
-            systemConfig.efetivo = parseInt(document.getElementById('cfg-efetivo').value) || 500;
-            systemConfig.meta = parseFloat(document.getElementById('cfg-meta').value) || 2.7;
-            systemConfig.volumeGalao = parseInt(document.getElementById('cfg-volume').value) || 20;
-
-            if(!systemConfig.estoqueInicialVazios) systemConfig.estoqueInicialVazios = {};
-
-            mainLocations.forEach(loc => {
-                const iniInput = document.getElementById(`cfg-ini-${loc}`);
-                const iniVazInput = document.getElementById(`cfg-inivaz-${loc}`);
-                const minInput = document.getElementById(`cfg-min-${loc}`);
-                if (iniInput) systemConfig.estoqueInicial[loc] = parseInt(iniInput.value) || 0;
-                if (iniVazInput) systemConfig.estoqueInicialVazios[loc] = parseInt(iniVazInput.value) || 0;
-                if (minInput) systemConfig.estoqueMinimo[loc] = parseInt(minInput.value) || 200;
-            });
-
-            const fullConfig = {
-                systemConfig,
-                mainLocations,
-                tiposLancamento,
-                subLocationsMap,
-                USERS_DB
-            };
-
-            localStorage.setItem('controle_agua_config', JSON.stringify(fullConfig));
-            closeConfigModal();
-            updateAllSelectsUI();
-            updateStockUI();
-            updateDashboard();
-            alert('Configurações salvas!');
-        }
-
-        function executeResetCache() {
-            if(confirm('Tem certeza de que deseja limpar a memória cache?')) {
-                localStorage.clear();
-                database = [];
-                closeConfigModal();
-                loadDataFromSheet();
-                alert('Cache limpo!');
-            }
-        }
-
-        function switchScreen(screenId) {
-            if (!currentUser) return;
-            if (currentUser.role !== 'ADM' && ['screen5', 'screen6'].includes(screenId)) {
-                alert('Acesso restrito ao Administrador.');
-                return;
-            }
-
-            document.querySelectorAll('.screen-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(screenId).classList.remove('hidden');
-
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            const activeNav = document.getElementById(`nav-${screenId}`);
-            if(activeNav) activeNav.classList.add('active');
-
-            if(screenId === 'screen3') buildBatchInputs();
-            if(screenId === 'screen5') updateDashboard();
-            if(screenId === 'screen4') updateStockUI();
-            if(screenId === 'screen6') renderFullDatabaseTable();
-        }
-
-        async function loadDataFromSheet() {
-            const savedLocalDB = localStorage.getItem('controle_agua_db');
-            if(savedLocalDB) {
-                try { database = JSON.parse(savedLocalDB) || []; } catch(e) { database = []; }
-            }
-
-            if (navigator.onLine && SCRIPT_URL) {
-                try {
-                    const res = await fetch(SCRIPT_URL);
-                    const data = await res.json();
-                    
-                    if(data && typeof data === 'object') {
-                        if(Array.isArray(data.records)) {
-                            database = data.records;
-                            localStorage.setItem('controle_agua_db', JSON.stringify(database));
-                        }
-                        if(data.users && typeof data.users === 'object') {
-                            USERS_DB = { ...BASE_USERS, ...data.users };
-                            localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
-                        }
-                    } else if(Array.isArray(data)) {
-                        database = data;
-                        localStorage.setItem('controle_agua_db', JSON.stringify(database));
-                    }
-                } catch (err) {
-                    console.error("Erro no carregamento remoto:", err);
-                }
-            }
-
-            renderRecentTable();
-            updateStockUI();
-            updateDashboard();
-        }
-
-        async function saveRecords(records) {
-            database.push(...records);
-            localStorage.setItem('controle_agua_db', JSON.stringify(database));
-
-            renderRecentTable();
-            updateStockUI();
-            updateDashboard();
-
-            if (navigator.onLine && SCRIPT_URL) {
-                try {
-                    await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ action: 'addRecords', records })
-                    });
-                    alert('Lançamento registrado e enviado para o Google Sheets!');
-                } catch(e) {
-                    pendingQueue.push(...records);
-                    savePendingQueue();
-                    alert('Conexão oscilou. O lançamento foi salvo localmente e será enviado em breve.');
-                }
-            } else {
-                pendingQueue.push(...records);
-                savePendingQueue();
-                alert('Você está OFFLINE. O lançamento foi salvo no telemóvel e será sincronizado assim que recuperar a conexão!');
-            }
-        }
-
-        function handleSingleSubmit(e) {
-            e.preventDefault();
-            const record = {
-                Data: document.getElementById('single-data').value,
-                Tipo: document.getElementById('single-tipo').value,
-                LocalPrincipal: document.getElementById('single-local').value,
-                LocalDetalhe: document.getElementById('single-detalhe').value,
-                Quantidade: parseInt(document.getElementById('single-qtd').value) || 0,
-                Observacao: document.getElementById('single-obs').value || '-'
-            };
-
-            saveRecords([record]);
-            document.getElementById('form-single').reset();
-            document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
-            updateSubLocations();
-        }
-
-        function renderRecentTable() {
-            const tbody = document.getElementById('table-recent-body');
-            tbody.innerHTML = '';
-
-            const list = [...database].reverse().slice(0, 5);
-
-            if(list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-xs text-slate-400">Nenhum lançamento.</td></tr>`;
-                return;
-            }
-
-            list.forEach((r, idx) => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-2">${r.Data || '-'}</td>
-                        <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
-                        <td class="p-2">${r.LocalPrincipal || '-'}</td>
-                        <td class="p-2">${r.LocalDetalhe || '-'}</td>
-                        <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
-                        <td class="p-2 text-center"><button onclick="deleteRecord(${database.length - 1 - idx})" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>
-                `;
-            });
-        }
-
-        function renderFullDatabaseTable() {
-            const tbody = document.getElementById('table-full-db');
-            tbody.innerHTML = '';
-
-            if(database.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-xs text-slate-400">Nenhum registro.</td></tr>`;
-                return;
-            }
-
-            database.forEach((r, idx) => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50">
-                        <td class="p-2">${r.Data || '-'}</td>
-                        <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
-                        <td class="p-2">${r.LocalPrincipal || '-'}</td>
-                        <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
-                        <td class="p-2 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>
-                `;
-            });
-        }
-
-        function deleteRecord(idx) {
-            if(confirm('Tem certeza de que deseja excluir este registro?')) {
-                database.splice(idx, 1);
-                localStorage.setItem('controle_agua_db', JSON.stringify(database));
-                renderRecentTable();
-                renderFullDatabaseTable();
-                updateStockUI();
-                updateDashboard();
-            }
         }
 
         function calculateStock() {
             const stock = {};
             mainLocations.forEach(loc => {
-                const iniCheios = (systemConfig.estoqueInicial && systemConfig.estoqueInicial[loc]) || 0;
-                const iniVazios = (systemConfig.estoqueInicialVazios && systemConfig.estoqueInicialVazios[loc]) || 0;
+                const iniCheios = (systemConfig.estoqueInicial && systemConfig.estoqueInicial[loc]) != null ? parseInt(systemConfig.estoqueInicial[loc]) || 0 : 0;
+                const iniVazios = (systemConfig.estoqueInicialVazios && systemConfig.estoqueInicialVazios[loc]) != null ? parseInt(systemConfig.estoqueInicialVazios[loc]) || 0 : 0;
+                const minVal = (systemConfig.estoqueMinimo && systemConfig.estoqueMinimo[loc]) != null ? parseInt(systemConfig.estoqueMinimo[loc]) || 200 : 200;
                 stock[loc] = {
                     inicial: iniCheios,
                     inicialVazios: iniVazios,
-                    min: (systemConfig.estoqueMinimo && systemConfig.estoqueMinimo[loc]) || 200,
+                    min: minVal,
                     cheios: iniCheios,
                     vazios: iniVazios,
                     entrada: 0,
@@ -1564,76 +1221,107 @@
                 };
             });
 
-            database.forEach(r => {
-                const loc = r.LocalPrincipal;
-                const qtd = parseInt(r.Quantidade) || 0;
+            if (Array.isArray(database)) {
+                database.forEach(r => {
+                    if (!r) return;
+                    const rawLoc = (r.LocalPrincipal || '').trim();
+                    const qtd = parseInt(r.Quantidade) || 0;
 
-                if(stock[loc]) {
-                    if(r.Tipo === 'Consumo') { 
-                        stock[loc].consumo += qtd; 
-                        stock[loc].cheios -= qtd; 
-                        stock[loc].vazios += qtd; // Consumir água transforma galão cheio em galão vazio
+                    // Busca o local correspondente de forma flexível (sem problemas com maiúsculas/espaços)
+                    const matchedLoc = mainLocations.find(l => l.trim().toLowerCase() === rawLoc.toLowerCase());
+
+                    if (matchedLoc && stock[matchedLoc]) {
+                        const tipo = (r.Tipo || '').trim();
+                        if (tipo === 'Consumo') { 
+                            stock[matchedLoc].consumo += qtd; 
+                            stock[matchedLoc].cheios -= qtd; 
+                            stock[matchedLoc].vazios += qtd; // Consumir gera garrafão vazio
+                        } else if (tipo === 'Entrada') { 
+                            stock[matchedLoc].entrada += qtd; 
+                            stock[matchedLoc].cheios += qtd; 
+                        } else if (tipo === 'Devolução') { 
+                            stock[matchedLoc].devolucao += qtd; 
+                            stock[matchedLoc].vazios -= qtd; // Devolver reduz vazios
+                        }
                     }
-                    else if(r.Tipo === 'Entrada') { 
-                        stock[loc].entrada += qtd; 
-                        stock[loc].cheios += qtd; 
-                    }
-                    else if(r.Tipo === 'Devolução') { 
-                        stock[loc].devolucao += qtd; 
-                        stock[loc].vazios -= qtd; // Devolver galão vazio para o fornecedor
-                    }
-                }
-            });
+                });
+            }
 
             return stock;
         }
 
         function updateStockUI() {
             const stock = calculateStock();
-
-            mainLocations.forEach(loc => {
-                const safeId = loc.replace(/\s+/g, '');
-                const s = stock[loc];
-                if (s) {
-                    const elIni = document.getElementById(`st-${safeId}-inicial`);
-                    const elChe = document.getElementById(`st-${safeId}-cheios`);
-                    const elVaz = document.getElementById(`st-${safeId}-vazios`);
-                    const elSta = document.getElementById(`st-${safeId}-status`);
-
-                    if (elIni) elIni.innerText = s.inicial;
-                    if (elChe) elChe.innerText = s.cheios;
-                    if (elVaz) elVaz.innerText = s.vazios;
-
-                    if (elSta) {
-                        const isNormal = s.cheios >= s.min;
-                        elSta.className = `${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-2 py-0.5 rounded-full text-[10px]`;
-                        elSta.innerText = `● ${isNormal ? 'Normal' : 'Baixo'}`;
-                    }
-                }
-            });
-
+            const cardContainer = document.getElementById('stock-cards-container');
             const tbody = document.getElementById('stock-summary-table');
-            tbody.innerHTML = '';
-            Object.keys(stock).forEach(loc => {
-                const s = stock[loc];
-                const isNormal = s.cheios >= s.min;
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="p-2 font-bold">${loc}</td>
-                        <td class="p-2 text-center">${s.inicial}</td>
-                        <td class="p-2 text-center text-emerald-600 font-bold">+${s.entrada}</td>
-                        <td class="p-2 text-center text-blue-600 font-bold">-${s.consumo}</td>
-                        <td class="p-2 text-center text-amber-600 font-bold">-${s.devolucao}</td>
-                        <td class="p-2 text-center font-black text-slate-900">${s.cheios}</td>
-                        <td class="p-2 text-center font-black text-amber-600">${s.vazios}</td>
-                        <td class="p-2 text-center">
-                            <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-2 py-0.5 rounded-full text-[10px]">
-                                ● ${isNormal ? 'OK' : 'Baixo'}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            });
+
+            // Renderiza os cards de estoque diretamente para garantir visibilidade no mobile e desktop
+            if (cardContainer) {
+                cardContainer.innerHTML = '';
+                mainLocations.forEach(loc => {
+                    const s = stock[loc] || { inicial: 0, inicialVazios: 0, min: 200, cheios: 0, vazios: 0, entrada: 0, consumo: 0, devolucao: 0 };
+                    const isNormal = s.cheios >= s.min;
+                    const statusClass = isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
+                    const statusText = isNormal ? '● NORMAL' : '● BAIXO';
+
+                    cardContainer.innerHTML += `
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
+                            <div class="bg-[#0b5394] text-white p-2.5 rounded-xl font-bold text-xs uppercase flex items-center justify-between shadow">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-building"></i> ${loc}</span>
+                                <span class="${statusClass} font-black px-2 py-0.5 rounded-full text-[10px]">${statusText}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="bg-white p-2 rounded-xl border border-slate-200">
+                                    <span class="text-[10px] uppercase font-bold text-slate-400 block">Cheios</span>
+                                    <strong class="text-lg font-black text-slate-900">${s.cheios}</strong>
+                                </div>
+                                <div class="bg-white p-2 rounded-xl border border-slate-200">
+                                    <span class="text-[10px] uppercase font-bold text-amber-600 block">Vazios</span>
+                                    <strong class="text-lg font-black text-amber-600">${s.vazios}</strong>
+                                </div>
+                                <div class="bg-white p-2 rounded-xl border border-slate-200">
+                                    <span class="text-[10px] uppercase font-bold text-slate-400 block">Inicial</span>
+                                    <strong class="text-xs font-bold text-slate-700">${s.inicial}</strong>
+                                </div>
+                                <div class="bg-white p-2 rounded-xl border border-slate-200">
+                                    <span class="text-[10px] uppercase font-bold text-slate-400 block">Mínimo</span>
+                                    <strong class="text-xs font-bold text-slate-700">${s.min}</strong>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-[11px] text-slate-500 pt-1.5 border-t border-slate-200 font-medium">
+                                <span>Entradas: <b class="text-emerald-600 font-bold">+${s.entrada}</b></span>
+                                <span>Consumo: <b class="text-blue-600 font-bold">-${s.consumo}</b></span>
+                                <span>Devol.: <b class="text-amber-600 font-bold">-${s.devolucao}</b></span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // Renderiza a tabela analítica de estoque
+            if (tbody) {
+                tbody.innerHTML = '';
+                mainLocations.forEach(loc => {
+                    const s = stock[loc] || { inicial: 0, inicialVazios: 0, min: 200, cheios: 0, vazios: 0, entrada: 0, consumo: 0, devolucao: 0 };
+                    const isNormal = s.cheios >= s.min;
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-2.5 font-bold text-slate-800">${loc}</td>
+                            <td class="p-2.5 text-center">${s.inicial}</td>
+                            <td class="p-2.5 text-center text-emerald-600 font-bold">+${s.entrada}</td>
+                            <td class="p-2.5 text-center text-blue-600 font-bold">-${s.consumo}</td>
+                            <td class="p-2.5 text-center text-amber-600 font-bold">-${s.devolucao}</td>
+                            <td class="p-2.5 text-center font-black text-slate-900 text-sm">${s.cheios}</td>
+                            <td class="p-2.5 text-center font-black text-amber-600 text-sm">${s.vazios}</td>
+                            <td class="p-2.5 text-center">
+                                <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-2 py-0.5 rounded-full text-[10px]">
+                                    ● ${isNormal ? 'OK' : 'Baixo'}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
         }
 
         function initCharts() {
