@@ -30,7 +30,7 @@
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
     </script>
 
-    <!-- TELA / MODAL DE LOGIN -->
+    <!-- TELA DE LOGIN -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[100] flex items-center justify-center p-4">
         <div class="bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full p-8 space-y-6 border border-slate-800 relative text-center">
             <div class="space-y-3">
@@ -38,7 +38,7 @@
                 <p class="text-[11px] text-sky-400 font-extrabold uppercase tracking-widest">SISTEMAS INTELIGENTES PARA O SEU DIA A DIA</p>
             </div>
 
-            <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
+            <form id="login-form" class="space-y-4 text-left">
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Usuário / E-mail</label>
                     <input type="text" id="login-user" required placeholder="admin ou operador" class="w-full p-3 border border-slate-700 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-sky-500 bg-slate-800 text-white">
@@ -64,7 +64,7 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO AZUL -->
+    <!-- CABEÇALHO DA APLICAÇÃO -->
     <header class="bg-nav text-white px-6 py-3 shadow-md">
         <div class="max-w-[1500px] mx-auto flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-3">
@@ -75,7 +75,6 @@
                 </div>
             </div>
 
-            <!-- NAVEGAÇÃO SUPERIOR -->
             <nav class="flex items-center gap-1 text-sm">
                 <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-4 py-2 flex items-center gap-2">
                     <i class="fa-solid fa-house text-xs"></i> Menu
@@ -96,7 +95,7 @@
 
             <div class="flex items-center gap-3">
                 <span id="user-badge" class="bg-slate-800 text-sky-300 text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1.5 border border-slate-700">
-                    <i class="fa-solid fa-user-check text-sky-400"></i> <span id="user-display-name">Carregando...</span>
+                    <i class="fa-solid fa-user-check text-sky-400"></i> <span id="user-display-name">Ninguém</span>
                 </span>
                 <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow">
                     <i class="fa-solid fa-right-from-bracket"></i> Sair
@@ -271,7 +270,7 @@
             </div>
         </section>
 
-        <!-- 3. TELA – CONSUMO POR ALOJAMENTO -->
+        <!-- 3. TELA – CONSUMO DETALHADO -->
         <section id="screen3" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
             <div class="bg-[#0b5394] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
                 <h2 id="batch-screen-title" class="text-lg font-bold flex items-center gap-2 uppercase">
@@ -407,7 +406,6 @@
                 </div>
             </div>
 
-            <!-- PAINEL DE KPIS -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-[#0f5298] text-white p-4 rounded-2xl shadow flex justify-between items-center">
                     <div>
@@ -482,7 +480,6 @@
                 </div>
             </div>
 
-            <!-- GRELHA DE GRÁFICOS -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="border rounded-2xl p-4 shadow-sm flex flex-col">
                     <h4 class="text-xs font-bold uppercase text-slate-700 mb-3">CONSUMO DIÁRIO (GALÕES)</h4>
@@ -580,7 +577,7 @@
         </div>
     </footer>
 
-    <!-- MODAL DE CONFIGURAÇÕES -->
+    <!-- MODAL CONFIGURAÇÕES -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-6 space-y-6 relative border max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2 border-b">
@@ -591,7 +588,7 @@
             </div>
 
             <div class="space-y-6">
-                <!-- GESTÃO DE USUÁRIOS -->
+                <!-- GESTÃO USUÁRIOS -->
                 <div class="bg-blue-50/60 border border-blue-200 p-4 rounded-2xl space-y-4">
                     <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1 flex items-center gap-2">
                         <i class="fa-solid fa-users-gear"></i> GESTÃO DE USUÁRIOS E PERMISSÕES
@@ -647,7 +644,7 @@
                     </div>
                 </div>
 
-                <!-- CADASTRO DE LOCAIS E TIPOS -->
+                <!-- CADASTRO LOCAIS E TIPOS -->
                 <div class="bg-slate-50 p-4 rounded-2xl border space-y-4">
                     <h4 class="text-xs font-bold uppercase text-purple-700 border-b pb-1">CADASTRO DE OPÇÕES DO SISTEMA</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -692,7 +689,6 @@
                     <div id="cfg-min-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
                 </div>
 
-                <!-- LIMPEZA DE CACHE -->
                 <div class="pt-2 border-t">
                     <button type="button" onclick="executeResetCache()" class="w-full bg-red-50 hover:bg-red-100 text-red-700 font-bold p-2.5 rounded-xl text-xs flex items-center justify-center gap-2 border border-red-200 transition">
                         <i class="fa-solid fa-rotate text-xs"></i> Limpar Memória Cache e Atualizar do Google Sheets
@@ -707,15 +703,15 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT CORRIGIDA -->
+    <!-- LÓGICA JAVASCRIPT COMPLETA E CORRIGIDA -->
     <script>
-        // UTILIZADORES PADRÃO PERMANENTES
-        const DEFAULT_USERS = {
+        // USUÁRIOS PADRÃO IMUTÁVEIS
+        const BASE_USERS = {
             'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
             'operador': { pass: '1234', role: 'OPERADOR', name: 'Apontador de Campo' }
         };
 
-        let USERS_DB = { ...DEFAULT_USERS };
+        let USERS_DB = { ...BASE_USERS };
         let currentUser = null;
         let database = [];
 
@@ -736,27 +732,99 @@
             estoqueMinimo: { 'Site': 300, 'Alojamento 01': 200, 'Alojamento 03': 200 }
         };
 
+        // INICIALIZAÇÃO
         document.addEventListener('DOMContentLoaded', () => {
             loadSavedConfig();
+            setupLoginHandler();
             checkAuthSession();
         });
 
         function loadSavedConfig() {
-            const saved = localStorage.getItem('controle_agua_config');
-            if(saved) {
-                try {
+            try {
+                const saved = localStorage.getItem('controle_agua_config');
+                if(saved) {
                     const parsed = JSON.parse(saved);
-                    systemConfig = parsed.systemConfig || systemConfig;
-                    mainLocations = parsed.mainLocations || mainLocations;
-                    tiposLancamento = parsed.tiposLancamento || tiposLancamento;
-                    subLocationsMap = parsed.subLocationsMap || subLocationsMap;
+                    if (parsed.systemConfig) systemConfig = parsed.systemConfig;
+                    if (parsed.mainLocations) mainLocations = parsed.mainLocations;
+                    if (parsed.tiposLancamento) tiposLancamento = parsed.tiposLancamento;
+                    if (parsed.subLocationsMap) subLocationsMap = parsed.subLocationsMap;
                     if (parsed.USERS_DB && typeof parsed.USERS_DB === 'object') {
-                        USERS_DB = { ...DEFAULT_USERS, ...parsed.USERS_DB };
+                        USERS_DB = { ...BASE_USERS, ...parsed.USERS_DB };
                     }
-                } catch(e) {
-                    console.error("Erro ao carregar configurações:", e);
                 }
+            } catch(e) {
+                console.error("Erro no carregamento de configurações:", e);
+                USERS_DB = { ...BASE_USERS };
             }
+        }
+
+        function setupLoginHandler() {
+            const form = document.getElementById('login-form');
+            if(form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const uInput = document.getElementById('login-user').value.trim().toLowerCase();
+                    const pInput = document.getElementById('login-pass').value.trim();
+
+                    if (USERS_DB[uInput] && USERS_DB[uInput].pass === pInput) {
+                        currentUser = USERS_DB[uInput];
+                        localStorage.setItem('controle_agua_session', uInput);
+                        document.getElementById('login-overlay').classList.add('hidden');
+                        document.getElementById('login-error').classList.add('hidden');
+                        initAppUI();
+                    } else {
+                        document.getElementById('login-error').classList.remove('hidden');
+                    }
+                });
+            }
+        }
+
+        function checkAuthSession() {
+            const savedUser = localStorage.getItem('controle_agua_session');
+            if (savedUser && USERS_DB[savedUser]) {
+                currentUser = USERS_DB[savedUser];
+                document.getElementById('login-overlay').classList.add('hidden');
+                initAppUI();
+            } else {
+                document.getElementById('login-overlay').classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Deseja realmente encerrar a sessão?')) {
+                localStorage.removeItem('controle_agua_session');
+                currentUser = null;
+                location.reload();
+            }
+        }
+
+        function applyUserPermissions() {
+            if(!currentUser) return;
+            document.getElementById('user-display-name').innerText = `${currentUser.name} (${currentUser.role})`;
+            
+            if (currentUser.role === 'OPERADOR') {
+                document.querySelectorAll('.adm-only').forEach(el => el.classList.add('hidden'));
+            } else {
+                document.querySelectorAll('.adm-only').forEach(el => el.classList.remove('hidden'));
+            }
+        }
+
+        function initAppUI() {
+            applyUserPermissions();
+
+            const today = new Date().toISOString().split('T')[0];
+            const firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+
+            document.getElementById('single-data').value = today;
+            document.getElementById('batch-data').value = today;
+
+            document.getElementById('dash-date-start').value = firstDayOfMonth;
+            document.getElementById('dash-date-end').value = today;
+
+            updateAllSelectsUI();
+            buildBatchInputs();
+            loadDataFromSheet();
+            initCharts();
         }
 
         function addNewUser() {
@@ -771,7 +839,7 @@
             }
 
             if (USERS_DB[login]) {
-                alert('Este login já está cadastrado no sistema.');
+                alert('Este login já existe.');
                 return;
             }
 
@@ -790,7 +858,7 @@
                 return;
             }
 
-            if (confirm(`Deseja revogar o acesso do usuário "${USERS_DB[loginKey].name}"?`)) {
+            if (confirm(`Deseja remover o usuário "${USERS_DB[loginKey].name}"?`)) {
                 delete USERS_DB[loginKey];
                 renderUsersTable();
             }
@@ -820,18 +888,778 @@
             });
         }
 
-        function checkAuthSession() {
-            const savedUser = localStorage.getItem('controle_agua_session');
-            if (savedUser && USERS_DB[savedUser]) {
-                currentUser = USERS_DB[savedUser];
-                document.getElementById('login-overlay').classList.add('hidden');
-                initAppUI();
-            } else {
-                document.getElementById('login-overlay').classList.remove('hidden');
+        function updateAllSelectsUI() {
+            const singleLocalSelect = document.getElementById('single-local');
+            singleLocalSelect.innerHTML = '';
+            mainLocations.forEach(loc => {
+                const el = document.createElement('option');
+                el.value = loc; el.innerText = loc;
+                singleLocalSelect.appendChild(el);
+            });
+
+            const singleTipoSelect = document.getElementById('single-tipo');
+            singleTipoSelect.innerHTML = '';
+            tiposLancamento.forEach(t => {
+                const el = document.createElement('option');
+                el.value = t; el.innerText = t;
+                singleTipoSelect.appendChild(el);
+            });
+
+            const batchLocalSelect = document.getElementById('batch-local-select');
+            batchLocalSelect.innerHTML = '';
+            mainLocations.forEach(loc => {
+                const el = document.createElement('option');
+                el.value = loc; el.innerText = loc;
+                batchLocalSelect.appendChild(el);
+            });
+
+            const dashFilterSelect = document.getElementById('dash-filter-local');
+            dashFilterSelect.innerHTML = '<option value="Todos">Todos</option>';
+            mainLocations.forEach(loc => {
+                const el = document.createElement('option');
+                el.value = loc; el.innerText = loc;
+                dashFilterSelect.appendChild(el);
+            });
+
+            const cfgSubParent = document.getElementById('cfg-subloc-parent-select');
+            cfgSubParent.innerHTML = '';
+            mainLocations.forEach(loc => {
+                const el = document.createElement('option');
+                el.value = loc; el.innerText = loc;
+                cfgSubParent.appendChild(el);
+            });
+            cfgSubParent.onchange = renderSubLocTags;
+
+            updateSubLocations();
+            renderConfigDynamicFields();
+        }
+
+        function addMainLocation() {
+            const val = document.getElementById('add-main-loc-input').value.trim();
+            if (val && !mainLocations.includes(val)) {
+                mainLocations.push(val);
+                subLocationsMap[val] = subLocationsMap[val] || [];
+                systemConfig.estoqueInicial[val] = 0;
+                systemConfig.estoqueMinimo[val] = 100;
+                document.getElementById('add-main-loc-input').value = '';
+                updateAllSelectsUI();
+                renderConfigDynamicFields();
             }
         }
 
-        function handleLogin(e) {
+        function removeMainLocation(loc) {
+            if (confirm(`Deseja remover o local "${loc}"?`)) {
+                mainLocations = mainLocations.filter(m => m !== loc);
+                delete subLocationsMap[loc];
+                delete systemConfig.estoqueInicial[loc];
+                delete systemConfig.estoqueMinimo[loc];
+                updateAllSelectsUI();
+                renderConfigDynamicFields();
+            }
+        }
+
+        function addTipoLancamento() {
+            const val = document.getElementById('add-tipo-input').value.trim();
+            if (val && !tiposLancamento.includes(val)) {
+                tiposLancamento.push(val);
+                document.getElementById('add-tipo-input').value = '';
+                updateAllSelectsUI();
+            }
+        }
+
+        function removeTipoLancamento(t) {
+            if (['Consumo', 'Entrada', 'Devolução'].includes(t)) {
+                alert('Não é possível remover tipos padrão do sistema.');
+                return;
+            }
+            tiposLancamento = tiposLancamento.filter(item => item !== t);
+            updateAllSelectsUI();
+        }
+
+        function addSubLocation() {
+            const parentLoc = document.getElementById('cfg-subloc-parent-select').value;
+            const val = document.getElementById('add-subloc-input').value.trim();
+            if (parentLoc && val) {
+                subLocationsMap[parentLoc] = subLocationsMap[parentLoc] || [];
+                if (!subLocationsMap[parentLoc].includes(val)) {
+                    subLocationsMap[parentLoc].push(val);
+                    document.getElementById('add-subloc-input').value = '';
+                    renderSubLocTags();
+                    updateSubLocations();
+                }
+            }
+        }
+
+        function removeSubLocation(parentLoc, subLoc) {
+            if (subLocationsMap[parentLoc]) {
+                subLocationsMap[parentLoc] = subLocationsMap[parentLoc].filter(s => s !== subLoc);
+                renderSubLocTags();
+                updateSubLocations();
+            }
+        }
+
+        function renderSubLocTags() {
+            const parentLoc = document.getElementById('cfg-subloc-parent-select').value;
+            const container = document.getElementById('cfg-subloc-list');
+            container.innerHTML = '';
+            const list = subLocationsMap[parentLoc] || [];
+            list.forEach(sub => {
+                container.innerHTML += `
+                    <span class="bg-purple-100 text-purple-800 text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                        ${sub} <i onclick="removeSubLocation('${parentLoc}', '${sub}')" class="fa-solid fa-xmark cursor-pointer hover:text-red-600"></i>
+                    </span>
+                `;
+            });
+        }
+
+        function renderConfigDynamicFields() {
+            renderUsersTable();
+
+            const mainTagContainer = document.getElementById('cfg-main-loc-list');
+            mainTagContainer.innerHTML = '';
+            mainLocations.forEach(loc => {
+                mainTagContainer.innerHTML += `
+                    <span class="bg-blue-100 text-blue-800 text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                        ${loc} <i onclick="removeMainLocation('${loc}')" class="fa-solid fa-xmark cursor-pointer hover:text-red-600"></i>
+                    </span>
+                `;
+            });
+
+            const tipoTagContainer = document.getElementById('cfg-tipos-list');
+            tipoTagContainer.innerHTML = '';
+            tiposLancamento.forEach(t => {
+                tipoTagContainer.innerHTML += `
+                    <span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                        ${t} ${!['Consumo', 'Entrada', 'Devolução'].includes(t) ? `<i onclick="removeTipoLancamento('${t}')" class="fa-solid fa-xmark cursor-pointer hover:text-red-600"></i>` : ''}
+                    </span>
+                `;
+            });
+
+            renderSubLocTags();
+
+            const iniContainer = document.getElementById('cfg-ini-container');
+            iniContainer.innerHTML = '';
+            mainLocations.forEach(loc => {
+                const val = systemConfig.estoqueInicial[loc] || 0;
+                iniContainer.innerHTML += `
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">${loc}:</label>
+                        <input type="number" id="cfg-ini-${loc}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800" value="${val}">
+                    </div>
+                `;
+            });
+
+            const minContainer = document.getElementById('cfg-min-container');
+            minContainer.innerHTML = '';
+            mainLocations.forEach(loc => {
+                const val = systemConfig.estoqueMinimo[loc] || 200;
+                minContainer.innerHTML += `
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">${loc}:</label>
+                        <input type="number" id="cfg-min-${loc}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm font-bold text-slate-800" value="${val}">
+                    </div>
+                `;
+            });
+
+            const stockCardContainer = document.getElementById('stock-cards-container');
+            stockCardContainer.innerHTML = '';
+            mainLocations.forEach(loc => {
+                const safeId = loc.replace(/\s+/g, '');
+                stockCardContainer.innerHTML += `
+                    <div class="border rounded-2xl p-4 shadow-sm space-y-3">
+                        <div class="bg-[#0b5394] text-white p-2 rounded-lg font-bold text-xs uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-building"></i> ${loc}
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE INICIAL</span> <strong id="st-${safeId}-inicial" class="text-base text-slate-800">0</strong></div>
+                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES CHEIOS</span> <strong id="st-${safeId}-cheios" class="text-base text-slate-800">0</strong></div>
+                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">GALÕES VAZIOS</span> <strong id="st-${safeId}-vazios" class="text-base text-slate-800">0</strong></div>
+                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">ESTOQUE MÍNIMO</span> <strong id="st-${safeId}-minimo" class="text-base text-slate-800">0</strong></div>
+                            <div class="flex justify-between items-center pt-1"><span class="text-slate-500">STATUS</span> <span id="st-${safeId}-status" class="bg-slate-100 text-slate-700 font-bold px-3 py-0.5 rounded-full text-xs">● ZERADO</span></div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function updateSubLocations() {
+            const tipo = document.getElementById('single-tipo').value;
+            const mainLoc = document.getElementById('single-local').value;
+            const subSelect = document.getElementById('single-detalhe');
+
+            subSelect.innerHTML = '';
+
+            if (tipo === 'Entrada' || tipo === 'Devolução') {
+                const el = document.createElement('option');
+                el.value = 'Geral';
+                el.innerText = 'Geral';
+                subSelect.appendChild(el);
+            } else {
+                const options = subLocationsMap[mainLoc] || [];
+                options.forEach(opt => {
+                    const el = document.createElement('option');
+                    el.value = opt;
+                    el.innerText = opt;
+                    subSelect.appendChild(el);
+                });
+            }
+        }
+
+        function changeBatchLocation() {
+            const selectedLoc = document.getElementById('batch-local-select').value;
+            document.getElementById('batch-total-label').innerText = `TOTAL ${selectedLoc.toUpperCase()}`;
+            buildBatchInputs();
+        }
+
+        function buildBatchInputs() {
+            const selectedLoc = document.getElementById('batch-local-select').value;
+            const container = document.getElementById('batch-inputs');
+            container.innerHTML = '';
+
+            const subLocs = subLocationsMap[selectedLoc] || [];
+
+            subLocs.forEach(loc => {
+                container.innerHTML += `
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <span class="text-xs font-semibold text-slate-700 flex items-center gap-2">
+                            <i class="fa-solid fa-house text-blue-600"></i> ${loc}
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <input type="number" min="0" data-loc="${loc}" oninput="updateBatchSummary()" class="batch-qtd-input w-20 p-1.5 border rounded-lg text-center font-bold text-xs" placeholder="0">
+                            <span class="text-xs text-slate-500">galões</span>
+                        </div>
+                    </div>
+                `;
+            });
+            updateBatchSummary();
+        }
+
+        function updateBatchSummary() {
+            const inputs = document.querySelectorAll('.batch-qtd-input');
+            const summary = document.getElementById('batch-summary');
+            summary.innerHTML = '';
+            let total = 0;
+
+            inputs.forEach(inp => {
+                const val = parseInt(inp.value) || 0;
+                total += val;
+                if(val > 0) {
+                    summary.innerHTML += `
+                        <div class="flex justify-between border-b pb-1">
+                            <span>${inp.dataset.loc}:</span>
+                            <strong>${val} galões</strong>
+                        </div>
+                    `;
+                }
+            });
+
+            document.getElementById('batch-total').innerText = total;
+        }
+
+        function submitBatch() {
+            const selectedLoc = document.getElementById('batch-local-select').value;
+            const date = document.getElementById('batch-data').value;
+            const inputs = document.querySelectorAll('.batch-qtd-input');
+            const records = [];
+
+            inputs.forEach(inp => {
+                const val = parseInt(inp.value) || 0;
+                if(val > 0) {
+                    records.push({
+                        Data: date,
+                        Tipo: 'Consumo',
+                        LocalPrincipal: selectedLoc,
+                        LocalDetalhe: inp.dataset.loc,
+                        Quantidade: val,
+                        Observacao: `Consumo Detalhado ${selectedLoc}`
+                    });
+                }
+            });
+
+            if(records.length === 0) {
+                alert('Preencha ao menos uma quantidade.');
+                return;
+            }
+
+            saveRecords(records);
+            alert(`Consumo de ${selectedLoc} registrado com sucesso!`);
+            clearBatch();
+        }
+
+        function clearBatch() {
+            document.querySelectorAll('.batch-qtd-input').forEach(i => i.value = '');
+            updateBatchSummary();
+        }
+
+        function openConfigModal() {
+            if (!currentUser || currentUser.role !== 'ADM') {
+                alert('Acesso restrito ao Administrador.');
+                return;
+            }
+            document.getElementById('cfg-efetivo').value = systemConfig.efetivo;
+            document.getElementById('cfg-meta').value = systemConfig.meta;
+            document.getElementById('cfg-volume').value = systemConfig.volumeGalao;
+            renderConfigDynamicFields();
+            document.getElementById('modal-config').classList.remove('hidden');
+        }
+
+        function closeConfigModal() {
+            document.getElementById('modal-config').classList.add('hidden');
+        }
+
+        function saveConfigParameters() {
+            systemConfig.efetivo = parseInt(document.getElementById('cfg-efetivo').value) || 500;
+            systemConfig.meta = parseFloat(document.getElementById('cfg-meta').value) || 2.7;
+            systemConfig.volumeGalao = parseInt(document.getElementById('cfg-volume').value) || 20;
+
+            mainLocations.forEach(loc => {
+                const iniInput = document.getElementById(`cfg-ini-${loc}`);
+                const minInput = document.getElementById(`cfg-min-${loc}`);
+                if (iniInput) systemConfig.estoqueInicial[loc] = parseInt(iniInput.value) || 0;
+                if (minInput) systemConfig.estoqueMinimo[loc] = parseInt(minInput.value) || 200;
+            });
+
+            const fullConfig = {
+                systemConfig,
+                mainLocations,
+                tiposLancamento,
+                subLocationsMap,
+                USERS_DB
+            };
+
+            localStorage.setItem('controle_agua_config', JSON.stringify(fullConfig));
+            closeConfigModal();
+            updateAllSelectsUI();
+            updateStockUI();
+            updateDashboard();
+            alert('Configurações salvas com sucesso!');
+        }
+
+        function executeResetCache() {
+            if(confirm('Tem certeza de que deseja limpar a memória temporária do navegador? Os dados serão atualizados diretamente do Google Sheets.')) {
+                localStorage.clear();
+                database = [];
+                closeConfigModal();
+                loadDataFromSheet();
+                alert('Cache limpo com sucesso!');
+            }
+        }
+
+        function switchScreen(screenId) {
+            if (!currentUser) return;
+            if (currentUser.role !== 'ADM' && ['screen5', 'screen6'].includes(screenId)) {
+                alert('Acesso restrito ao Administrador.');
+                return;
+            }
+
+            document.querySelectorAll('.screen-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            const activeNav = document.getElementById(`nav-${screenId}`);
+            if(activeNav) activeNav.classList.add('active');
+
+            if(screenId === 'screen3') buildBatchInputs();
+            if(screenId === 'screen5') updateDashboard();
+            if(screenId === 'screen4') updateStockUI();
+            if(screenId === 'screen6') renderFullDatabaseTable();
+        }
+
+        async function loadDataFromSheet() {
+            try {
+                if (SCRIPT_URL) {
+                    const res = await fetch(SCRIPT_URL);
+                    const data = await res.json();
+                    if(Array.isArray(data)) database = data;
+                }
+            } catch (err) {
+                console.error("Erro no carregamento:", err);
+                database = [];
+            }
+            renderRecentTable();
+            updateStockUI();
+            updateDashboard();
+        }
+
+        async function saveRecords(records) {
+            database.push(...records);
+            localStorage.setItem('controle_agua_db', JSON.stringify(database));
+
+            renderRecentTable();
+            updateStockUI();
+            updateDashboard();
+
+            if (SCRIPT_URL) {
+                try {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(records)
+                    });
+                } catch(e) {
+                    console.error("Erro ao enviar:", e);
+                }
+            }
+        }
+
+        function handleSingleSubmit(e) {
             e.preventDefault();
-            const u = document.getElementById('login-user').value.trim().toLowerCase();
-            const p = document.getElementById('login-pass').value.trim();
+            const record = {
+                Data: document.getElementById('single-data').value,
+                Tipo: document.getElementById('single-tipo').value,
+                LocalPrincipal: document.getElementById('single-local').value,
+                LocalDetalhe: document.getElementById('single-detalhe').value,
+                Quantidade: parseInt(document.getElementById('single-qtd').value) || 0,
+                Observacao: document.getElementById('single-obs').value || '-'
+            };
+
+            saveRecords([record]);
+            alert('Lançamento registrado com sucesso!');
+            document.getElementById('form-single').reset();
+            document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
+            updateSubLocations();
+        }
+
+        function renderRecentTable() {
+            const tbody = document.getElementById('table-recent-body');
+            tbody.innerHTML = '';
+
+            const list = [...database].reverse().slice(0, 5);
+
+            if(list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-xs text-slate-400">Nenhum lançamento registrado ainda.</td></tr>`;
+                return;
+            }
+
+            list.forEach((r, idx) => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3">${r.Data || '-'}</td>
+                        <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                        <td class="p-3">${r.LocalPrincipal || '-'}</td>
+                        <td class="p-3">${r.LocalDetalhe || '-'}</td>
+                        <td class="p-3 text-center font-black">${r.Quantidade || 0}</td>
+                        <td class="p-3 text-xs text-slate-500">${r.Observacao || '-'}</td>
+                        <td class="p-3 text-center"><button onclick="deleteRecord(${database.length - 1 - idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+
+            const tbodyMoves = document.getElementById('stock-last-moves');
+            if(tbodyMoves) {
+                tbodyMoves.innerHTML = '';
+                if(list.length === 0) {
+                    tbodyMoves.innerHTML = `<tr><td colspan="4" class="p-2 text-center text-slate-400">Sem registros.</td></tr>`;
+                } else {
+                    list.forEach(r => {
+                        tbodyMoves.innerHTML += `
+                            <tr>
+                                <td class="p-2">${r.Data || '-'}</td>
+                                <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                                <td class="p-2">${r.LocalPrincipal || '-'}</td>
+                                <td class="p-2 text-center font-bold">${r.Quantidade || 0}</td>
+                            </tr>
+                        `;
+                    });
+                }
+            }
+        }
+
+        function renderFullDatabaseTable() {
+            const tbody = document.getElementById('table-full-db');
+            tbody.innerHTML = '';
+
+            if(database.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-xs text-slate-400">Nenhum registro encontrado na base de dados.</td></tr>`;
+                return;
+            }
+
+            database.forEach((r, idx) => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 text-slate-400 font-mono text-xs">#${1001 + idx}</td>
+                        <td class="p-3">${r.Data || '-'}</td>
+                        <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                        <td class="p-3">${r.LocalPrincipal || '-'}</td>
+                        <td class="p-3">${r.LocalDetalhe || '-'}</td>
+                        <td class="p-3 text-center font-black">${r.Quantidade || 0}</td>
+                        <td class="p-3 text-xs text-slate-500">${r.Observacao || '-'}</td>
+                        <td class="p-3 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function deleteRecord(idx) {
+            if(confirm('Tem certeza de que deseja excluir este registro?')) {
+                database.splice(idx, 1);
+                localStorage.setItem('controle_agua_db', JSON.stringify(database));
+                renderRecentTable();
+                renderFullDatabaseTable();
+                updateStockUI();
+                updateDashboard();
+            }
+        }
+
+        function filterDatabase() {
+            const search = document.getElementById('db-search').value.toLowerCase();
+            const filterTipo = document.getElementById('db-filter-tipo').value;
+
+            const tbody = document.getElementById('table-full-db');
+            tbody.innerHTML = '';
+
+            database.forEach((r, idx) => {
+                const matchesSearch = (r.LocalPrincipal || '').toLowerCase().includes(search) || 
+                                      (r.LocalDetalhe || '').toLowerCase().includes(search) || 
+                                      (r.Observacao || '').toLowerCase().includes(search);
+                const matchesTipo = filterTipo === 'Todos' || r.Tipo === filterTipo;
+
+                if(matchesSearch && matchesTipo) {
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 text-slate-400 font-mono text-xs">#${1001 + idx}</td>
+                            <td class="p-3">${r.Data || '-'}</td>
+                            <td class="p-3 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                            <td class="p-3">${r.LocalPrincipal || '-'}</td>
+                            <td class="p-3">${r.LocalDetalhe || '-'}</td>
+                            <td class="p-3 text-center font-black">${r.Quantidade || 0}</td>
+                            <td class="p-3 text-xs text-slate-500">${r.Observacao || '-'}</td>
+                            <td class="p-3 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        function calculateStock() {
+            const stock = {};
+            mainLocations.forEach(loc => {
+                stock[loc] = {
+                    inicial: systemConfig.estoqueInicial[loc] || 0,
+                    min: systemConfig.estoqueMinimo[loc] || 200,
+                    cheios: systemConfig.estoqueInicial[loc] || 0,
+                    vazios: 0, entrada: 0, consumo: 0, devolucao: 0
+                };
+            });
+
+            database.forEach(r => {
+                const loc = r.LocalPrincipal;
+                const qtd = parseInt(r.Quantidade) || 0;
+
+                if(stock[loc]) {
+                    if(r.Tipo === 'Consumo') { stock[loc].consumo += qtd; stock[loc].cheios -= qtd; }
+                    else if(r.Tipo === 'Entrada') { stock[loc].entrada += qtd; stock[loc].cheios += qtd; }
+                    else if(r.Tipo === 'Devolução') { stock[loc].devolucao += qtd; stock[loc].vazios -= qtd; }
+                }
+            });
+
+            return stock;
+        }
+
+        function updateStockUI() {
+            const stock = calculateStock();
+
+            mainLocations.forEach(loc => {
+                const safeId = loc.replace(/\s+/g, '');
+                const s = stock[loc];
+                if (s) {
+                    const elIni = document.getElementById(`st-${safeId}-inicial`);
+                    const elChe = document.getElementById(`st-${safeId}-cheios`);
+                    const elVaz = document.getElementById(`st-${safeId}-vazios`);
+                    const elMin = document.getElementById(`st-${safeId}-minimo`);
+                    const elSta = document.getElementById(`st-${safeId}-status`);
+
+                    if (elIni) elIni.innerText = s.inicial;
+                    if (elChe) elChe.innerText = s.cheios;
+                    if (elVaz) elVaz.innerText = s.vazios;
+                    if (elMin) elMin.innerText = s.min;
+
+                    if (elSta) {
+                        const isNormal = s.cheios >= s.min;
+                        elSta.className = `${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-3 py-0.5 rounded-full text-xs`;
+                        elSta.innerText = `● ${isNormal ? 'Normal' : 'Abaixo do Mínimo'}`;
+                    }
+                }
+            });
+
+            const tbody = document.getElementById('stock-summary-table');
+            tbody.innerHTML = '';
+            Object.keys(stock).forEach(loc => {
+                const s = stock[loc];
+                const isNormal = s.cheios >= s.min;
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-3 font-bold">${loc}</td>
+                        <td class="p-3 text-center">${s.inicial}</td>
+                        <td class="p-3 text-center font-bold text-emerald-600">+${s.entrada}</td>
+                        <td class="p-3 text-center font-bold text-blue-600">-${s.consumo}</td>
+                        <td class="p-3 text-center font-bold text-amber-600">${s.devolucao}</td>
+                        <td class="p-3 text-center font-black text-slate-800 text-sm">${s.cheios}</td>
+                        <td class="p-3 text-center">${s.min}</td>
+                        <td class="p-3 text-center">
+                            <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} font-bold px-3 py-0.5 rounded-full text-xs">
+                                ● ${isNormal ? 'Normal' : 'Abaixo do Mínimo'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        let chartEvolucao, chartDiario, chartLocal, chartEntradasDev, chartMensal;
+
+        function initCharts() {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' } }
+            };
+
+            const ctxEvol = document.getElementById('chartEvolucaoEstoque').getContext('2d');
+            chartEvolucao = new Chart(ctxEvol, {
+                type: 'line',
+                data: {
+                    labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+                    datasets: [
+                        { label: 'Site', data: [0, 0, 0, 0], borderColor: '#0f5298', fill: false },
+                        { label: 'Alaj. 01', data: [0, 0, 0, 0], borderColor: '#0e8a44', fill: false },
+                        { label: 'Alaj. 03', data: [0, 0, 0, 0], borderColor: '#d9530f', fill: false }
+                    ]
+                },
+                options: chartOptions
+            });
+
+            const ctxDiario = document.getElementById('chartConsumoDiario').getContext('2d');
+            chartDiario = new Chart(ctxDiario, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({length: 15}, (_, i) => String(i + 1).padStart(2, '0')),
+                    datasets: [{ label: 'Consumo Diário', data: Array(15).fill(0), backgroundColor: '#0f5298' }]
+                },
+                options: chartOptions
+            });
+
+            const ctxLocal = document.getElementById('chartConsumoLocal').getContext('2d');
+            chartLocal = new Chart(ctxLocal, {
+                type: 'doughnut',
+                data: {
+                    labels: mainLocations,
+                    datasets: [{ data: mainLocations.map(() => 0), backgroundColor: ['#0f5298', '#0e8a44', '#d9530f', '#6f42c1', '#fd7e14'] }]
+                },
+                options: chartOptions
+            });
+
+            const ctxEntDev = document.getElementById('chartEntradasDevolucoes').getContext('2d');
+            chartEntradasDev = new Chart(ctxEntDev, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 10}, (_, i) => String(i + 1).padStart(2, '0')),
+                    datasets: [
+                        { label: 'Entradas', data: Array(10).fill(0), borderColor: '#0e8a44', fill: false },
+                        { label: 'Devoluções', data: Array(10).fill(0), borderColor: '#d9530f', fill: false }
+                    ]
+                },
+                options: chartOptions
+            });
+
+            const ctxMensal = document.getElementById('chartConsumoMensal').getContext('2d');
+            chartMensal = new Chart(ctxMensal, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    datasets: [{ label: 'Galões', data: Array(12).fill(0), backgroundColor: '#0f5298' }]
+                },
+                options: chartOptions
+            });
+        }
+
+        function updateDashboard() {
+            const selectedFilterLoc = document.getElementById('dash-filter-local').value;
+            const startDateVal = document.getElementById('dash-date-start').value;
+            const endDateVal = document.getElementById('dash-date-end').value;
+
+            let totalConsumo = 0, totalEntradas = 0, totalDevolucoes = 0;
+            const stock = calculateStock();
+
+            let diasIntervalo = 30;
+            if (startDateVal && endDateVal) {
+                const dtStart = new Date(startDateVal);
+                const dtEnd = new Date(endDateVal);
+                const diffTime = dtEnd - dtStart;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                diasIntervalo = diffDays > 0 ? diffDays : 1;
+            }
+
+            database.forEach(r => {
+                const q = parseInt(r.Quantidade) || 0;
+                const matchesLoc = selectedFilterLoc === 'Todos' || r.LocalPrincipal === selectedFilterLoc;
+                
+                let matchesDate = true;
+                if (r.Data && startDateVal && endDateVal) {
+                    matchesDate = r.Data >= startDateVal && r.Data <= endDateVal;
+                }
+
+                if (matchesLoc && matchesDate) {
+                    if(r.Tipo === 'Consumo') totalConsumo += q;
+                    if(r.Tipo === 'Entrada') totalEntradas += q;
+                    if(r.Tipo === 'Devolução') totalDevolucoes += q;
+                }
+            });
+
+            let estoqueAtualLocal = 0;
+            if (selectedFilterLoc === 'Todos') {
+                Object.keys(stock).forEach(k => estoqueAtualLocal += stock[k].cheios);
+            } else if (stock[selectedFilterLoc]) {
+                estoqueAtualLocal = stock[selectedFilterLoc].cheios;
+            }
+
+            const totalLitros = totalConsumo * systemConfig.volumeGalao;
+            const mediaDiaria = Math.round(totalConsumo / diasIntervalo);
+            const mediaDiariaLitros = Math.round(totalLitros / diasIntervalo);
+            const litrosPessoaDia = systemConfig.efetivo > 0 ? (totalLitros / (systemConfig.efetivo * diasIntervalo)).toFixed(1) : "0,0";
+
+            document.getElementById('dash-consumo-total').innerText = totalConsumo;
+            document.getElementById('dash-litros-total').innerText = `${totalLitros.toLocaleString()} litros`;
+            document.getElementById('dash-entradas').innerText = totalEntradas;
+            document.getElementById('dash-devolucoes').innerText = totalDevolucoes;
+            document.getElementById('dash-estoque-atual').innerText = estoqueAtualLocal;
+
+            document.getElementById('dash-media-diaria').innerText = mediaDiaria;
+            document.getElementById('dash-media-diaria-litros').innerText = `${mediaDiariaLitros} litros/dia`;
+            document.getElementById('dash-efetivo').innerText = systemConfig.efetivo;
+            document.getElementById('dash-litros-pessoa').innerText = litrosPessoaDia.toString().replace('.', ',');
+            document.getElementById('dash-meta').innerText = systemConfig.meta.toString().replace('.', ',');
+        }
+
+        function exportToExcel() {
+            if (!currentUser || currentUser.role !== 'ADM') {
+                alert('Acesso restrito ao Administrador.');
+                return;
+            }
+            if(database.length === 0) { alert('Nenhum dado cadastrado para exportar.'); return; }
+            const ws = XLSX.utils.json_to_sheet(database);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Lancamentos");
+            XLSX.writeFile(wb, "Relatorio_Controle_Agua.xlsx");
+        }
+
+        function exportToCSV() {
+            if (!currentUser || currentUser.role !== 'ADM') {
+                alert('Acesso restrito ao Administrador.');
+                return;
+            }
+            if(database.length === 0) { alert('Nenhum dado cadastrado para exportar.'); return; }
+            const ws = XLSX.utils.json_to_sheet(database);
+            const csv = XLSX.utils.sheet_to_csv(ws);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", "Relatorio_Controle_Agua.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
