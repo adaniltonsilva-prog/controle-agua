@@ -47,6 +47,18 @@
         .banner-blue { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); }
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Garante tipografia nítida e escura ao digitar em formulários e modais */
+        input:not(#login-user):not(#login-pass),
+        select:not(#login-form select),
+        textarea {
+            color: #0f172a !important; /* slate-900 escuro e de alto contraste */
+            font-weight: 600 !important;
+        }
+        input::placeholder, textarea::placeholder {
+            color: #94a3b8 !important; /* placeholder cinza suave */
+            font-weight: 500 !important;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative bg-slate-950 max-w-full overflow-x-hidden">
@@ -621,10 +633,10 @@
                     <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1">GESTÃO DE USUÁRIOS E PERMISSÕES</h4>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <input type="text" id="add-user-name" placeholder="Nome Completo" class="p-2 border rounded-xl text-xs bg-white">
-                        <input type="text" id="add-user-login" placeholder="Login / E-mail" class="p-2 border rounded-xl text-xs bg-white">
-                        <input type="password" id="add-user-pass" placeholder="Senha" class="p-2 border rounded-xl text-xs bg-white">
-                        <select id="add-user-role" class="p-2 border rounded-xl text-xs bg-white font-bold text-slate-700">
+                        <input type="text" id="add-user-name" placeholder="Nome Completo" class="p-2 border border-slate-300 rounded-xl text-xs bg-white text-slate-900 font-bold placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
+                        <input type="text" id="add-user-login" placeholder="Login / E-mail" class="p-2 border border-slate-300 rounded-xl text-xs bg-white text-slate-900 font-bold placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
+                        <input type="password" id="add-user-pass" placeholder="Senha" class="p-2 border border-slate-300 rounded-xl text-xs bg-white text-slate-900 font-bold placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
+                        <select id="add-user-role" class="p-2 border border-slate-300 rounded-xl text-xs bg-white font-bold text-slate-900 outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
                             <option value="OPERADOR">Operador</option>
                             <option value="ADM">Administrador</option>
                         </select>
@@ -674,7 +686,7 @@
                         <div class="space-y-1.5">
                             <label class="block text-[10px] font-bold text-slate-700">Locais Principais:</label>
                             <div class="flex gap-1.5">
-                                <input type="text" id="add-main-loc-input" placeholder="Novo Local..." class="w-full p-1.5 border rounded-lg text-xs">
+                                <input type="text" id="add-main-loc-input" placeholder="Novo Local..." class="w-full p-1.5 border border-slate-300 rounded-lg text-xs bg-white text-slate-900 font-bold placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-sky-500">
                                 <button onclick="addMainLocation()" class="bg-[#0b5394] text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow">Adicionar</button>
                             </div>
                             <div id="cfg-main-loc-list" class="flex flex-wrap gap-1 pt-1"></div>
@@ -683,7 +695,7 @@
                         <div class="space-y-1.5">
                             <label class="block text-[10px] font-bold text-slate-700">Tipos de Lançamento:</label>
                             <div class="flex gap-1.5">
-                                <input type="text" id="add-tipo-input" placeholder="Novo Tipo..." class="w-full p-1.5 border rounded-lg text-xs">
+                                <input type="text" id="add-tipo-input" placeholder="Novo Tipo..." class="w-full p-1.5 border border-slate-300 rounded-lg text-xs bg-white text-slate-900 font-bold placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-sky-500">
                                 <button onclick="addTipoLancamento()" class="bg-[#0b5394] text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow">Adicionar</button>
                             </div>
                             <div id="cfg-tipos-list" class="flex flex-wrap gap-1 pt-1"></div>
@@ -693,8 +705,8 @@
                     <div class="space-y-1.5 pt-2 border-t">
                         <label class="block text-[10px] font-bold text-slate-700">Sub-Locais de Consumo (Detalhe):</label>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                            <select id="cfg-subloc-parent-select" class="p-1.5 border rounded-lg text-xs bg-white font-bold"></select>
-                            <input type="text" id="add-subloc-input" placeholder="Novo Sub-Local..." class="p-1.5 border rounded-lg text-xs">
+                            <select id="cfg-subloc-parent-select" class="p-1.5 border border-slate-300 rounded-lg text-xs bg-white font-bold text-slate-900 outline-none focus:ring-2 focus:ring-sky-500"></select>
+                            <input type="text" id="add-subloc-input" placeholder="Novo Sub-Local..." class="p-1.5 border border-slate-300 rounded-lg text-xs bg-white text-slate-900 font-bold placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-sky-500">
                             <button onclick="addSubLocation()" class="bg-[#0e8a44] text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow">Adicionar</button>
                         </div>
                         <div id="cfg-subloc-list" class="flex flex-wrap gap-1 pt-1"></div>
