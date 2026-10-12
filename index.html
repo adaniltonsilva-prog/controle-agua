@@ -115,6 +115,12 @@
         <span id="pending-badge" class="bg-slate-900 text-amber-400 px-2.5 py-0.5 rounded-full text-[10px] font-black">0 pendentes</span>
     </div>
 
+    <!-- BANNER DE ALERTA DE ESTOQUE CRÍTICO -->
+    <div id="critical-stock-banner" class="hidden bg-rose-600 text-white text-xs font-bold px-4 py-2 text-center flex justify-between items-center z-[109] shadow-md transition-all">
+        <span id="critical-stock-text" class="flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation text-amber-300"></i> Atenção: Estoque Crítico detectado!</span>
+        <button onclick="switchScreen('screen4')" class="bg-white text-rose-700 hover:bg-rose-100 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shadow transition">Ver Estoque</button>
+    </div>
+
     <!-- NOTIFICAÇÃO TOAST MODERNA -->
     <div id="toast-container" class="fixed top-4 right-4 z-[200] space-y-2 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
 
@@ -500,6 +506,10 @@
                         <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">LOCAL:</span>
                         <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full sm:w-36 min-w-0"></select>
                     </div>
+
+                    <button onclick="shareDashboardWhatsApp()" class="bg-[#25D366] hover:bg-[#20ba5a] text-slate-950 font-black px-3.5 py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-md transition active:scale-95 shrink-0" title="Compartilhar resumo no WhatsApp">
+                        <i class="fa-brands fa-whatsapp text-base"></i> <span>Enviar WhatsApp</span>
+                    </button>
                 </div>
             </div>
 
@@ -635,7 +645,9 @@
                             <th class="p-2.5">DATA</th>
                             <th class="p-2.5">TIPO</th>
                             <th class="p-2.5">LOCAL</th>
+                            <th class="p-2.5">DETALHE</th>
                             <th class="p-2.5 text-center">QTD</th>
+                            <th class="p-2.5">RESPONSÁVEL</th>
                             <th class="p-2.5 text-center">AÇÃO</th>
                         </tr>
                     </thead>
