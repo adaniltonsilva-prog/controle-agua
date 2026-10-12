@@ -84,7 +84,7 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO -->
+    <!-- CABEÇALHO DA APLICAÇÃO -->
     <header class="bg-nav text-white px-4 py-2.5 shadow-md w-full">
         <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2 md:gap-3">
             <div class="flex items-center justify-between w-full md:w-auto">
@@ -507,19 +507,21 @@
         </div>
     </footer>
 
-    <!-- MODAL CONFIGURAÇÕES -->
+    <!-- MODAL CONFIGURAÇÕES COMPLETO -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-5 space-y-5 relative border max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-5 space-y-5 relative border max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2 border-b">
                 <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-gear text-[#0b5394]"></i> Configurações
+                    <i class="fa-solid fa-gear text-[#0b5394]"></i> Configurações e Parâmetros
                 </h3>
                 <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-5">
+
+                <!-- 1. GESTÃO DE USUÁRIOS -->
                 <div class="bg-blue-50/60 border border-blue-200 p-3.5 rounded-2xl space-y-3">
-                    <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1">GESTÃO DE USUÁRIOS</h4>
+                    <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1">GESTÃO DE USUÁRIOS E PERMISSÕES</h4>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <input type="text" id="add-user-name" placeholder="Nome Completo" class="p-2 border rounded-xl text-xs bg-white">
@@ -549,6 +551,72 @@
                     </div>
                 </div>
 
+                <!-- 2. PARÂMETROS GERAIS -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b pb-1 mb-2">PARÂMETROS GERAIS DO SISTEMA</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-700 mb-1">Efetivo de Pessoas:</label>
+                            <input type="number" id="cfg-efetivo" class="w-full p-2 border rounded-xl text-xs font-bold text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-700 mb-1">Meta (L/Pessoa/Dia):</label>
+                            <input type="number" step="0.1" id="cfg-meta" class="w-full p-2 border rounded-xl text-xs font-bold text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-700 mb-1">Volume do Galão (L):</label>
+                            <input type="number" id="cfg-volume" class="w-full p-2 border rounded-xl text-xs font-bold text-slate-800">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. CADASTRO DE LOCAIS E TIPOS -->
+                <div class="bg-slate-50 p-3.5 rounded-2xl border space-y-3">
+                    <h4 class="text-xs font-bold uppercase text-purple-700 border-b pb-1">CADASTRO DE OPÇÕES E OPÇÕES</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-bold text-slate-700">Locais Principais:</label>
+                            <div class="flex gap-1.5">
+                                <input type="text" id="add-main-loc-input" placeholder="Novo Local..." class="w-full p-1.5 border rounded-lg text-xs">
+                                <button onclick="addMainLocation()" class="bg-[#0b5394] text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow">Adicionar</button>
+                            </div>
+                            <div id="cfg-main-loc-list" class="flex flex-wrap gap-1 pt-1"></div>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="block text-[10px] font-bold text-slate-700">Tipos de Lançamento:</label>
+                            <div class="flex gap-1.5">
+                                <input type="text" id="add-tipo-input" placeholder="Novo Tipo..." class="w-full p-1.5 border rounded-lg text-xs">
+                                <button onclick="addTipoLancamento()" class="bg-[#0b5394] text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow">Adicionar</button>
+                            </div>
+                            <div id="cfg-tipos-list" class="flex flex-wrap gap-1 pt-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5 pt-2 border-t">
+                        <label class="block text-[10px] font-bold text-slate-700">Sub-Locais de Consumo (Detalhe):</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <select id="cfg-subloc-parent-select" class="p-1.5 border rounded-lg text-xs bg-white font-bold"></select>
+                            <input type="text" id="add-subloc-input" placeholder="Novo Sub-Local..." class="p-1.5 border rounded-lg text-xs">
+                            <button onclick="addSubLocation()" class="bg-[#0e8a44] text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow">Adicionar</button>
+                        </div>
+                        <div id="cfg-subloc-list" class="flex flex-wrap gap-1 pt-1"></div>
+                    </div>
+                </div>
+
+                <!-- 4. ESTOQUES INICIAIS -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase text-emerald-700 border-b pb-1 mb-2">ESTOQUE INICIAL (GALÕES CHEIOS)</h4>
+                    <div id="cfg-ini-container" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
+                </div>
+
+                <!-- 5. ESTOQUES MÍNIMOS -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase text-amber-700 border-b pb-1 mb-2">ESTOQUE MÍNIMO DE SEGURANÇA</h4>
+                    <div id="cfg-min-container" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
+                </div>
+
+                <!-- LIMPAR CACHE -->
                 <div class="pt-2 border-t">
                     <button type="button" onclick="executeResetCache()" class="w-full bg-red-50 text-red-700 font-bold p-2 rounded-xl text-xs border border-red-200">
                         Limpar Cache / Atualizar do Google Sheets
@@ -558,12 +626,12 @@
 
             <div class="flex justify-end gap-2 pt-3 border-t">
                 <button onclick="closeConfigModal()" class="bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs">Cancelar</button>
-                <button onclick="saveConfigParameters()" class="bg-[#0b5394] text-white font-bold px-4 py-2 rounded-xl text-xs shadow">Salvar</button>
+                <button onclick="saveConfigParameters()" class="bg-[#0b5394] text-white font-bold px-4 py-2 rounded-xl text-xs shadow">Salvar Configurações</button>
             </div>
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT COM SINCRONIZAÇÃO DE USUÁRIOS NO GOOGLE SHEETS -->
+    <!-- LÓGICA JAVASCRIPT COMPLETA E ESTÁVEL -->
     <script>
         const BASE_USERS = {
             'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
@@ -689,7 +757,6 @@
                     const uInput = document.getElementById('login-user').value.trim().toLowerCase();
                     const pInput = document.getElementById('login-pass').value.trim();
 
-                    // Tentar atualizar a base de usuários do servidor antes de barrar o acesso
                     if (navigator.onLine && SCRIPT_URL) {
                         try {
                             const res = await fetch(SCRIPT_URL + '?action=getUsers');
@@ -699,7 +766,7 @@
                                 localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
                             }
                         } catch(err) {
-                            console.log("Validação local em fallback offline.");
+                            console.log("Validação local offline.");
                         }
                     }
 
@@ -789,7 +856,6 @@
             USERS_DB[login] = { pass, role, name };
             localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
 
-            // Enviar novo usuário para o Google Sheets para sincronizar em todos os celulares
             if (navigator.onLine && SCRIPT_URL) {
                 try {
                     await fetch(SCRIPT_URL, {
@@ -799,7 +865,7 @@
                         body: JSON.stringify({ action: 'saveUsers', users: USERS_DB })
                     });
                 } catch(e) {
-                    console.error("Erro ao sincronizar usuários no servidor:", e);
+                    console.error("Erro ao sincronizar usuários:", e);
                 }
             }
 
@@ -808,7 +874,7 @@
             document.getElementById('add-user-pass').value = '';
 
             renderUsersTable();
-            alert(`Usuário "${name}" cadastrado e sincronizado com a nuvem!`);
+            alert(`Usuário "${name}" cadastrado e sincronizado!`);
         }
 
         function removeUser(loginKey) {
@@ -890,30 +956,175 @@
                 dashFilterSelect.appendChild(el);
             });
 
+            const cfgSubParent = document.getElementById('cfg-subloc-parent-select');
+            if(cfgSubParent) {
+                cfgSubParent.innerHTML = '';
+                mainLocations.forEach(loc => {
+                    const el = document.createElement('option');
+                    el.value = loc; el.innerText = loc;
+                    cfgSubParent.appendChild(el);
+                });
+                cfgSubParent.onchange = renderSubLocTags;
+            }
+
             updateSubLocations();
             renderConfigDynamicFields();
         }
 
-        function renderConfigDynamicFields() {
-            renderUsersTable();
-            const stockCardContainer = document.getElementById('stock-cards-container');
-            stockCardContainer.innerHTML = '';
-            mainLocations.forEach(loc => {
-                const safeId = loc.replace(/\s+/g, '');
-                stockCardContainer.innerHTML += `
-                    <div class="border rounded-2xl p-3 shadow-sm space-y-2">
-                        <div class="bg-[#0b5394] text-white p-1.5 rounded-lg font-bold text-xs uppercase flex items-center gap-1.5">
-                            <i class="fa-solid fa-building"></i> ${loc}
-                        </div>
-                        <div class="space-y-1.5 text-xs">
-                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">INICIAL</span> <strong id="st-${safeId}-inicial" class="text-slate-800">0</strong></div>
-                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">CHEIOS</span> <strong id="st-${safeId}-cheios" class="text-slate-800">0</strong></div>
-                            <div class="flex justify-between border-b pb-1"><span class="text-slate-500">VAZIOS</span> <strong id="st-${safeId}-vazios" class="text-slate-800">0</strong></div>
-                            <div class="flex justify-between items-center pt-0.5"><span class="text-slate-500">STATUS</span> <span id="st-${safeId}-status" class="bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full text-[10px]">● ZERADO</span></div>
-                        </div>
-                    </div>
+        function addMainLocation() {
+            const val = document.getElementById('add-main-loc-input').value.trim();
+            if (val && !mainLocations.includes(val)) {
+                mainLocations.push(val);
+                subLocationsMap[val] = subLocationsMap[val] || [];
+                systemConfig.estoqueInicial[val] = 0;
+                systemConfig.estoqueMinimo[val] = 100;
+                document.getElementById('add-main-loc-input').value = '';
+                updateAllSelectsUI();
+            }
+        }
+
+        function removeMainLocation(loc) {
+            if (confirm(`Deseja remover o local "${loc}"?`)) {
+                mainLocations = mainLocations.filter(m => m !== loc);
+                delete subLocationsMap[loc];
+                delete systemConfig.estoqueInicial[loc];
+                delete systemConfig.estoqueMinimo[loc];
+                updateAllSelectsUI();
+            }
+        }
+
+        function addTipoLancamento() {
+            const val = document.getElementById('add-tipo-input').value.trim();
+            if (val && !tiposLancamento.includes(val)) {
+                tiposLancamento.push(val);
+                document.getElementById('add-tipo-input').value = '';
+                updateAllSelectsUI();
+            }
+        }
+
+        function removeTipoLancamento(t) {
+            if (['Consumo', 'Entrada', 'Devolução'].includes(t)) {
+                alert('Não é possível remover tipos padrão.');
+                return;
+            }
+            tiposLancamento = tiposLancamento.filter(item => item !== t);
+            updateAllSelectsUI();
+        }
+
+        function addSubLocation() {
+            const parentLoc = document.getElementById('cfg-subloc-parent-select').value;
+            const val = document.getElementById('add-subloc-input').value.trim();
+            if (parentLoc && val) {
+                subLocationsMap[parentLoc] = subLocationsMap[parentLoc] || [];
+                if (!subLocationsMap[parentLoc].includes(val)) {
+                    subLocationsMap[parentLoc].push(val);
+                    document.getElementById('add-subloc-input').value = '';
+                    renderSubLocTags();
+                    updateSubLocations();
+                }
+            }
+        }
+
+        function removeSubLocation(parentLoc, subLoc) {
+            if (subLocationsMap[parentLoc]) {
+                subLocationsMap[parentLoc] = subLocationsMap[parentLoc].filter(s => s !== subLoc);
+                renderSubLocTags();
+                updateSubLocations();
+            }
+        }
+
+        function renderSubLocTags() {
+            const parentLoc = document.getElementById('cfg-subloc-parent-select').value;
+            const container = document.getElementById('cfg-subloc-list');
+            if(!container) return;
+            container.innerHTML = '';
+            const list = subLocationsMap[parentLoc] || [];
+            list.forEach(sub => {
+                container.innerHTML += `
+                    <span class="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                        ${sub} <i onclick="removeSubLocation('${parentLoc}', '${sub}')" class="fa-solid fa-xmark cursor-pointer text-red-600"></i>
+                    </span>
                 `;
             });
+        }
+
+        function renderConfigDynamicFields() {
+            renderUsersTable();
+
+            const mainTagContainer = document.getElementById('cfg-main-loc-list');
+            if(mainTagContainer) {
+                mainTagContainer.innerHTML = '';
+                mainLocations.forEach(loc => {
+                    mainTagContainer.innerHTML += `
+                        <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                            ${loc} <i onclick="removeMainLocation('${loc}')" class="fa-solid fa-xmark cursor-pointer text-red-600"></i>
+                        </span>
+                    `;
+                });
+            }
+
+            const tipoTagContainer = document.getElementById('cfg-tipos-list');
+            if(tipoTagContainer) {
+                tipoTagContainer.innerHTML = '';
+                tiposLancamento.forEach(t => {
+                    tipoTagContainer.innerHTML += `
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                            ${t} ${!['Consumo', 'Entrada', 'Devolução'].includes(t) ? `<i onclick="removeTipoLancamento('${t}')" class="fa-solid fa-xmark cursor-pointer text-red-600"></i>` : ''}
+                        </span>
+                    `;
+                });
+            }
+
+            renderSubLocTags();
+
+            const iniContainer = document.getElementById('cfg-ini-container');
+            if(iniContainer) {
+                iniContainer.innerHTML = '';
+                mainLocations.forEach(loc => {
+                    const val = systemConfig.estoqueInicial[loc] || 0;
+                    iniContainer.innerHTML += `
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-700 mb-0.5">${loc}:</label>
+                            <input type="number" id="cfg-ini-${loc}" class="w-full p-1.5 border rounded-lg text-xs font-bold text-slate-800" value="${val}">
+                        </div>
+                    `;
+                });
+            }
+
+            const minContainer = document.getElementById('cfg-min-container');
+            if(minContainer) {
+                minContainer.innerHTML = '';
+                mainLocations.forEach(loc => {
+                    const val = systemConfig.estoqueMinimo[loc] || 200;
+                    minContainer.innerHTML += `
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-700 mb-0.5">${loc}:</label>
+                            <input type="number" id="cfg-min-${loc}" class="w-full p-1.5 border rounded-lg text-xs font-bold text-slate-800" value="${val}">
+                        </div>
+                    `;
+                });
+            }
+
+            const stockCardContainer = document.getElementById('stock-cards-container');
+            if(stockCardContainer) {
+                stockCardContainer.innerHTML = '';
+                mainLocations.forEach(loc => {
+                    const safeId = loc.replace(/\s+/g, '');
+                    stockCardContainer.innerHTML += `
+                        <div class="border rounded-2xl p-3 shadow-sm space-y-2">
+                            <div class="bg-[#0b5394] text-white p-1.5 rounded-lg font-bold text-xs uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-building"></i> ${loc}
+                            </div>
+                            <div class="space-y-1.5 text-xs">
+                                <div class="flex justify-between border-b pb-1"><span class="text-slate-500">INICIAL</span> <strong id="st-${safeId}-inicial" class="text-slate-800">0</strong></div>
+                                <div class="flex justify-between border-b pb-1"><span class="text-slate-500">CHEIOS</span> <strong id="st-${safeId}-cheios" class="text-slate-800">0</strong></div>
+                                <div class="flex justify-between border-b pb-1"><span class="text-slate-500">VAZIOS</span> <strong id="st-${safeId}-vazios" class="text-slate-800">0</strong></div>
+                                <div class="flex justify-between items-center pt-0.5"><span class="text-slate-500">STATUS</span> <span id="st-${safeId}-status" class="bg-slate-100 text-slate-700 font-bold px-2 py-0.5 rounded-full text-[10px]">● ZERADO</span></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
         }
 
         function updateSubLocations() {
@@ -1029,6 +1240,9 @@
                 alert('Acesso restrito ao Administrador.');
                 return;
             }
+            document.getElementById('cfg-efetivo').value = systemConfig.efetivo;
+            document.getElementById('cfg-meta').value = systemConfig.meta;
+            document.getElementById('cfg-volume').value = systemConfig.volumeGalao;
             renderConfigDynamicFields();
             document.getElementById('modal-config').classList.remove('hidden');
         }
@@ -1038,6 +1252,17 @@
         }
 
         function saveConfigParameters() {
+            systemConfig.efetivo = parseInt(document.getElementById('cfg-efetivo').value) || 500;
+            systemConfig.meta = parseFloat(document.getElementById('cfg-meta').value) || 2.7;
+            systemConfig.volumeGalao = parseInt(document.getElementById('cfg-volume').value) || 20;
+
+            mainLocations.forEach(loc => {
+                const iniInput = document.getElementById(`cfg-ini-${loc}`);
+                const minInput = document.getElementById(`cfg-min-${loc}`);
+                if (iniInput) systemConfig.estoqueInicial[loc] = parseInt(iniInput.value) || 0;
+                if (minInput) systemConfig.estoqueMinimo[loc] = parseInt(minInput.value) || 200;
+            });
+
             const fullConfig = {
                 systemConfig,
                 mainLocations,
