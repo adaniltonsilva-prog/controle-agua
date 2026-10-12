@@ -44,7 +44,7 @@
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
     </script>
 
-    <!-- BARRA INDICADORA DE REDE E PENDÊNCIAS OFFLINE -->
+    <!-- BARRA INDICADORA DE REDE -->
     <div id="network-banner" class="hidden bg-amber-500 text-slate-950 text-xs font-extrabold px-4 py-1.5 text-center flex justify-between items-center z-[110]">
         <span id="network-status-text"><i class="fa-solid fa-wifi"></i> Você está offline. Lançamentos serão salvos localmente.</span>
         <span id="pending-badge" class="bg-slate-900 text-amber-400 px-2 py-0.5 rounded-full text-[10px] font-black">0 pendentes</span>
@@ -84,7 +84,7 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO DA APLICAÇÃO -->
+    <!-- CABEÇALHO -->
     <header class="bg-nav text-white px-4 py-2.5 shadow-md w-full">
         <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2 md:gap-3">
             <div class="flex items-center justify-between w-full md:w-auto">
@@ -531,7 +531,7 @@
                         </select>
                     </div>
                     <button onclick="addNewUser()" class="w-full bg-[#0b5394] text-white font-bold p-2 rounded-xl text-xs shadow">
-                        Cadastrar Usuário
+                        Cadastrar e Sincronizar Usuário
                     </button>
 
                     <div class="overflow-x-auto border rounded-xl bg-white shadow-sm pt-1">
@@ -563,7 +563,7 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT COM SUPORTE OFFLINE E SINCRONIZAÇÃO AUTOMÁTICA -->
+    <!-- LÓGICA JAVASCRIPT COM SINCRONIZAÇÃO DE USUÁRIOS NO GOOGLE SHEETS -->
     <script>
         const BASE_USERS = {
             'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
@@ -600,7 +600,6 @@
             loadPendingQueue();
         });
 
-        // MONITORIZAÇÃO DE REDE
         function initNetworkListeners() {
             window.addEventListener('online', updateNetworkStatus);
             window.addEventListener('offline', updateNetworkStatus);
@@ -649,15 +648,15 @@
                     await fetch(SCRIPT_URL, {
                         method: 'POST',
                         mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(recordsToSend)
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'addRecords', records: recordsToSend })
                     });
                 }
                 pendingQueue = [];
                 savePendingQueue();
-                alert('Sincronização concluída! Todos os registros offline foram salvos na nuvem.');
+                alert('Sincronização concluída! Todos os registros foram enviados para a nuvem.');
             } catch(e) {
-                console.error("Falha ao sincronizar em segundo plano:", e);
+                console.error("Falha ao sincronizar:", e);
             } finally {
                 updateNetworkStatus();
             }
@@ -685,10 +684,24 @@
         function setupLoginHandler() {
             const form = document.getElementById('login-form');
             if(form) {
-                form.addEventListener('submit', (e) => {
+                form.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const uInput = document.getElementById('login-user').value.trim().toLowerCase();
                     const pInput = document.getElementById('login-pass').value.trim();
+
+                    // Tentar atualizar a base de usuários do servidor antes de barrar o acesso
+                    if (navigator.onLine && SCRIPT_URL) {
+                        try {
+                            const res = await fetch(SCRIPT_URL + '?action=getUsers');
+                            const remoteUsers = await res.json();
+                            if (remoteUsers && typeof remoteUsers === 'object') {
+                                USERS_DB = { ...BASE_USERS, ...remoteUsers };
+                                localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
+                            }
+                        } catch(err) {
+                            console.log("Validação local em fallback offline.");
+                        }
+                    }
 
                     if (USERS_DB[uInput] && USERS_DB[uInput].pass === pInput) {
                         currentUser = USERS_DB[uInput];
@@ -704,6 +717,11 @@
         }
 
         function checkAuthSession() {
+            const savedUsers = localStorage.getItem('controle_agua_users');
+            if (savedUsers) {
+                try { USERS_DB = { ...BASE_USERS, ...JSON.parse(savedUsers) }; } catch(e){}
+            }
+
             const savedUser = localStorage.getItem('controle_agua_session');
             if (savedUser && USERS_DB[savedUser]) {
                 currentUser = USERS_DB[savedUser];
@@ -752,7 +770,7 @@
             initCharts();
         }
 
-        function addNewUser() {
+        async function addNewUser() {
             const name = document.getElementById('add-user-name').value.trim();
             const login = document.getElementById('add-user-login').value.trim().toLowerCase();
             const pass = document.getElementById('add-user-pass').value.trim();
@@ -769,12 +787,28 @@
             }
 
             USERS_DB[login] = { pass, role, name };
+            localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
+
+            // Enviar novo usuário para o Google Sheets para sincronizar em todos os celulares
+            if (navigator.onLine && SCRIPT_URL) {
+                try {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'saveUsers', users: USERS_DB })
+                    });
+                } catch(e) {
+                    console.error("Erro ao sincronizar usuários no servidor:", e);
+                }
+            }
+
             document.getElementById('add-user-name').value = '';
             document.getElementById('add-user-login').value = '';
             document.getElementById('add-user-pass').value = '';
 
             renderUsersTable();
-            alert(`Usuário "${name}" cadastrado!`);
+            alert(`Usuário "${name}" cadastrado e sincronizado com a nuvem!`);
         }
 
         function removeUser(loginKey) {
@@ -785,6 +819,16 @@
 
             if (confirm(`Deseja remover o usuário "${USERS_DB[loginKey].name}"?`)) {
                 delete USERS_DB[loginKey];
+                localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
+                
+                if (navigator.onLine && SCRIPT_URL) {
+                    fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'saveUsers', users: USERS_DB })
+                    });
+                }
                 renderUsersTable();
             }
         }
@@ -1050,7 +1094,17 @@
                 try {
                     const res = await fetch(SCRIPT_URL);
                     const data = await res.json();
-                    if(Array.isArray(data) && data.length > 0) {
+                    
+                    if(data && typeof data === 'object') {
+                        if(Array.isArray(data.records)) {
+                            database = data.records;
+                            localStorage.setItem('controle_agua_db', JSON.stringify(database));
+                        }
+                        if(data.users && typeof data.users === 'object') {
+                            USERS_DB = { ...BASE_USERS, ...data.users };
+                            localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
+                        }
+                    } else if(Array.isArray(data)) {
                         database = data;
                         localStorage.setItem('controle_agua_db', JSON.stringify(database));
                     }
@@ -1077,8 +1131,8 @@
                     await fetch(SCRIPT_URL, {
                         method: 'POST',
                         mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(records)
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'addRecords', records })
                     });
                     alert('Lançamento registrado e enviado para o Google Sheets!');
                 } catch(e) {
