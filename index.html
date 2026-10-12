@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OUD PRIME - Controle de Água</title>
     
-    <!-- CONEXÃO PWA -->
+    <!-- CONEXÃO PWA E CONFIGURAÇÕES DE NAVEGADOR MOBILE -->
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,12 +13,16 @@
     <meta name="theme-color" content="#0f172a">
 
     <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
+      // Registro seguro do Service Worker: executa apenas em origens HTTP/HTTPS válidas
+      // Previne erros não tratados quando executado em ambientes blob:/preview/sandboxed
+      if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
+        navigator.serviceWorker.register('sw.js').catch(function(err) {
+          console.warn('Registro de Service Worker ignorado no ambiente atual:', err);
+        });
       }
     </script>
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -26,6 +30,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- SheetJS (XLSX Export) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0b0f19; color: #f1f5f9; line-height: 1.25; overflow-x: hidden; }
@@ -36,6 +41,9 @@
         .card-menu { transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .card-menu:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2); }
         .banner-blue { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); }
+        /* Mobile Scrollbar Hide */
+        .scrollbar-none::-webkit-scrollbar { display: none; }
+        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative bg-slate-950 max-w-full overflow-x-hidden">
@@ -44,18 +52,18 @@
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
     </script>
 
-    <!-- BARRA INDICADORA DE REDE -->
-    <div id="network-banner" class="hidden bg-amber-500 text-slate-950 text-xs font-extrabold px-4 py-1.5 text-center flex justify-between items-center z-[110]">
-        <span id="network-status-text"><i class="fa-solid fa-wifi"></i> Você está offline. Lançamentos serão salvos localmente.</span>
-        <span id="pending-badge" class="bg-slate-900 text-amber-400 px-2 py-0.5 rounded-full text-[10px] font-black">0 pendentes</span>
+    <!-- BARRA INDICADORA DE REDE E OFFLINE -->
+    <div id="network-banner" class="hidden bg-amber-500 text-slate-950 text-xs font-extrabold px-4 py-2 text-center flex justify-between items-center z-[110] shadow-md">
+        <span id="network-status-text" class="flex items-center gap-1.5"><i class="fa-solid fa-wifi-slash"></i> Você está offline. Lançamentos salvos no aparelho.</span>
+        <span id="pending-badge" class="bg-slate-900 text-amber-400 px-2.5 py-0.5 rounded-full text-[10px] font-black">0 pendentes</span>
     </div>
 
     <!-- TELA DE LOGIN -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 w-full h-full overflow-y-auto">
         <div class="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-6 space-y-5 border border-slate-800 my-auto text-center mx-auto">
             <div class="space-y-2 flex flex-col items-center justify-center">
-                <img src="logo.png" alt="OUD PRIME Logo" class="max-w-[180px] w-full h-auto object-contain drop-shadow-lg mx-auto" onerror="this.src='https://via.placeholder.com/180/0284c7/ffffff?text=OUD+PRIME'">
-                <p class="text-[10px] text-sky-400 font-extrabold uppercase tracking-widest mt-2">SISTEMAS INTELIGENTES PARA O SEU DIA A DIA</p>
+                <img src="logo.png" alt="OUD PRIME Logo" class="max-w-[170px] w-full h-auto object-contain drop-shadow-lg mx-auto" onerror="this.src='https://via.placeholder.com/180/0284c7/ffffff?text=OUD+PRIME'">
+                <p class="text-[10px] text-sky-400 font-extrabold uppercase tracking-widest mt-1">SISTEMAS INTELIGENTES PARA O SEU DIA A DIA</p>
             </div>
 
             <form id="login-form" class="space-y-4 text-left w-full">
@@ -85,8 +93,8 @@
     </div>
 
     <!-- CABEÇALHO DA APLICAÇÃO -->
-    <header class="bg-nav text-white px-4 py-2.5 shadow-md w-full">
-        <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2 md:gap-3">
+    <header class="bg-nav text-white px-3 md:px-6 py-2.5 shadow-md w-full">
+        <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2.5">
             <div class="flex items-center justify-between w-full md:w-auto">
                 <div class="flex items-center gap-2.5">
                     <img src="logo.png" alt="OUD PRIME" class="h-7 md:h-10 object-contain" onerror="this.src='https://via.placeholder.com/100/0284c7/ffffff?text=OP'">
@@ -97,14 +105,14 @@
                 </div>
 
                 <div class="flex items-center gap-2 md:hidden">
-                    <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-lg text-xs font-bold shadow">
+                    <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 </div>
             </div>
 
             <!-- NAVEGAÇÃO -->
-            <nav class="flex items-center gap-1.5 text-xs md:text-sm overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
+            <nav class="flex items-center gap-1 text-xs md:text-sm overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
                 <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-3 py-1.5 flex items-center gap-1.5">
                     <i class="fa-solid fa-house text-xs"></i> Menu
                 </button>
@@ -149,7 +157,7 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
-                <div onclick="switchScreen('screen2')" class="card-menu cursor-pointer bg-[#0f5298] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                <div onclick="switchScreen('screen2')" class="card-menu cursor-pointer bg-[#0f5298] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
                     <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-pen-to-square"></i></div>
                     <div>
                         <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">LANÇAMENTOS</h3>
@@ -158,7 +166,7 @@
                     <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-blue-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="switchScreen('screen4')" class="card-menu cursor-pointer bg-[#0e8a44] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                <div onclick="switchScreen('screen4')" class="card-menu cursor-pointer bg-[#0e8a44] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
                     <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-cubes"></i></div>
                     <div>
                         <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">ESTOQUE</h3>
@@ -167,7 +175,7 @@
                     <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-emerald-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="switchScreen('screen5')" class="card-menu adm-only cursor-pointer bg-[#d9530f] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                <div onclick="switchScreen('screen5')" class="card-menu adm-only cursor-pointer bg-[#d9530f] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
                     <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-chart-column"></i></div>
                     <div>
                         <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">DASHBOARD</h3>
@@ -176,7 +184,7 @@
                     <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-amber-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="switchScreen('screen6')" class="card-menu adm-only cursor-pointer bg-[#6f42c1] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                <div onclick="switchScreen('screen6')" class="card-menu adm-only cursor-pointer bg-[#6f42c1] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
                     <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-database"></i></div>
                     <div>
                         <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">BASE DE DADOS</h3>
@@ -185,7 +193,7 @@
                     <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-purple-200">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="openConfigModal()" class="card-menu adm-only cursor-pointer bg-[#495057] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                <div onclick="openConfigModal()" class="card-menu adm-only cursor-pointer bg-[#495057] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
                     <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-gear"></i></div>
                     <div>
                         <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">CONFIGURAÇÕES</h3>
@@ -194,7 +202,7 @@
                     <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="exportToExcel()" class="card-menu adm-only cursor-pointer bg-[#17a2b8] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                <div onclick="exportToExcel()" class="card-menu adm-only cursor-pointer bg-[#17a2b8] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
                     <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-file-excel"></i></div>
                     <div>
                         <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">RELATÓRIOS</h3>
@@ -220,28 +228,28 @@
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-calendar text-blue-600"></i> DATA DO LANÇAMENTO
                         </label>
-                        <input type="date" id="single-data" required class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium">
+                        <input type="date" id="single-data" required class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-droplet text-blue-600"></i> TIPO DE LANÇAMENTO
                         </label>
-                        <select id="single-tipo" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium"></select>
+                        <select id="single-tipo" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-house text-blue-600"></i> LOCAL PRINCIPAL
                         </label>
-                        <select id="single-local" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium"></select>
+                        <select id="single-local" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-sitemap text-blue-600"></i> LOCAL DE CONSUMO
                         </label>
-                        <select id="single-detalhe" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium"></select>
+                        <select id="single-detalhe" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
                     </div>
                 </div>
 
@@ -250,14 +258,14 @@
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-bottle-water text-blue-600"></i> QUANTIDADE (GALÕES)
                         </label>
-                        <input type="number" id="single-qtd" min="1" placeholder="Ex: 35" required class="w-full p-2.5 border-2 border-emerald-300 bg-[#e8f8f2] text-emerald-900 font-extrabold text-xl rounded-lg">
+                        <input type="number" id="single-qtd" min="1" placeholder="Ex: 35" required class="w-full p-2.5 border-2 border-emerald-300 bg-[#e8f8f2] text-emerald-900 font-extrabold text-xl rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
 
                     <div class="md:col-span-2">
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-comment text-blue-600"></i> OBSERVAÇÃO (OPCIONAL)
                         </label>
-                        <input type="text" id="single-obs" placeholder="Ex: Recebimento de carga, troca semanal, etc." class="w-full p-2.5 border rounded-lg text-sm bg-slate-50">
+                        <input type="text" id="single-obs" placeholder="Ex: Recebimento de carga, troca semanal, etc." class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 
@@ -300,20 +308,22 @@
 
         <!-- 3. TELA – CONSUMO DETALHADO -->
         <section id="screen3" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
-            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 w-full max-w-full">
+            <!-- CABEÇALHO COM FILTROS ORGANIZADOS NO MOBILE E DESKTOP -->
+            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full max-w-full">
                 <h2 id="batch-screen-title" class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
                     <i class="fa-solid fa-building"></i> 3. CONSUMO DETALHADO
                 </h2>
                 
-                <div class="flex flex-wrap items-center gap-2 bg-blue-800 p-2 rounded-lg text-xs font-semibold w-full sm:w-auto max-w-full">
-                    <div class="flex items-center gap-1">
-                        <span>LOCAL:</span>
-                        <select id="batch-local-select" onchange="changeBatchLocation()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none max-w-[130px]"></select>
+                <!-- CONTAINER DE SELEÇÃO E DATA TOTALMENTE RESPONSIVO -->
+                <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold">
+                    <div class="flex items-center justify-between gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30">
+                        <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">LOCAL:</span>
+                        <select id="batch-local-select" onchange="changeBatchLocation()" class="bg-white text-slate-800 px-2 py-1.5 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0"></select>
                     </div>
 
-                    <div class="flex items-center gap-1">
-                        <span>DATA:</span>
-                        <input type="date" id="batch-data" class="bg-white text-slate-800 p-1 rounded text-xs font-semibold outline-none w-28 max-w-full">
+                    <div class="flex items-center justify-between gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30">
+                        <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">DATA:</span>
+                        <input type="date" id="batch-data" class="bg-white text-slate-800 px-2 py-1.5 rounded text-xs font-bold outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0">
                     </div>
                 </div>
             </div>
@@ -380,8 +390,9 @@
             </div>
         </section>
 
-        <!-- 5. TELA – DASHBOARD (CABEÇALHO RESPONSIVO E FILTRO POR PERÍODO CORRIGIDO) -->
+        <!-- 5. TELA – DASHBOARD -->
         <section id="screen5" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
+            <!-- CABEÇALHO DO DASHBOARD E FILTROS ORGANIZADOS -->
             <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full max-w-full">
                 <div>
                     <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
@@ -390,22 +401,31 @@
                     <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
                 </div>
                 
-                <div class="flex flex-wrap items-center gap-2 bg-blue-800 p-2 rounded-lg text-xs font-semibold w-full lg:w-auto max-w-full">
-                    <div class="flex items-center gap-1 flex-wrap sm:flex-nowrap">
-                        <span>DE:</span>
-                        <input type="date" id="dash-date-start" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none w-28 max-w-full">
-                        <span>ATÉ:</span>
-                        <input type="date" id="dash-date-end" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none w-28 max-w-full">
+                <!-- BARRA DE FILTROS TOTALMENTE RESPONSIVA PARA MOBILE (SEM ULTRAPASSAR MARGENS) -->
+                <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2.5 rounded-xl flex flex-col sm:flex-row items-stretch sm:items-center gap-2 text-xs font-semibold">
+                    
+                    <!-- LINHA/BLOCO DE DATAS -->
+                    <div class="grid grid-cols-2 gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">DE:</span>
+                            <input type="date" id="dash-date-start" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0">
+                        </div>
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">ATÉ:</span>
+                            <input type="date" id="dash-date-end" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0">
+                        </div>
                     </div>
 
-                    <div class="flex items-center gap-1 ml-auto sm:ml-0">
-                        <span>LOCAL:</span>
-                        <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 p-1 rounded font-bold text-xs outline-none max-w-[130px]"></select>
+                    <!-- BLOCO DE SELEÇÃO DE LOCAL -->
+                    <div class="flex items-center justify-between sm:justify-start gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
+                        <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">LOCAL:</span>
+                        <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full sm:w-36 min-w-0"></select>
                     </div>
+
                 </div>
             </div>
 
-            <!-- 8 CARTÕES DE KPIS -->
+            <!-- TODOS OS 8 CARTÕES DE KPIS RESTAURADOS -->
             <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 <div class="bg-[#0f5298] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
                     <div>
@@ -480,10 +500,10 @@
                 </div>
             </div>
 
-            <!-- 4 GRÁFICOS -->
+            <!-- TODOS OS 4 GRÁFICOS RESTAURADOS -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO DIÁARIO (GALÕES)</h4>
+                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO DIÁRIO (GALÕES)</h4>
                     <div class="relative h-56 w-full">
                         <canvas id="chartConsumoDiario"></canvas>
                     </div>
@@ -561,7 +581,7 @@
         </div>
     </footer>
 
-    <!-- MODAL CONFIGURAÇÕES -->
+    <!-- MODAL CONFIGURAÇÕES COMPLETO -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3">
         <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-5 space-y-5 relative border max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2 border-b">
@@ -684,7 +704,6 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT COMPLETA COM FILTRAGEM POR PERÍODO CORRIGIDA -->
     <script>
         const BASE_USERS = {
             'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
@@ -1624,7 +1643,6 @@
             });
         }
 
-        // LÓGICA DE FILTRAGEM DE PERÍODO E ATUALIZAÇÃO DOS GRÁFICOS
         function updateDashboard() {
             const selectedFilterLoc = document.getElementById('dash-filter-local').value;
             const startDateVal = document.getElementById('dash-date-start').value;
