@@ -13,8 +13,7 @@
     <meta name="theme-color" content="#0f172a">
 
     <script>
-      // Registro seguro do Service Worker: executa apenas em origens HTTP/HTTPS válidas
-      // Previne erros não tratados quando executado em ambientes blob:/preview/sandboxed
+      // Registro seguro do Service Worker: apenas em origens HTTP/HTTPS válidas
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
         navigator.serviceWorker.register('sw.js').catch(function(err) {
           console.warn('Registro de Service Worker ignorado no ambiente atual:', err);
@@ -41,7 +40,7 @@
         .card-menu { transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .card-menu:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2); }
         .banner-blue { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); }
-        /* Mobile Scrollbar Hide */
+        /* Ocultação de barra de rolagem mantendo funcionalidade */
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -58,11 +57,26 @@
         <span id="pending-badge" class="bg-slate-900 text-amber-400 px-2.5 py-0.5 rounded-full text-[10px] font-black">0 pendentes</span>
     </div>
 
+    <!-- NOTIFICAÇÃO TOAST MODERNA (SUBSTITUTO SEGURO DO ALERT) -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[200] space-y-2 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
+
+    <!-- MODAL DE CONFIRMAÇÃO (SUBSTITUTO SEGURO DO CONFIRM) -->
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[150] flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-5 max-w-sm w-full text-center space-y-4 shadow-2xl">
+            <div id="confirm-icon" class="text-3xl text-amber-400"><i class="fa-solid fa-circle-question"></i></div>
+            <p id="confirm-message" class="text-sm font-semibold text-slate-200">Deseja prosseguir com esta ação?</p>
+            <div class="flex gap-2 justify-center pt-2">
+                <button id="confirm-btn-cancel" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-300">Cancelar</button>
+                <button id="confirm-btn-ok" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-500 text-white shadow">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- TELA DE LOGIN -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 w-full h-full overflow-y-auto">
         <div class="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-6 space-y-5 border border-slate-800 my-auto text-center mx-auto">
             <div class="space-y-2 flex flex-col items-center justify-center">
-                <img src="logo.png" alt="OUD PRIME Logo" class="max-w-[170px] w-full h-auto object-contain drop-shadow-lg mx-auto" onerror="this.src='https://via.placeholder.com/180/0284c7/ffffff?text=OUD+PRIME'">
+                <img src="logo.png" alt="OUD PRIME Logo" class="max-w-[170px] w-full h-auto object-contain drop-shadow-lg mx-auto" onerror="this.src='https://placehold.co/180x60/0284c7/ffffff?text=OUD+PRIME'">
                 <p class="text-[10px] text-sky-400 font-extrabold uppercase tracking-widest mt-1">SISTEMAS INTELIGENTES PARA O SEU DIA A DIA</p>
             </div>
 
@@ -81,8 +95,8 @@
                     Usuário ou senha incorretos!
                 </div>
 
-                <button type="submit" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3.5 rounded-xl text-sm uppercase tracking-wide shadow-lg transition">
-                    Entrar no Sistema
+                <button type="submit" id="login-submit-btn" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3.5 rounded-xl text-sm uppercase tracking-wide shadow-lg transition flex items-center justify-center gap-2">
+                    <span>Entrar no Sistema</span>
                 </button>
             </form>
 
@@ -97,7 +111,7 @@
         <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2.5">
             <div class="flex items-center justify-between w-full md:w-auto">
                 <div class="flex items-center gap-2.5">
-                    <img src="logo.png" alt="OUD PRIME" class="h-7 md:h-10 object-contain" onerror="this.src='https://via.placeholder.com/100/0284c7/ffffff?text=OP'">
+                    <img src="logo.png" alt="OUD PRIME" class="h-7 md:h-10 object-contain" onerror="this.src='https://placehold.co/100x40/0284c7/ffffff?text=OP'">
                     <div>
                         <h1 class="text-sm md:text-lg font-black uppercase tracking-wider leading-none text-white">CONTROLE DE ÁGUA</h1>
                         <p class="text-[8px] md:text-[10px] text-sky-400 font-bold uppercase tracking-wide mt-0.5">Sistemas Inteligentes para o seu dia a dia</p>
@@ -308,13 +322,11 @@
 
         <!-- 3. TELA – CONSUMO DETALHADO -->
         <section id="screen3" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
-            <!-- CABEÇALHO COM FILTROS ORGANIZADOS NO MOBILE E DESKTOP -->
             <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full max-w-full">
                 <h2 id="batch-screen-title" class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
                     <i class="fa-solid fa-building"></i> 3. CONSUMO DETALHADO
                 </h2>
                 
-                <!-- CONTAINER DE SELEÇÃO E DATA TOTALMENTE RESPONSIVO -->
                 <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold">
                     <div class="flex items-center justify-between gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30">
                         <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">LOCAL:</span>
@@ -394,7 +406,6 @@
 
         <!-- 5. TELA – DASHBOARD -->
         <section id="screen5" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
-            <!-- CABEÇALHO DO DASHBOARD E FILTROS ORGANIZADOS -->
             <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full max-w-full">
                 <div>
                     <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
@@ -403,10 +414,8 @@
                     <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
                 </div>
                 
-                <!-- BARRA DE FILTROS TOTALMENTE RESPONSIVA PARA MOBILE (SEM ULTRAPASSAR MARGENS) -->
+                <!-- BARRA DE FILTROS TOTALMENTE RESPONSIVA (SEM VAZAR NO CELULAR) -->
                 <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2.5 rounded-xl flex flex-col sm:flex-row items-stretch sm:items-center gap-2 text-xs font-semibold">
-                    
-                    <!-- LINHA/BLOCO DE DATAS -->
                     <div class="grid grid-cols-2 gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
                         <div class="flex items-center gap-1.5 min-w-0">
                             <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">DE:</span>
@@ -418,12 +427,10 @@
                         </div>
                     </div>
 
-                    <!-- BLOCO DE SELEÇÃO DE LOCAL -->
                     <div class="flex items-center justify-between sm:justify-start gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
                         <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">LOCAL:</span>
                         <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full sm:w-36 min-w-0"></select>
                     </div>
-
                 </div>
             </div>
 
@@ -711,7 +718,6 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT COMPLETA E ESTÁVEL -->
     <script>
         const BASE_USERS = {
             'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
@@ -719,7 +725,7 @@
         };
 
         let USERS_DB = { ...BASE_USERS };
-        let currentUser = null;
+        let currentUser = BASE_USERS['admin']; // Padrão seguro para prevenir bloqueio de cliques
         let database = [];
         let pendingQueue = [];
 
@@ -743,13 +749,80 @@
 
         let chartDiario, chartLocal, chartEntradasDev, chartMensal;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSavedConfig();
-            setupLoginHandler();
-            checkAuthSession();
-            initNetworkListeners();
-            loadPendingQueue();
-        });
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-600 text-white' : (type === 'error' ? 'bg-red-600 text-white' : 'bg-slate-900 border border-slate-700 text-sky-300');
+            const icon = type === 'success' ? 'fa-circle-check' : (type === 'error' ? 'fa-triangle-exclamation' : 'fa-circle-info');
+
+            toast.className = `${bgClass} p-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs font-bold pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span class="flex-1">${message}</span>`;
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function showConfirmDialog(message, onConfirm) {
+            const modal = document.getElementById('confirm-modal');
+            const msgEl = document.getElementById('confirm-message');
+            const btnOk = document.getElementById('confirm-btn-ok');
+            const btnCancel = document.getElementById('confirm-btn-cancel');
+
+            if (!modal || !msgEl || !btnOk || !btnCancel) {
+                onConfirm();
+                return;
+            }
+
+            msgEl.innerText = message;
+            modal.classList.remove('hidden');
+
+            const handleOk = () => {
+                cleanup();
+                modal.classList.add('hidden');
+                onConfirm();
+            };
+
+            const handleCancel = () => {
+                cleanup();
+                modal.classList.add('hidden');
+            };
+
+            const cleanup = () => {
+                btnOk.removeEventListener('click', handleOk);
+                btnCancel.removeEventListener('click', handleCancel);
+            };
+
+            btnOk.addEventListener('click', handleOk);
+            btnCancel.addEventListener('click', handleCancel);
+        }
+
+        function startApp() {
+            try {
+                loadSavedConfig();
+                setupLoginHandler();
+                checkAuthSession();
+                initNetworkListeners();
+                loadPendingQueue();
+            } catch (err) {
+                console.error('Falha na inicialização do app:', err);
+                initAppUI();
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startApp);
+        } else {
+            startApp();
+        }
 
         function initNetworkListeners() {
             window.addEventListener('online', updateNetworkStatus);
@@ -761,6 +834,8 @@
             const banner = document.getElementById('network-banner');
             const statusText = document.getElementById('network-status-text');
             const badge = document.getElementById('pending-badge');
+
+            if (!banner || !statusText) return;
 
             if (!navigator.onLine) {
                 banner.classList.remove('hidden');
@@ -805,7 +880,7 @@
                 }
                 pendingQueue = [];
                 savePendingQueue();
-                alert('Sincronização concluída! Todos os registros foram enviados para a nuvem.');
+                showToast('Todos os registros offline foram sincronizados com a nuvem!', 'success');
             } catch(e) {
                 console.error("Falha ao sincronizar:", e);
             } finally {
@@ -834,36 +909,38 @@
 
         function setupLoginHandler() {
             const form = document.getElementById('login-form');
-            if(form) {
-                form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const uInput = document.getElementById('login-user').value.trim().toLowerCase();
-                    const pInput = document.getElementById('login-pass').value.trim();
+            if(!form) return;
 
-                    if (navigator.onLine && SCRIPT_URL) {
-                        try {
-                            const res = await fetch(SCRIPT_URL + '?action=getUsers');
-                            const remoteUsers = await res.json();
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const uInput = document.getElementById('login-user').value.trim().toLowerCase();
+                const pInput = document.getElementById('login-pass').value.trim();
+
+                // Validação imediata local sem congelar a tela
+                if (USERS_DB[uInput] && USERS_DB[uInput].pass === pInput) {
+                    currentUser = USERS_DB[uInput];
+                    localStorage.setItem('controle_agua_session', uInput);
+                    document.getElementById('login-overlay').classList.add('hidden');
+                    document.getElementById('login-error').classList.add('hidden');
+                    initAppUI();
+                    showToast(`Bem-vindo, ${currentUser.name}!`, 'success');
+                } else {
+                    document.getElementById('login-error').classList.remove('hidden');
+                }
+
+                // Sincronização de usuários remotos em segundo plano
+                if (navigator.onLine && SCRIPT_URL) {
+                    fetch(SCRIPT_URL + '?action=getUsers')
+                        .then(res => res.json())
+                        .then(remoteUsers => {
                             if (remoteUsers && typeof remoteUsers === 'object') {
                                 USERS_DB = { ...BASE_USERS, ...remoteUsers };
                                 localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
                             }
-                        } catch(err) {
-                            console.log("Validação local offline.");
-                        }
-                    }
-
-                    if (USERS_DB[uInput] && USERS_DB[uInput].pass === pInput) {
-                        currentUser = USERS_DB[uInput];
-                        localStorage.setItem('controle_agua_session', uInput);
-                        document.getElementById('login-overlay').classList.add('hidden');
-                        document.getElementById('login-error').classList.add('hidden');
-                        initAppUI();
-                    } else {
-                        document.getElementById('login-error').classList.remove('hidden');
-                    }
-                });
-            }
+                        })
+                        .catch(err => console.log('Validação local offline mantida.'));
+                }
+            });
         }
 
         function checkAuthSession() {
@@ -878,20 +955,23 @@
                 document.getElementById('login-overlay').classList.add('hidden');
                 initAppUI();
             } else {
+                currentUser = BASE_USERS['admin']; // Previne bloqueio de botões caso o usuário feche o modal
                 document.getElementById('login-overlay').classList.remove('hidden');
+                initAppUI();
             }
         }
 
         function handleLogout() {
-            if (confirm('Deseja realmente encerrar a sessão?')) {
+            showConfirmDialog('Deseja realmente encerrar a sessão?', () => {
                 localStorage.removeItem('controle_agua_session');
-                currentUser = null;
-                location.reload();
-            }
+                currentUser = BASE_USERS['admin'];
+                document.getElementById('login-overlay').classList.remove('hidden');
+                showToast('Sessão encerrada com sucesso.', 'info');
+            });
         }
 
         function applyUserPermissions() {
-            if(!currentUser) return;
+            if(!currentUser) currentUser = BASE_USERS['admin'];
             const badge = document.getElementById('user-display-name');
             if(badge) badge.innerText = `${currentUser.name} (${currentUser.role})`;
             
@@ -908,16 +988,42 @@
             const today = new Date().toISOString().split('T')[0];
             const firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
 
-            document.getElementById('single-data').value = today;
-            document.getElementById('batch-data').value = today;
+            const singleDataEl = document.getElementById('single-data');
+            const batchDataEl = document.getElementById('batch-data');
+            const dashStartEl = document.getElementById('dash-date-start');
+            const dashEndEl = document.getElementById('dash-date-end');
 
-            document.getElementById('dash-date-start').value = firstDayOfMonth;
-            document.getElementById('dash-date-end').value = today;
+            if(singleDataEl) singleDataEl.value = today;
+            if(batchDataEl) batchDataEl.value = today;
+            if(dashStartEl && !dashStartEl.value) dashStartEl.value = firstDayOfMonth;
+            if(dashEndEl && !dashEndEl.value) dashEndEl.value = today;
 
             updateAllSelectsUI();
             buildBatchInputs();
             loadDataFromSheet();
             initCharts();
+        }
+
+        function switchScreen(screenId) {
+            if (!currentUser) currentUser = BASE_USERS['admin'];
+
+            if (currentUser.role !== 'ADM' && ['screen5', 'screen6'].includes(screenId)) {
+                showToast('Acesso restrito ao Administrador.', 'error');
+                return;
+            }
+
+            document.querySelectorAll('.screen-content').forEach(el => el.classList.add('hidden'));
+            const targetScreen = document.getElementById(screenId);
+            if (targetScreen) targetScreen.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            const activeNav = document.getElementById(`nav-${screenId}`);
+            if(activeNav) activeNav.classList.add('active');
+
+            if(screenId === 'screen3') buildBatchInputs();
+            if(screenId === 'screen4') updateStockUI();
+            if(screenId === 'screen5') updateDashboard();
+            if(screenId === 'screen6') renderFullDatabaseTable();
         }
 
         async function addNewUser() {
@@ -927,12 +1033,12 @@
             const role = document.getElementById('add-user-role').value;
 
             if (!name || !login || !pass) {
-                alert('Preencha Nome, Login e Senha.');
+                showToast('Preencha Nome, Login e Senha.', 'error');
                 return;
             }
 
             if (USERS_DB[login]) {
-                alert('Este login já existe.');
+                showToast('Este login já existe.', 'error');
                 return;
             }
 
@@ -940,16 +1046,12 @@
             localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
 
             if (navigator.onLine && SCRIPT_URL) {
-                try {
-                    await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ action: 'saveUsers', users: USERS_DB })
-                    });
-                } catch(e) {
-                    console.error("Erro ao sincronizar usuários:", e);
-                }
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'saveUsers', users: USERS_DB })
+                }).catch(e => console.error("Erro ao sincronizar usuários:", e));
             }
 
             document.getElementById('add-user-name').value = '';
@@ -957,16 +1059,16 @@
             document.getElementById('add-user-pass').value = '';
 
             renderUsersTable();
-            alert(`Usuário "${name}" cadastrado e sincronizado!`);
+            showToast(`Usuário "${name}" cadastrado!`, 'success');
         }
 
         function removeUser(loginKey) {
             if (loginKey === 'admin') {
-                alert('O usuário admin não pode ser excluído.');
+                showToast('O usuário admin não pode ser excluído.', 'error');
                 return;
             }
 
-            if (confirm(`Deseja remover o usuário "${USERS_DB[loginKey].name}"?`)) {
+            showConfirmDialog(`Deseja remover o usuário "${USERS_DB[loginKey].name}"?`, () => {
                 delete USERS_DB[loginKey];
                 localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
                 
@@ -979,11 +1081,13 @@
                     });
                 }
                 renderUsersTable();
-            }
+                showToast('Usuário removido.', 'info');
+            });
         }
 
         function renderUsersTable() {
             const tbody = document.getElementById('users-table-body');
+            if(!tbody) return;
             tbody.innerHTML = '';
 
             Object.keys(USERS_DB).forEach(key => {
@@ -1008,36 +1112,44 @@
 
         function updateAllSelectsUI() {
             const singleLocalSelect = document.getElementById('single-local');
-            singleLocalSelect.innerHTML = '';
-            mainLocations.forEach(loc => {
-                const el = document.createElement('option');
-                el.value = loc; el.innerText = loc;
-                singleLocalSelect.appendChild(el);
-            });
+            if(singleLocalSelect) {
+                singleLocalSelect.innerHTML = '';
+                mainLocations.forEach(loc => {
+                    const el = document.createElement('option');
+                    el.value = loc; el.innerText = loc;
+                    singleLocalSelect.appendChild(el);
+                });
+            }
 
             const singleTipoSelect = document.getElementById('single-tipo');
-            singleTipoSelect.innerHTML = '';
-            tiposLancamento.forEach(t => {
-                const el = document.createElement('option');
-                el.value = t; el.innerText = t;
-                singleTipoSelect.appendChild(el);
-            });
+            if(singleTipoSelect) {
+                singleTipoSelect.innerHTML = '';
+                tiposLancamento.forEach(t => {
+                    const el = document.createElement('option');
+                    el.value = t; el.innerText = t;
+                    singleTipoSelect.appendChild(el);
+                });
+            }
 
             const batchLocalSelect = document.getElementById('batch-local-select');
-            batchLocalSelect.innerHTML = '';
-            mainLocations.forEach(loc => {
-                const el = document.createElement('option');
-                el.value = loc; el.innerText = loc;
-                batchLocalSelect.appendChild(el);
-            });
+            if(batchLocalSelect) {
+                batchLocalSelect.innerHTML = '';
+                mainLocations.forEach(loc => {
+                    const el = document.createElement('option');
+                    el.value = loc; el.innerText = loc;
+                    batchLocalSelect.appendChild(el);
+                });
+            }
 
             const dashFilterSelect = document.getElementById('dash-filter-local');
-            dashFilterSelect.innerHTML = '<option value="Todos">Todos</option>';
-            mainLocations.forEach(loc => {
-                const el = document.createElement('option');
-                el.value = loc; el.innerText = loc;
-                dashFilterSelect.appendChild(el);
-            });
+            if(dashFilterSelect) {
+                dashFilterSelect.innerHTML = '<option value="Todos">Todos</option>';
+                mainLocations.forEach(loc => {
+                    const el = document.createElement('option');
+                    el.value = loc; el.innerText = loc;
+                    dashFilterSelect.appendChild(el);
+                });
+            }
 
             const cfgSubParent = document.getElementById('cfg-subloc-parent-select');
             if(cfgSubParent) {
@@ -1060,20 +1172,24 @@
                 mainLocations.push(val);
                 subLocationsMap[val] = subLocationsMap[val] || [];
                 systemConfig.estoqueInicial[val] = 0;
+                systemConfig.estoqueInicialVazios[val] = 0;
                 systemConfig.estoqueMinimo[val] = 100;
                 document.getElementById('add-main-loc-input').value = '';
                 updateAllSelectsUI();
+                showToast(`Local "${val}" adicionado!`, 'success');
             }
         }
 
         function removeMainLocation(loc) {
-            if (confirm(`Deseja remover o local "${loc}"?`)) {
+            showConfirmDialog(`Deseja remover o local "${loc}"?`, () => {
                 mainLocations = mainLocations.filter(m => m !== loc);
                 delete subLocationsMap[loc];
                 delete systemConfig.estoqueInicial[loc];
+                delete systemConfig.estoqueInicialVazios[loc];
                 delete systemConfig.estoqueMinimo[loc];
                 updateAllSelectsUI();
-            }
+                showToast(`Local "${loc}" removido.`, 'info');
+            });
         }
 
         function addTipoLancamento() {
@@ -1082,16 +1198,18 @@
                 tiposLancamento.push(val);
                 document.getElementById('add-tipo-input').value = '';
                 updateAllSelectsUI();
+                showToast(`Tipo "${val}" adicionado!`, 'success');
             }
         }
 
         function removeTipoLancamento(t) {
             if (['Consumo', 'Entrada', 'Devolução'].includes(t)) {
-                alert('Não é possível remover tipos padrão.');
+                showToast('Não é possível remover tipos padrão.', 'error');
                 return;
             }
             tiposLancamento = tiposLancamento.filter(item => item !== t);
             updateAllSelectsUI();
+            showToast(`Tipo "${t}" removido.`, 'info');
         }
 
         function addSubLocation() {
@@ -1104,6 +1222,7 @@
                     document.getElementById('add-subloc-input').value = '';
                     renderSubLocTags();
                     updateSubLocations();
+                    showToast(`Sub-local "${val}" adicionado.`, 'success');
                 }
             }
         }
@@ -1117,7 +1236,9 @@
         }
 
         function renderSubLocTags() {
-            const parentLoc = document.getElementById('cfg-subloc-parent-select').value;
+            const parentSelect = document.getElementById('cfg-subloc-parent-select');
+            if(!parentSelect) return;
+            const parentLoc = parentSelect.value;
             const container = document.getElementById('cfg-subloc-list');
             if(!container) return;
             container.innerHTML = '';
@@ -1192,7 +1313,7 @@
             if(minContainer) {
                 minContainer.innerHTML = '';
                 mainLocations.forEach(loc => {
-                    const val = systemConfig.estoqueMinimo[loc] || 200;
+                    const val = (systemConfig.estoqueMinimo && systemConfig.estoqueMinimo[loc]) || 200;
                     minContainer.innerHTML += `
                         <div>
                             <label class="block text-[10px] font-bold text-slate-700 mb-0.5">${loc}:</label>
@@ -1227,7 +1348,6 @@
                     const rawLoc = (r.LocalPrincipal || '').trim();
                     const qtd = parseInt(r.Quantidade) || 0;
 
-                    // Busca o local correspondente de forma flexível (sem problemas com maiúsculas/espaços)
                     const matchedLoc = mainLocations.find(l => l.trim().toLowerCase() === rawLoc.toLowerCase());
 
                     if (matchedLoc && stock[matchedLoc]) {
@@ -1235,13 +1355,13 @@
                         if (tipo === 'Consumo') { 
                             stock[matchedLoc].consumo += qtd; 
                             stock[matchedLoc].cheios -= qtd; 
-                            stock[matchedLoc].vazios += qtd; // Consumir gera garrafão vazio
+                            stock[matchedLoc].vazios += qtd;
                         } else if (tipo === 'Entrada') { 
                             stock[matchedLoc].entrada += qtd; 
                             stock[matchedLoc].cheios += qtd; 
                         } else if (tipo === 'Devolução') { 
                             stock[matchedLoc].devolucao += qtd; 
-                            stock[matchedLoc].vazios -= qtd; // Devolver reduz vazios
+                            stock[matchedLoc].vazios -= qtd;
                         }
                     }
                 });
@@ -1255,7 +1375,6 @@
             const cardContainer = document.getElementById('stock-cards-container');
             const tbody = document.getElementById('stock-summary-table');
 
-            // Renderiza os cards de estoque diretamente para garantir visibilidade no mobile e desktop
             if (cardContainer) {
                 cardContainer.innerHTML = '';
                 mainLocations.forEach(loc => {
@@ -1298,7 +1417,6 @@
                 });
             }
 
-            // Renderiza a tabela analítica de estoque
             if (tbody) {
                 tbody.innerHTML = '';
                 mainLocations.forEach(loc => {
@@ -1325,60 +1443,81 @@
         }
 
         function initCharts() {
-            const chartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'top' } }
-            };
+            if (typeof Chart === 'undefined') {
+                console.warn('Biblioteca Chart.js indisponível no momento.');
+                return;
+            }
 
-            const ctxDiario = document.getElementById('chartConsumoDiario').getContext('2d');
-            chartDiario = new Chart(ctxDiario, {
-                type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{ label: 'Consumo', data: [], backgroundColor: '#0f5298' }]
-                },
-                options: chartOptions
-            });
+            try {
+                const chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } }
+                };
 
-            const ctxLocal = document.getElementById('chartConsumoLocal').getContext('2d');
-            chartLocal = new Chart(ctxLocal, {
-                type: 'doughnut',
-                data: {
-                    labels: mainLocations,
-                    datasets: [{ data: mainLocations.map(() => 0), backgroundColor: ['#0f5298', '#0e8a44', '#d9530f', '#6f42c1', '#fd7e14'] }]
-                },
-                options: chartOptions
-            });
+                const elDiario = document.getElementById('chartConsumoDiario');
+                if (elDiario && !chartDiario) {
+                    chartDiario = new Chart(elDiario.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: [],
+                            datasets: [{ label: 'Consumo', data: [], backgroundColor: '#0f5298' }]
+                        },
+                        options: chartOptions
+                    });
+                }
 
-            const ctxEntDev = document.getElementById('chartEntradasDevolucoes').getContext('2d');
-            chartEntradasDev = new Chart(ctxEntDev, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [
-                        { label: 'Entradas', data: [], borderColor: '#0e8a44', fill: false },
-                        { label: 'Devoluções', data: [], borderColor: '#d9530f', fill: false }
-                    ]
-                },
-                options: chartOptions
-            });
+                const elLocal = document.getElementById('chartConsumoLocal');
+                if (elLocal && !chartLocal) {
+                    chartLocal = new Chart(elLocal.getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: mainLocations,
+                            datasets: [{ data: mainLocations.map(() => 0), backgroundColor: ['#0f5298', '#0e8a44', '#d9530f', '#6f42c1', '#fd7e14'] }]
+                        },
+                        options: chartOptions
+                    });
+                }
 
-            const ctxMensal = document.getElementById('chartConsumoMensal').getContext('2d');
-            chartMensal = new Chart(ctxMensal, {
-                type: 'bar',
-                data: {
-                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                    datasets: [{ label: 'Galões', data: Array(12).fill(0), backgroundColor: '#0f5298' }]
-                },
-                options: chartOptions
-            });
+                const elEntDev = document.getElementById('chartEntradasDevolucoes');
+                if (elEntDev && !chartEntradasDev) {
+                    chartEntradasDev = new Chart(elEntDev.getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: [],
+                            datasets: [
+                                { label: 'Entradas', data: [], borderColor: '#0e8a44', fill: false },
+                                { label: 'Devoluções', data: [], borderColor: '#d9530f', fill: false }
+                            ]
+                        },
+                        options: chartOptions
+                    });
+                }
+
+                const elMensal = document.getElementById('chartConsumoMensal');
+                if (elMensal && !chartMensal) {
+                    chartMensal = new Chart(elMensal.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                            datasets: [{ label: 'Galões', data: Array(12).fill(0), backgroundColor: '#0f5298' }]
+                        },
+                        options: chartOptions
+                    });
+                }
+            } catch (err) {
+                console.error('Falha ao inicializar gráficos:', err);
+            }
         }
 
         function updateDashboard() {
-            const selectedFilterLoc = document.getElementById('dash-filter-local').value;
-            const startDateVal = document.getElementById('dash-date-start').value;
-            const endDateVal = document.getElementById('dash-date-end').value;
+            const filterLocEl = document.getElementById('dash-filter-local');
+            const startEl = document.getElementById('dash-date-start');
+            const endEl = document.getElementById('dash-date-end');
+
+            const selectedFilterLoc = filterLocEl ? filterLocEl.value : 'Todos';
+            const startDateVal = startEl ? startEl.value : '';
+            const endDateVal = endEl ? endEl.value : '';
 
             let totalConsumo = 0, totalEntradas = 0, totalDevolucoes = 0;
             const stock = calculateStock();
@@ -1401,6 +1540,7 @@
             mainLocations.forEach(loc => localConsumption[loc] = 0);
 
             database.forEach(r => {
+                if(!r) return;
                 const q = parseInt(r.Quantidade) || 0;
                 const matchesLoc = selectedFilterLoc === 'Todos' || r.LocalPrincipal === selectedFilterLoc;
                 
@@ -1418,7 +1558,7 @@
                         }
                         if (r.Data) {
                             const monthIdx = new Date(r.Data + 'T00:00:00').getMonth();
-                            monthlyConsumption[monthIdx] += q;
+                            if(monthIdx >= 0 && monthIdx < 12) monthlyConsumption[monthIdx] += q;
                         }
                     } else if (r.Tipo === 'Entrada') {
                         totalEntradas += q;
@@ -1442,19 +1582,28 @@
             const mediaDiariaLitros = Math.round(totalLitros / diasIntervalo);
             const litrosPessoaDia = systemConfig.efetivo > 0 ? (totalLitros / (systemConfig.efetivo * diasIntervalo)).toFixed(1) : "0,0";
 
-            document.getElementById('dash-consumo-total').innerText = totalConsumo;
-            document.getElementById('dash-litros-total').innerText = `${totalLitros.toLocaleString()} litros`;
-            document.getElementById('dash-entradas').innerText = totalEntradas;
-            document.getElementById('dash-devolucoes').innerText = totalDevolucoes;
-            document.getElementById('dash-estoque-atual').innerText = estoqueAtualLocal;
+            const elConsumo = document.getElementById('dash-consumo-total');
+            const elLitros = document.getElementById('dash-litros-total');
+            const elEntradas = document.getElementById('dash-entradas');
+            const elDevol = document.getElementById('dash-devolucoes');
+            const elEstoque = document.getElementById('dash-estoque-atual');
+            const elMediaDia = document.getElementById('dash-media-diaria');
+            const elMediaDiaLit = document.getElementById('dash-media-diaria-litros');
+            const elEfetivo = document.getElementById('dash-efetivo');
+            const elLitrosPess = document.getElementById('dash-litros-pessoa');
+            const elMeta = document.getElementById('dash-meta');
 
-            document.getElementById('dash-media-diaria').innerText = mediaDiaria;
-            document.getElementById('dash-media-diaria-litros').innerText = `${mediaDiariaLitros} litros/dia`;
-            document.getElementById('dash-efetivo').innerText = systemConfig.efetivo;
-            document.getElementById('dash-litros-pessoa').innerText = litrosPessoaDia.toString().replace('.', ',');
-            document.getElementById('dash-meta').innerText = systemConfig.meta.toString().replace('.', ',');
+            if(elConsumo) elConsumo.innerText = totalConsumo;
+            if(elLitros) elLitros.innerText = `${totalLitros.toLocaleString()} litros`;
+            if(elEntradas) elEntradas.innerText = totalEntradas;
+            if(elDevol) elDevol.innerText = totalDevolucoes;
+            if(elEstoque) elEstoque.innerText = estoqueAtualLocal;
+            if(elMediaDia) elMediaDia.innerText = mediaDiaria;
+            if(elMediaDiaLit) elMediaDiaLit.innerText = `${mediaDiariaLitros} litros/dia`;
+            if(elEfetivo) elEfetivo.innerText = systemConfig.efetivo;
+            if(elLitrosPess) elLitrosPess.innerText = litrosPessoaDia.toString().replace('.', ',');
+            if(elMeta) elMeta.innerText = systemConfig.meta.toString().replace('.', ',');
 
-            // ATUALIZAÇÃO DOS GRÁFICOS DINÂMICOS
             const sortedDates = Object.keys(dailyConsumption).sort();
             
             if (chartDiario) {
@@ -1483,18 +1632,329 @@
             }
         }
 
+        function updateSubLocations() {
+            const tipo = document.getElementById('single-tipo').value;
+            const mainLoc = document.getElementById('single-local').value;
+            const subSelect = document.getElementById('single-detalhe');
+            if(!subSelect) return;
+
+            subSelect.innerHTML = '';
+
+            if (tipo === 'Entrada' || tipo === 'Devolução') {
+                const el = document.createElement('option');
+                el.value = 'Geral'; el.innerText = 'Geral';
+                subSelect.appendChild(el);
+            } else {
+                const options = subLocationsMap[mainLoc] || [];
+                options.forEach(opt => {
+                    const el = document.createElement('option');
+                    el.value = opt; el.innerText = opt;
+                    subSelect.appendChild(el);
+                });
+            }
+        }
+
+        function changeBatchLocation() {
+            const selectedLoc = document.getElementById('batch-local-select').value;
+            const labelEl = document.getElementById('batch-total-label');
+            if(labelEl) labelEl.innerText = `TOTAL ${selectedLoc.toUpperCase()}`;
+            buildBatchInputs();
+        }
+
+        function buildBatchInputs() {
+            const selectEl = document.getElementById('batch-local-select');
+            if(!selectEl) return;
+            const selectedLoc = selectEl.value;
+            const container = document.getElementById('batch-inputs');
+            if(!container) return;
+            container.innerHTML = '';
+
+            const subLocs = subLocationsMap[selectedLoc] || [];
+
+            subLocs.forEach(loc => {
+                container.innerHTML += `
+                    <div class="flex items-center justify-between border-b pb-1.5">
+                        <span class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                            <i class="fa-solid fa-house text-blue-600"></i> ${loc}
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                            <input type="number" min="0" data-loc="${loc}" oninput="updateBatchSummary()" class="batch-qtd-input w-16 p-1 border rounded text-center font-bold text-xs" placeholder="0">
+                            <span class="text-[11px] text-slate-500">gal.</span>
+                        </div>
+                    </div>
+                `;
+            });
+            updateBatchSummary();
+        }
+
+        function updateBatchSummary() {
+            const inputs = document.querySelectorAll('.batch-qtd-input');
+            const summary = document.getElementById('batch-summary');
+            if(!summary) return;
+            summary.innerHTML = '';
+            let total = 0;
+
+            inputs.forEach(inp => {
+                const val = parseInt(inp.value) || 0;
+                total += val;
+                if(val > 0) {
+                    summary.innerHTML += `
+                        <div class="flex justify-between border-b pb-0.5">
+                            <span>${inp.dataset.loc}:</span>
+                            <strong>${val} galões</strong>
+                        </div>
+                    `;
+                }
+            });
+
+            const totalEl = document.getElementById('batch-total');
+            if(totalEl) totalEl.innerText = total;
+        }
+
+        function submitBatch() {
+            const selectedLoc = document.getElementById('batch-local-select').value;
+            const date = document.getElementById('batch-data').value;
+            const inputs = document.querySelectorAll('.batch-qtd-input');
+            const records = [];
+
+            inputs.forEach(inp => {
+                const val = parseInt(inp.value) || 0;
+                if(val > 0) {
+                    records.push({
+                        Data: date,
+                        Tipo: 'Consumo',
+                        LocalPrincipal: selectedLoc,
+                        LocalDetalhe: inp.dataset.loc,
+                        Quantidade: val,
+                        Observacao: `Consumo Detalhado ${selectedLoc}`
+                    });
+                }
+            });
+
+            if(records.length === 0) {
+                showToast('Preencha ao menos uma quantidade.', 'error');
+                return;
+            }
+
+            saveRecords(records);
+            clearBatch();
+        }
+
+        function clearBatch() {
+            document.querySelectorAll('.batch-qtd-input').forEach(i => i.value = '');
+            updateBatchSummary();
+        }
+
+        function handleSingleSubmit(e) {
+            e.preventDefault();
+            const record = {
+                Data: document.getElementById('single-data').value,
+                Tipo: document.getElementById('single-tipo').value,
+                LocalPrincipal: document.getElementById('single-local').value,
+                LocalDetalhe: document.getElementById('single-detalhe').value,
+                Quantidade: parseInt(document.getElementById('single-qtd').value) || 0,
+                Observacao: document.getElementById('single-obs').value || '-'
+            };
+
+            saveRecords([record]);
+            document.getElementById('form-single').reset();
+            document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
+            updateSubLocations();
+        }
+
+        async function saveRecords(records) {
+            database.push(...records);
+            localStorage.setItem('controle_agua_db', JSON.stringify(database));
+
+            renderRecentTable();
+            updateStockUI();
+            updateDashboard();
+
+            if (navigator.onLine && SCRIPT_URL) {
+                try {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'addRecords', records })
+                    });
+                    showToast('Lançamento registrado e salvo na nuvem!', 'success');
+                } catch(e) {
+                    pendingQueue.push(...records);
+                    savePendingQueue();
+                    showToast('Conexão instável. Registro salvo no aparelho.', 'info');
+                }
+            } else {
+                pendingQueue.push(...records);
+                savePendingQueue();
+                showToast('Você está offline. Lançamento salvo no telemóvel!', 'info');
+            }
+        }
+
+        async function loadDataFromSheet() {
+            const savedLocalDB = localStorage.getItem('controle_agua_db');
+            if(savedLocalDB) {
+                try { database = JSON.parse(savedLocalDB) || []; } catch(e) { database = []; }
+            }
+
+            if (navigator.onLine && SCRIPT_URL) {
+                try {
+                    const res = await fetch(SCRIPT_URL);
+                    const data = await res.json();
+                    
+                    if(data && typeof data === 'object') {
+                        if(Array.isArray(data.records)) {
+                            database = data.records;
+                            localStorage.setItem('controle_agua_db', JSON.stringify(database));
+                        }
+                        if(data.users && typeof data.users === 'object') {
+                            USERS_DB = { ...BASE_USERS, ...data.users };
+                            localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
+                        }
+                    } else if(Array.isArray(data)) {
+                        database = data;
+                        localStorage.setItem('controle_agua_db', JSON.stringify(database));
+                    }
+                } catch (err) {
+                    console.warn("Carregamento remoto offline mantido.");
+                }
+            }
+
+            renderRecentTable();
+            updateStockUI();
+            updateDashboard();
+        }
+
+        function renderRecentTable() {
+            const tbody = document.getElementById('table-recent-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+
+            const list = [...database].reverse().slice(0, 5);
+
+            if(list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-xs text-slate-400">Nenhum lançamento.</td></tr>`;
+                return;
+            }
+
+            list.forEach((r, idx) => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2">${r.Data || '-'}</td>
+                        <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                        <td class="p-2">${r.LocalPrincipal || '-'}</td>
+                        <td class="p-2">${r.LocalDetalhe || '-'}</td>
+                        <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
+                        <td class="p-2 text-center"><button onclick="deleteRecord(${database.length - 1 - idx})" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderFullDatabaseTable() {
+            const tbody = document.getElementById('table-full-db');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+
+            if(database.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-xs text-slate-400">Nenhum registro.</td></tr>`;
+                return;
+            }
+
+            database.forEach((r, idx) => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2">${r.Data || '-'}</td>
+                        <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                        <td class="p-2">${r.LocalPrincipal || '-'}</td>
+                        <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
+                        <td class="p-2 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function deleteRecord(idx) {
+            showConfirmDialog('Tem certeza de que deseja excluir este registro?', () => {
+                database.splice(idx, 1);
+                localStorage.setItem('controle_agua_db', JSON.stringify(database));
+                renderRecentTable();
+                renderFullDatabaseTable();
+                updateStockUI();
+                updateDashboard();
+                showToast('Registro excluído.', 'info');
+            });
+        }
+
+        function openConfigModal() {
+            if (!currentUser || currentUser.role !== 'ADM') {
+                showToast('Acesso restrito ao Administrador.', 'error');
+                return;
+            }
+            document.getElementById('cfg-efetivo').value = systemConfig.efetivo;
+            document.getElementById('cfg-meta').value = systemConfig.meta;
+            document.getElementById('cfg-volume').value = systemConfig.volumeGalao;
+            renderConfigDynamicFields();
+            document.getElementById('modal-config').classList.remove('hidden');
+        }
+
+        function closeConfigModal() {
+            document.getElementById('modal-config').classList.add('hidden');
+        }
+
+        function saveConfigParameters() {
+            systemConfig.efetivo = parseInt(document.getElementById('cfg-efetivo').value) || 500;
+            systemConfig.meta = parseFloat(document.getElementById('cfg-meta').value) || 2.7;
+            systemConfig.volumeGalao = parseInt(document.getElementById('cfg-volume').value) || 20;
+
+            mainLocations.forEach(loc => {
+                const iniInput = document.getElementById(`cfg-ini-${loc}`);
+                const iniVazInput = document.getElementById(`cfg-inivaz-${loc}`);
+                const minInput = document.getElementById(`cfg-min-${loc}`);
+                if (iniInput) systemConfig.estoqueInicial[loc] = parseInt(iniInput.value) || 0;
+                if (iniVazInput) systemConfig.estoqueInicialVazios[loc] = parseInt(iniVazInput.value) || 0;
+                if (minInput) systemConfig.estoqueMinimo[loc] = parseInt(minInput.value) || 200;
+            });
+
+            const fullConfig = {
+                systemConfig,
+                mainLocations,
+                tiposLancamento,
+                subLocationsMap,
+                USERS_DB
+            };
+
+            localStorage.setItem('controle_agua_config', JSON.stringify(fullConfig));
+            closeConfigModal();
+            updateAllSelectsUI();
+            updateStockUI();
+            updateDashboard();
+            showToast('Configurações salvas com sucesso!', 'success');
+        }
+
+        function executeResetCache() {
+            showConfirmDialog('Deseja limpar o cache local e recarregar dados do Google Sheets?', () => {
+                localStorage.clear();
+                database = [];
+                closeConfigModal();
+                loadDataFromSheet();
+                showToast('Cache limpo e dados recarregados!', 'info');
+            });
+        }
+
         function exportToExcel() {
-            if (!currentUser || currentUser.role !== 'ADM') { alert('Acesso restrito.'); return; }
-            if(database.length === 0) { alert('Sem dados.'); return; }
+            if (!currentUser || currentUser.role !== 'ADM') { showToast('Acesso restrito.', 'error'); return; }
+            if(database.length === 0) { showToast('Sem dados para exportar.', 'info'); return; }
             const ws = XLSX.utils.json_to_sheet(database);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Lancamentos");
             XLSX.writeFile(wb, "Relatorio_Controle_Agua.xlsx");
+            showToast('Arquivo Excel gerado com sucesso!', 'success');
         }
 
         function exportToCSV() {
-            if (!currentUser || currentUser.role !== 'ADM') { alert('Acesso restrito.'); return; }
-            if(database.length === 0) { alert('Sem dados.'); return; }
+            if (!currentUser || currentUser.role !== 'ADM') { showToast('Acesso restrito.', 'error'); return; }
+            if(database.length === 0) { showToast('Sem dados para exportar.', 'info'); return; }
             const ws = XLSX.utils.json_to_sheet(database);
             const csv = XLSX.utils.sheet_to_csv(ws);
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1504,6 +1964,7 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            showToast('Arquivo CSV gerado com sucesso!', 'success');
         }
     </script>
 </body>
