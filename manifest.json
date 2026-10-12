@@ -1,0 +1,17 @@
+{
+  "name": "OUD PRIME - Controle de Água",
+  "short_name": "OUD PRIME",
+  "description": "Sistemas Inteligentes para o seu dia a dia - Controle de Água e Alojamentos",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
