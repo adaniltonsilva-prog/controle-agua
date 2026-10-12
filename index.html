@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OUD PRIME - Controle de Água</title>
+    
+    <!-- CONEXÃO PWA (APLICATIVO MOBILE) -->
+    <link rel="manifest" href="manifest.json">
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+      }
+    </script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -59,7 +68,7 @@
             </form>
 
             <div class="pt-2 border-t border-slate-800 text-center text-[11px] text-slate-500">
-                Desenvolvido por <strong class="text-slate-300">Adanilton Garcia</strong>
+                Desenvolvido por <strong class="text-slate-300">Adanilton Silva</strong>
             </div>
         </div>
     </div>
@@ -180,7 +189,7 @@
         <section id="screen2" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
             <div class="bg-[#0b5394] text-white p-4 rounded-xl flex justify-between items-center">
                 <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
-                    <i class="fa-solid fa-calendar-days"></i> LANÇAMENTOS
+                    <i class="fa-solid fa-calendar-days"></i> 2. TELA – LANÇAMENTOS
                 </h2>
                 <span class="bg-blue-800 text-xs px-3 py-1 rounded-md text-blue-100">Registro Direto ou Detalhado</span>
             </div>
@@ -274,7 +283,7 @@
         <section id="screen3" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
             <div class="bg-[#0b5394] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
                 <h2 id="batch-screen-title" class="text-lg font-bold flex items-center gap-2 uppercase">
-                    <i class="fa-solid fa-building"></i> LANÇAMENTO DE CONSUMO DETALHADO
+                    <i class="fa-solid fa-building"></i> 3. TELA – LANÇAMENTO DE CONSUMO DETALHADO
                 </h2>
                 
                 <div class="flex items-center gap-4 bg-blue-800 px-3 py-1.5 rounded-lg text-xs font-semibold">
@@ -325,7 +334,7 @@
         <section id="screen4" class="screen-content hidden bg-white rounded-2xl shadow-lg p-6 space-y-6">
             <div class="bg-[#0b5394] text-white p-4 rounded-xl flex justify-between items-center">
                 <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
-                    <i class="fa-solid fa-cubes"></i> ESTOQUE
+                    <i class="fa-solid fa-cubes"></i> 4. TELA – ESTOQUE
                 </h2>
                 <span class="bg-blue-800 text-xs px-3 py-1 rounded-md text-blue-100">Posição e Indicadores de Galões</span>
             </div>
@@ -387,7 +396,7 @@
             <div class="bg-[#0b5394] text-white p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
                 <div>
                     <h2 class="text-lg font-bold flex items-center gap-2 uppercase">
-                        <i class="fa-solid fa-chart-line"></i> DASHBOARD
+                        <i class="fa-solid fa-chart-line"></i> 5. TELA – DASHBOARD
                     </h2>
                     <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
                 </div>
@@ -707,7 +716,7 @@
     <script>
         // USUÁRIOS PADRÃO IMUTÁVEIS
         const BASE_USERS = {
-            'admin': { pass: '171020', role: 'ADM', name: 'Administrador Principal' },
+            'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
             'operador': { pass: '1234', role: 'OPERADOR', name: 'Apontador de Campo' }
         };
 
