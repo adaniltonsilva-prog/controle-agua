@@ -118,7 +118,10 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 md:hidden">
+                <div class="flex items-center gap-1.5 md:hidden">
+                    <button onclick="loadDataFromSheet(true)" title="Sincronizar" class="bg-sky-700 hover:bg-sky-600 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow flex items-center gap-1">
+                        <i id="sync-icon-mobile" class="fa-solid fa-arrows-rotate"></i>
+                    </button>
                     <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
@@ -145,6 +148,9 @@
             </nav>
 
             <div class="hidden md:flex items-center gap-3">
+                <button onclick="loadDataFromSheet(true)" title="Sincronizar Dados" class="bg-sky-700 hover:bg-sky-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow transition">
+                    <i id="sync-icon-desktop" class="fa-solid fa-arrows-rotate"></i> <span>Sincronizar</span>
+                </button>
                 <span id="user-badge" class="bg-slate-800 text-sky-300 text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1.5 border border-slate-700">
                     <i class="fa-solid fa-user-check text-sky-400"></i> <span id="user-display-name">Ninguém</span>
                 </span>
@@ -812,133 +818,24 @@
                 checkAuthSession();
                 initNetworkListeners();
                 loadPendingQueue();
+                initAutoSync();
             } catch (err) {
                 console.error('Falha na inicialização do app:', err);
                 initAppUI();
             }
         }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', startApp);
-        } else {
-            startApp();
-        }
-
-        function initNetworkListeners() {
-            window.addEventListener('online', updateNetworkStatus);
-            window.addEventListener('offline', updateNetworkStatus);
-            updateNetworkStatus();
-        }
-
-        function updateNetworkStatus() {
-            const banner = document.getElementById('network-banner');
-            const statusText = document.getElementById('network-status-text');
-            const badge = document.getElementById('pending-badge');
-
-            if (!banner || !statusText) return;
-
-            if (!navigator.onLine) {
-                banner.classList.remove('hidden');
-                statusText.innerHTML = '<i class="fa-solid fa-wifi-slash"></i> Você está offline. Lançamentos serão salvos localmente.';
-            } else {
-                if (pendingQueue.length > 0) {
-                    banner.classList.remove('hidden');
-                    statusText.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin"></i> Conexão restabelecida. Sincronizando dados com o Google Sheets...';
-                    syncPendingQueue();
-                } else {
-                    banner.classList.add('hidden');
+        // Sincronização periódica a cada 20 segundos e ao retornar ao app
+        function initAutoSync() {
+            setInterval(() => {
+                if (navigator.onLine && currentUser) {
+                    loadDataFromSheet(false);
                 }
-            }
-            if(badge) badge.innerText = `${pendingQueue.length} pendentes`;
-        }
+            }, 20000);
 
-        function loadPendingQueue() {
-            const savedQueue = localStorage.getItem('controle_agua_pending');
-            if(savedQueue) {
-                try { pendingQueue = JSON.parse(savedQueue) || []; } catch(e) { pendingQueue = []; }
-            }
-            updateNetworkStatus();
-        }
-
-        function savePendingQueue() {
-            localStorage.setItem('controle_agua_pending', JSON.stringify(pendingQueue));
-            updateNetworkStatus();
-        }
-
-        async function syncPendingQueue() {
-            if (!navigator.onLine || pendingQueue.length === 0) return;
-
-            const recordsToSend = [...pendingQueue];
-            try {
-                if (SCRIPT_URL) {
-                    await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ action: 'addRecords', records: recordsToSend })
-                    });
-                }
-                pendingQueue = [];
-                savePendingQueue();
-                showToast('Todos os registros offline foram sincronizados com a nuvem!', 'success');
-            } catch(e) {
-                console.error("Falha ao sincronizar:", e);
-            } finally {
-                updateNetworkStatus();
-            }
-        }
-
-        function loadSavedConfig() {
-            try {
-                const saved = localStorage.getItem('controle_agua_config');
-                if(saved) {
-                    const parsed = JSON.parse(saved);
-                    if (parsed.systemConfig) systemConfig = parsed.systemConfig;
-                    if (parsed.mainLocations) mainLocations = parsed.mainLocations;
-                    if (parsed.tiposLancamento) tiposLancamento = parsed.tiposLancamento;
-                    if (parsed.subLocationsMap) subLocationsMap = parsed.subLocationsMap;
-                    if (parsed.USERS_DB && typeof parsed.USERS_DB === 'object') {
-                        USERS_DB = { ...BASE_USERS, ...parsed.USERS_DB };
-                    }
-                }
-            } catch(e) {
-                console.error("Erro no carregamento:", e);
-                USERS_DB = { ...BASE_USERS };
-            }
-        }
-
-        function setupLoginHandler() {
-            const form = document.getElementById('login-form');
-            if(!form) return;
-
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const uInput = document.getElementById('login-user').value.trim().toLowerCase();
-                const pInput = document.getElementById('login-pass').value.trim();
-
-                // Validação imediata local sem congelar a tela
-                if (USERS_DB[uInput] && USERS_DB[uInput].pass === pInput) {
-                    currentUser = USERS_DB[uInput];
-                    localStorage.setItem('controle_agua_session', uInput);
-                    document.getElementById('login-overlay').classList.add('hidden');
-                    document.getElementById('login-error').classList.add('hidden');
-                    initAppUI();
-                    showToast(`Bem-vindo, ${currentUser.name}!`, 'success');
-                } else {
-                    document.getElementById('login-error').classList.remove('hidden');
-                }
-
-                // Sincronização de usuários remotos em segundo plano
-                if (navigator.onLine && SCRIPT_URL) {
-                    fetch(SCRIPT_URL + '?action=getUsers')
-                        .then(res => res.json())
-                        .then(remoteUsers => {
-                            if (remoteUsers && typeof remoteUsers === 'object') {
-                                USERS_DB = { ...BASE_USERS, ...remoteUsers };
-                                localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
-                            }
-                        })
-                        .catch(err => console.log('Validação local offline mantida.'));
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible' && navigator.onLine) {
+                    loadDataFromSheet(false);
                 }
             });
         }
@@ -1776,9 +1673,11 @@
                         method: 'POST',
                         mode: 'no-cors',
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ action: 'addRecords', records })
+                        body: JSON.stringify({ action: 'addRecords', records: records })
                     });
                     showToast('Lançamento registrado e salvo na nuvem!', 'success');
+                    // Recarregar dados frescos da planilha após 1.5s
+                    setTimeout(() => loadDataFromSheet(false), 1500);
                 } catch(e) {
                     pendingQueue.push(...records);
                     savePendingQueue();
@@ -1788,6 +1687,63 @@
                 pendingQueue.push(...records);
                 savePendingQueue();
                 showToast('Você está offline. Lançamento salvo no telemóvel!', 'info');
+            }
+        }
+
+        async function loadDataFromSheet(userTriggered = false) {
+            const iconMobile = document.getElementById('sync-icon-mobile');
+            const iconDesktop = document.getElementById('sync-icon-desktop');
+            if (iconMobile) iconMobile.classList.add('fa-spin');
+            if (iconDesktop) iconDesktop.classList.add('fa-spin');
+
+            const savedLocalDB = localStorage.getItem('controle_agua_db');
+            if (savedLocalDB && database.length === 0) {
+                try { database = JSON.parse(savedLocalDB) || []; } catch(e) { database = []; }
+            }
+
+            if (navigator.onLine && SCRIPT_URL) {
+                try {
+                    // Cache buster via timestamp para impedir leitura de dados defasados do cache do navegador
+                    const fetchUrl = `${SCRIPT_URL}${SCRIPT_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
+                    const res = await fetch(fetchUrl, { cache: 'no-store' });
+                    const data = await res.json();
+                    
+                    if (data && typeof data === 'object') {
+                        if (Array.isArray(data.records)) {
+                            database = data.records;
+                            localStorage.setItem('controle_agua_db', JSON.stringify(database));
+                        } else if (Array.isArray(data)) {
+                            database = data;
+                            localStorage.setItem('controle_agua_db', JSON.stringify(database));
+                        }
+                        if (data.users && typeof data.users === 'object') {
+                            USERS_DB = { ...BASE_USERS, ...data.users };
+                            localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
+                        }
+                    }
+
+                    if (userTriggered) {
+                        showToast('Dados sincronizados com o Google Sheets!', 'success');
+                    }
+                } catch (err) {
+                    console.warn("Carregamento remoto:", err);
+                    if (userTriggered) {
+                        showToast('Não foi possível sincronizar agora. Verifique sua conexão.', 'error');
+                    }
+                }
+            }
+
+            setTimeout(() => {
+                if (iconMobile) iconMobile.classList.remove('fa-spin');
+                if (iconDesktop) iconDesktop.classList.remove('fa-spin');
+            }, 600);
+
+            renderRecentTable();
+            updateStockUI();
+            updateDashboard();
+            const activeScreen = document.querySelector('.screen-content:not(.hidden)');
+            if (activeScreen && activeScreen.id === 'screen6') {
+                renderFullDatabaseTable();
             }
         }
 
