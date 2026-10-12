@@ -44,7 +44,7 @@
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Usuário / E-mail</label>
-                    <input type="text" id="login-user" required placeholder="admin ou operador" class="w-full p-3 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-600 bg-slate-50">
+                    <input type="text" id="login-user" required placeholder="Digite seu usuário..." class="w-full p-3 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-600 bg-slate-50">
                 </div>
 
                 <div>
@@ -110,7 +110,6 @@
         </div>
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL DA APLICAÇÃO -->
     <main class="max-w-[1500px] w-full mx-auto p-4 md:p-6 flex-1">
 
         <!-- 1. TELA – MENU PRINCIPAL -->
@@ -167,7 +166,7 @@
                     <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-gear"></i></div>
                     <div>
                         <h3 class="text-xl font-bold uppercase tracking-wide">CONFIGURAÇÕES</h3>
-                        <p class="text-xs text-slate-200 mt-1">Cadastros e Parâmetros</p>
+                        <p class="text-xs text-slate-200 mt-1">Usuários, Cadastros e Parâmetros</p>
                     </div>
                     <div class="text-right text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
                 </div>
@@ -573,17 +572,57 @@
 
     </main>
 
-    <!-- MODAL DE CONFIGURAÇÕES -->
+    <!-- MODAL DE CONFIGURAÇÕES (COM GESTÃO DE USUÁRIOS) -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-6 space-y-6 relative border max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2 border-b">
                 <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-gear text-[#0b5394]"></i> Configurações do Sistema
+                    <i class="fa-solid fa-gear text-[#0b5394]"></i> Configurações e Acessos
                 </h3>
                 <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
             </div>
 
             <div class="space-y-6">
+                <!-- SEÇÃO 1: MÓDULO DE GESTÃO DE USUÁRIOS -->
+                <div class="bg-blue-50/60 border border-blue-200 p-4 rounded-2xl space-y-4">
+                    <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-users-gear"></i> GESTÃO DE USUÁRIOS E PERMISSÕES
+                    </h4>
+
+                    <!-- Form de Cadastro de Usuários -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+                        <input type="text" id="add-user-name" placeholder="Nome Completo" class="p-2 border rounded-xl text-xs bg-white">
+                        <input type="text" id="add-user-login" placeholder="Login / E-mail" class="p-2 border rounded-xl text-xs bg-white">
+                        <input type="password" id="add-user-pass" placeholder="Senha" class="p-2 border rounded-xl text-xs bg-white">
+                        <select id="add-user-role" class="p-2 border rounded-xl text-xs bg-white font-bold text-slate-700">
+                            <option value="OPERADOR">Operador</option>
+                            <option value="ADM">Administrador</option>
+                        </select>
+                    </div>
+                    <button onclick="addNewUser()" class="w-full bg-[#0b5394] hover:bg-blue-800 text-white font-bold p-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-user-plus"></i> Cadastrar Novo Usuário
+                    </button>
+
+                    <!-- Lista de Usuários Cadastrados -->
+                    <div class="space-y-2 pt-2 border-t border-blue-200">
+                        <span class="text-[11px] font-bold text-slate-600 uppercase">Usuários Cadastrados no Sistema:</span>
+                        <div class="overflow-x-auto border rounded-xl bg-white shadow-sm">
+                            <table class="w-full text-xs text-left text-slate-700">
+                                <thead class="bg-slate-100 text-slate-700 font-bold uppercase text-[10px]">
+                                    <tr>
+                                        <th class="p-2">NOME</th>
+                                        <th class="p-2">LOGIN</th>
+                                        <th class="p-2 text-center">PERFIL</th>
+                                        <th class="p-2 text-center">AÇÃO</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body" class="divide-y text-[11px]"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 2: PARÂMETROS GERAIS -->
                 <div>
                     <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b pb-1 mb-3">PARÂMETROS GERAIS</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -602,6 +641,7 @@
                     </div>
                 </div>
 
+                <!-- SEÇÃO 3: CADASTRO DE LOCAIS E TIPOS -->
                 <div class="bg-slate-50 p-4 rounded-2xl border space-y-4">
                     <h4 class="text-xs font-bold uppercase text-purple-700 border-b pb-1">CADASTRO DE OPÇÕES DO SISTEMA</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -635,6 +675,7 @@
                     </div>
                 </div>
 
+                <!-- SEÇÃO 4: ESTOQUES INICIAIS E MÍNIMOS -->
                 <div>
                     <h4 class="text-xs font-bold uppercase font-bold text-emerald-700 border-b pb-1 mb-3">ESTOQUE INICIAL (GALÕES CHEIOS)</h4>
                     <div id="cfg-ini-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
@@ -645,6 +686,7 @@
                     <div id="cfg-min-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
                 </div>
 
+                <!-- LIMPEZA DE CACHE -->
                 <div class="pt-2 border-t">
                     <button type="button" onclick="executeResetCache()" class="w-full bg-red-50 hover:bg-red-100 text-red-700 font-bold p-2.5 rounded-xl text-xs flex items-center justify-center gap-2 border border-red-200 transition">
                         <i class="fa-solid fa-rotate text-xs"></i> Limpar Memória Cache e Atualizar do Google Sheets
@@ -659,11 +701,11 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT DE AUTENTICAÇÃO E PERMISSÕES -->
+    <!-- LÓGICA JAVASCRIPT COMPLETA COM PERSISTÊNCIA DE USUÁRIOS -->
     <script>
-        // SISTEMA DE USUÁRIOS E SENHAS (CONFIGURÁVEL)
-        const USERS_DB = {
-            'admin': { pass: '123456', role: 'ADM', name: 'Administrador' },
+        // BANCO DE USUÁRIOS PADRÃO (SISTEMA DE SEGURANÇA)
+        let USERS_DB = {
+            'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
             'operador': { pass: '1234', role: 'OPERADOR', name: 'Apontador de Campo' }
         };
 
@@ -688,10 +730,86 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            loadSavedConfig();
             checkAuthSession();
         });
 
-        // AUTENTICAÇÃO E CONTROLE DE SESSÃO
+        // CARREGA BASE DE USUÁRIOS E CONFIGURAÇÕES DO STORAGE
+        function loadSavedConfig() {
+            const saved = localStorage.getItem('controle_agua_config');
+            if(saved) {
+                const parsed = JSON.parse(saved);
+                systemConfig = parsed.systemConfig || systemConfig;
+                mainLocations = parsed.mainLocations || mainLocations;
+                tiposLancamento = parsed.tiposLancamento || tiposLancamento;
+                subLocationsMap = parsed.subLocationsMap || subLocationsMap;
+                if (parsed.USERS_DB) USERS_DB = parsed.USERS_DB;
+            }
+        }
+
+        // LÓGICA DE CADASTRO E REMOÇÃO DE USUÁRIOS
+        function addNewUser() {
+            const name = document.getElementById('add-user-name').value.trim();
+            const login = document.getElementById('add-user-login').value.trim().toLowerCase();
+            const pass = document.getElementById('add-user-pass').value.trim();
+            const role = document.getElementById('add-user-role').value;
+
+            if (!name || !login || !pass) {
+                alert('Preencha Nome, Login e Senha para cadastrar.');
+                return;
+            }
+
+            if (USERS_DB[login]) {
+                alert('Este login já está cadastrado no sistema.');
+                return;
+            }
+
+            USERS_DB[login] = { pass, role, name };
+            document.getElementById('add-user-name').value = '';
+            document.getElementById('add-user-login').value = '';
+            document.getElementById('add-user-pass').value = '';
+
+            renderUsersTable();
+            alert(`Usuário "${name}" cadastrado com sucesso!`);
+        }
+
+        function removeUser(loginKey) {
+            if (loginKey === 'admin') {
+                alert('O usuário "admin" principal não pode ser excluído.');
+                return;
+            }
+
+            if (confirm(`Deseja revogar o acesso do usuário "${USERS_DB[loginKey].name}"?`)) {
+                delete USERS_DB[loginKey];
+                renderUsersTable();
+            }
+        }
+
+        function renderUsersTable() {
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = '';
+
+            Object.keys(USERS_DB).forEach(key => {
+                const u = USERS_DB[key];
+                const isAdmin = u.role === 'ADM';
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2 font-bold">${u.name}</td>
+                        <td class="p-2 text-slate-500 font-mono text-[10px]">${key}</td>
+                        <td class="p-2 text-center">
+                            <span class="${isAdmin ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'} font-bold px-2 py-0.5 rounded text-[10px]">
+                                ${u.role}
+                            </span>
+                        </td>
+                        <td class="p-2 text-center">
+                            ${key !== 'admin' ? `<button onclick="removeUser('${key}')" class="text-red-500 hover:text-red-700 font-bold"><i class="fa-solid fa-user-minus"></i> Excluir</button>` : `<span class="text-slate-300 text-[10px]">Protegido</span>`}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // CONTROLE DE AUTENTICAÇÃO E SESSÃO
         function checkAuthSession() {
             const savedUser = localStorage.getItem('controle_agua_session');
             if (savedUser && USERS_DB[savedUser]) {
@@ -730,7 +848,6 @@
         function applyUserPermissions() {
             document.getElementById('user-display-name').innerText = `${currentUser.name} (${currentUser.role})`;
             
-            // SE FOR OPERADOR, OCULTA TELAS RESTRITAS
             if (currentUser.role === 'OPERADOR') {
                 document.querySelectorAll('.adm-only').forEach(el => el.classList.add('hidden'));
             } else {
@@ -750,7 +867,6 @@
             document.getElementById('dash-date-start').value = firstDayOfMonth;
             document.getElementById('dash-date-end').value = today;
 
-            loadSavedConfig();
             updateAllSelectsUI();
             buildBatchInputs();
             loadDataFromSheet();
@@ -882,6 +998,8 @@
         }
 
         function renderConfigDynamicFields() {
+            renderUsersTable();
+
             const mainTagContainer = document.getElementById('cfg-main-loc-list');
             mainTagContainer.innerHTML = '';
             mainLocations.forEach(loc => {
@@ -1058,17 +1176,6 @@
             updateBatchSummary();
         }
 
-        function loadSavedConfig() {
-            const saved = localStorage.getItem('controle_agua_config');
-            if(saved) {
-                const parsed = JSON.parse(saved);
-                systemConfig = parsed.systemConfig || systemConfig;
-                mainLocations = parsed.mainLocations || mainLocations;
-                tiposLancamento = parsed.tiposLancamento || tiposLancamento;
-                subLocationsMap = parsed.subLocationsMap || subLocationsMap;
-            }
-        }
-
         function openConfigModal() {
             if (currentUser.role !== 'ADM') {
                 alert('Acesso restrito ao Administrador.');
@@ -1101,7 +1208,8 @@
                 systemConfig,
                 mainLocations,
                 tiposLancamento,
-                subLocationsMap
+                subLocationsMap,
+                USERS_DB
             };
 
             localStorage.setItem('controle_agua_config', JSON.stringify(fullConfig));
@@ -1109,7 +1217,7 @@
             updateAllSelectsUI();
             updateStockUI();
             updateDashboard();
-            alert('Configurações e cadastros salvos com sucesso!');
+            alert('Configurações, cadastros e usuários salvos com sucesso!');
         }
 
         function executeResetCache() {
@@ -1123,7 +1231,6 @@
         }
 
         function switchScreen(screenId) {
-            // BLOQUEIO DE SEGURANÇA SE OPERADOR TENTAR ACESSAR
             if (currentUser.role !== 'ADM' && ['screen5', 'screen6'].includes(screenId)) {
                 alert('Acesso restrito ao Administrador.');
                 return;
