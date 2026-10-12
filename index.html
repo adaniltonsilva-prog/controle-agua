@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONTROLE DE ÁGUA - Site e Alojamentos</title>
+    <title>OUD PRIME - Controle de Água</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -30,18 +30,19 @@
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
     </script>
 
-    <!-- TELA / MODAL DE LOGIN (BLOQUEANTE) -->
+    <!-- TELA / MODAL DE LOGIN -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 space-y-6 border relative">
-            <div class="text-center space-y-2">
-                <div class="w-16 h-16 bg-[#0b5394] text-white rounded-full flex items-center justify-center mx-auto text-3xl shadow-lg">
-                    <i class="fa-solid fa-lock"></i>
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 space-y-6 border relative text-center">
+            <div class="space-y-2">
+                <!-- LOGO OUD PRIME NA TELA DE LOGIN -->
+                <div class="w-16 h-16 bg-[#0b5394] text-white rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-lg transform -rotate-3">
+                    <i class="fa-solid fa-droplet"></i>
                 </div>
-                <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Acesso ao Sistema</h2>
-                <p class="text-xs text-slate-500 font-medium">Controle de Água - Site e Alojamentos</p>
+                <h2 class="text-3xl font-black text-slate-800 tracking-tight">OUD PRIME</h2>
+                <p class="text-xs text-blue-600 font-bold uppercase tracking-widest">Gestão & Controle de Água</p>
             </div>
 
-            <form onsubmit="handleLogin(event)" class="space-y-4">
+            <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Usuário / E-mail</label>
                     <input type="text" id="login-user" required placeholder="Digite seu usuário..." class="w-full p-3 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-600 bg-slate-50">
@@ -62,21 +63,25 @@
             </form>
 
             <div class="pt-2 border-t text-center text-[11px] text-slate-400">
-                Acesso restrito a usuários autorizados.
+                Desenvolvido por <strong class="text-slate-600">Adanilton Garcia</strong>
             </div>
         </div>
     </div>
 
-    <!-- CABEÇALHO AZUL -->
+    <!-- CABEÇALHO AZUL COM BRANDING "OUD PRIME" -->
     <header class="bg-nav text-white px-6 py-3 shadow-md">
         <div class="max-w-[1500px] mx-auto flex flex-wrap justify-between items-center gap-4">
+            <!-- LOGO PRINCIPAL OUD PRIME -->
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#0b5394] shadow">
-                    <i class="fa-solid fa-bottle-water text-2xl"></i>
+                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-[#0b5394] shadow-md transform -rotate-3">
+                    <i class="fa-solid fa-droplet text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-extrabold uppercase tracking-wide leading-tight">CONTROLE DE ÁGUA</h1>
-                    <p class="text-xs text-blue-200">Site e Alojamentos</p>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl font-black uppercase tracking-wider leading-none">OUD PRIME</h1>
+                        <span class="bg-blue-400/30 text-blue-100 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Sistemas</span>
+                    </div>
+                    <p class="text-[11px] text-blue-200 font-medium">Controle de Água • Site & Alojamentos</p>
                 </div>
             </div>
 
@@ -116,12 +121,12 @@
         <section id="screen1" class="screen-content space-y-6">
             <div class="banner-blue text-white p-8 rounded-2xl shadow-md flex justify-between items-center relative overflow-hidden">
                 <div class="space-y-2 z-10">
-                    <span class="bg-white/20 text-xs uppercase font-bold px-3 py-1 rounded-full tracking-wider">1. TELA – MENU PRINCIPAL</span>
+                    <span class="bg-white/20 text-xs uppercase font-bold px-3 py-1 rounded-full tracking-wider">OUD PRIME • SISTEMA DE GESTÃO</span>
                     <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tight">CONTROLE DE ÁGUA</h2>
                     <p class="text-blue-100 text-sm md:text-base font-medium">Gestão Integrada de Consumo e Estoque de Galões</p>
                 </div>
                 <div class="hidden md:block opacity-25 text-white z-0">
-                    <i class="fa-solid fa-bottle-water text-9xl"></i>
+                    <i class="fa-solid fa-droplet text-9xl"></i>
                 </div>
             </div>
 
@@ -572,7 +577,20 @@
 
     </main>
 
-    <!-- MODAL DE CONFIGURAÇÕES (COM GESTÃO DE USUÁRIOS) -->
+    <!-- RODAPÉ COM ASSINATURA DE DESENVOLVIMENTO -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-4 px-6 mt-auto border-t border-slate-800">
+        <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-2">
+                <strong class="text-white font-black tracking-wider">OUD PRIME</strong>
+                <span>• Gestão de Água & Alojamentos</span>
+            </div>
+            <div>
+                Desenvolvido por <strong class="text-slate-200 font-semibold">[Seu Nome]</strong>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL DE CONFIGURAÇÕES -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-6 space-y-6 relative border max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2 border-b">
@@ -583,13 +601,12 @@
             </div>
 
             <div class="space-y-6">
-                <!-- SEÇÃO 1: MÓDULO DE GESTÃO DE USUÁRIOS -->
+                <!-- GESTÃO DE USUÁRIOS -->
                 <div class="bg-blue-50/60 border border-blue-200 p-4 rounded-2xl space-y-4">
                     <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1 flex items-center gap-2">
                         <i class="fa-solid fa-users-gear"></i> GESTÃO DE USUÁRIOS E PERMISSÕES
                     </h4>
 
-                    <!-- Form de Cadastro de Usuários -->
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
                         <input type="text" id="add-user-name" placeholder="Nome Completo" class="p-2 border rounded-xl text-xs bg-white">
                         <input type="text" id="add-user-login" placeholder="Login / E-mail" class="p-2 border rounded-xl text-xs bg-white">
@@ -603,7 +620,6 @@
                         <i class="fa-solid fa-user-plus"></i> Cadastrar Novo Usuário
                     </button>
 
-                    <!-- Lista de Usuários Cadastrados -->
                     <div class="space-y-2 pt-2 border-t border-blue-200">
                         <span class="text-[11px] font-bold text-slate-600 uppercase">Usuários Cadastrados no Sistema:</span>
                         <div class="overflow-x-auto border rounded-xl bg-white shadow-sm">
@@ -622,7 +638,7 @@
                     </div>
                 </div>
 
-                <!-- SEÇÃO 2: PARÂMETROS GERAIS -->
+                <!-- PARÂMETROS GERAIS -->
                 <div>
                     <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b pb-1 mb-3">PARÂMETROS GERAIS</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -641,7 +657,7 @@
                     </div>
                 </div>
 
-                <!-- SEÇÃO 3: CADASTRO DE LOCAIS E TIPOS -->
+                <!-- CADASTRO DE LOCAIS E TIPOS -->
                 <div class="bg-slate-50 p-4 rounded-2xl border space-y-4">
                     <h4 class="text-xs font-bold uppercase text-purple-700 border-b pb-1">CADASTRO DE OPÇÕES DO SISTEMA</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -675,7 +691,7 @@
                     </div>
                 </div>
 
-                <!-- SEÇÃO 4: ESTOQUES INICIAIS E MÍNIMOS -->
+                <!-- ESTOQUES INICIAIS E MÍNIMOS -->
                 <div>
                     <h4 class="text-xs font-bold uppercase font-bold text-emerald-700 border-b pb-1 mb-3">ESTOQUE INICIAL (GALÕES CHEIOS)</h4>
                     <div id="cfg-ini-container" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
@@ -701,9 +717,8 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT COMPLETA COM PERSISTÊNCIA DE USUÁRIOS -->
+    <!-- LÓGICA JAVASCRIPT COMPLETA -->
     <script>
-        // BANCO DE USUÁRIOS PADRÃO (SISTEMA DE SEGURANÇA)
         let USERS_DB = {
             'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
             'operador': { pass: '1234', role: 'OPERADOR', name: 'Apontador de Campo' }
@@ -734,7 +749,6 @@
             checkAuthSession();
         });
 
-        // CARREGA BASE DE USUÁRIOS E CONFIGURAÇÕES DO STORAGE
         function loadSavedConfig() {
             const saved = localStorage.getItem('controle_agua_config');
             if(saved) {
@@ -747,7 +761,6 @@
             }
         }
 
-        // LÓGICA DE CADASTRO E REMOÇÃO DE USUÁRIOS
         function addNewUser() {
             const name = document.getElementById('add-user-name').value.trim();
             const login = document.getElementById('add-user-login').value.trim().toLowerCase();
@@ -809,7 +822,6 @@
             });
         }
 
-        // CONTROLE DE AUTENTICAÇÃO E SESSÃO
         function checkAuthSession() {
             const savedUser = localStorage.getItem('controle_agua_session');
             if (savedUser && USERS_DB[savedUser]) {
