@@ -13,7 +13,7 @@
     <meta name="theme-color" content="#0f172a">
 
     <script>
-      // Registro seguro do Service Worker: apenas em origens HTTP/HTTPS válidas
+      // Registro seguro do Service Worker em HTTP/HTTPS
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
         navigator.serviceWorker.register('sw.js').catch(function(err) {
           console.warn('Registro de Service Worker ignorado no ambiente atual:', err);
@@ -40,7 +40,6 @@
         .card-menu { transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .card-menu:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2); }
         .banner-blue { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); }
-        /* Ocultação de barra de rolagem mantendo funcionalidade */
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -57,10 +56,10 @@
         <span id="pending-badge" class="bg-slate-900 text-amber-400 px-2.5 py-0.5 rounded-full text-[10px] font-black">0 pendentes</span>
     </div>
 
-    <!-- NOTIFICAÇÃO TOAST MODERNA (SUBSTITUTO SEGURO DO ALERT) -->
+    <!-- NOTIFICAÇÃO TOAST MODERNA -->
     <div id="toast-container" class="fixed top-4 right-4 z-[200] space-y-2 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
 
-    <!-- MODAL DE CONFIRMAÇÃO (SUBSTITUTO SEGURO DO CONFIRM) -->
+    <!-- MODAL DE CONFIRMAÇÃO -->
     <div id="confirm-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[150] flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-700 rounded-2xl p-5 max-w-sm w-full text-center space-y-4 shadow-2xl">
             <div id="confirm-icon" class="text-3xl text-amber-400"><i class="fa-solid fa-circle-question"></i></div>
@@ -72,7 +71,7 @@
         </div>
     </div>
 
-    <!-- TELA DE LOGIN -->
+    <!-- TELA DE LOGIN CORRIGIDA COM SUPORTE ROBUSTO -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 w-full h-full overflow-y-auto">
         <div class="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-6 space-y-5 border border-slate-800 my-auto text-center mx-auto">
             <div class="space-y-2 flex flex-col items-center justify-center">
@@ -80,25 +79,44 @@
                 <p class="text-[10px] text-sky-400 font-extrabold uppercase tracking-widest mt-1">SISTEMAS INTELIGENTES PARA O SEU DIA A DIA</p>
             </div>
 
-            <form id="login-form" class="space-y-4 text-left w-full">
+            <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4 text-left w-full">
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Usuário / E-mail</label>
-                    <input type="text" id="login-user" required placeholder="admin ou operador" class="w-full p-3 border border-slate-700 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-sky-500 bg-slate-800 text-white">
+                    <input type="text" id="login-user" required autocomplete="username" placeholder="admin ou operador" class="w-full p-3 border border-slate-700 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-sky-500 bg-slate-800 text-white">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Senha</label>
-                    <input type="password" id="login-pass" required placeholder="••••••••" class="w-full p-3 border border-slate-700 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-sky-500 bg-slate-800 text-white">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold uppercase text-slate-300">Senha</label>
+                        <button type="button" onclick="togglePassVisibility()" class="text-[10px] font-bold text-sky-400 hover:text-sky-300">
+                            <span id="pass-toggle-label">Mostrar</span>
+                        </button>
+                    </div>
+                    <input type="password" id="login-pass" required autocomplete="current-password" placeholder="••••••••" class="w-full p-3 border border-slate-700 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-sky-500 bg-slate-800 text-white">
                 </div>
 
-                <div id="login-error" class="hidden text-xs font-bold text-red-400 bg-red-950/50 p-2.5 rounded-lg text-center border border-red-800">
+                <div id="login-error" class="hidden text-xs font-bold text-red-300 bg-red-950/70 p-3 rounded-xl text-center border border-red-800">
                     Usuário ou senha incorretos!
                 </div>
 
                 <button type="submit" id="login-submit-btn" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3.5 rounded-xl text-sm uppercase tracking-wide shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
                     <span>Entrar no Sistema</span>
                 </button>
             </form>
+
+            <!-- ACESSO RÁPIDO PARA TESTE SEM TRAVAMENTO -->
+            <div class="pt-2 border-t border-slate-800/80 space-y-2">
+                <span class="text-[10px] text-slate-400 font-bold uppercase block">Entrar com credenciais padrão:</span>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="quickFillCredentials('admin', '123456')" class="bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 py-1.5 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-user-shield text-[10px]"></i> Admin (123456)
+                    </button>
+                    <button type="button" onclick="quickFillCredentials('operador', '1234')" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 py-1.5 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-user-pen text-[10px]"></i> Operador (1234)
+                    </button>
+                </div>
+            </div>
 
             <div class="pt-2 border-t border-slate-800 text-center text-[11px] text-slate-500">
                 Desenvolvido por <strong class="text-slate-300">Adanilton Silva</strong>
@@ -420,7 +438,6 @@
                     <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
                 </div>
                 
-                <!-- BARRA DE FILTROS TOTALMENTE RESPONSIVA (SEM VAZAR NO CELULAR) -->
                 <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2.5 rounded-xl flex flex-col sm:flex-row items-stretch sm:items-center gap-2 text-xs font-semibold">
                     <div class="grid grid-cols-2 gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
                         <div class="flex items-center gap-1.5 min-w-0">
@@ -440,7 +457,7 @@
                 </div>
             </div>
 
-            <!-- TODOS OS 8 CARTÕES DE KPIS RESTAURADOS -->
+            <!-- TODOS OS 8 CARTÕES DE KPIS -->
             <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 <div class="bg-[#0f5298] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
                     <div>
@@ -515,7 +532,7 @@
                 </div>
             </div>
 
-            <!-- TODOS OS 4 GRÁFICOS RESTAURADOS -->
+            <!-- TODOS OS 4 GRÁFICOS -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
                     <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO DIÁRIO (GALÕES)</h4>
@@ -731,7 +748,7 @@
         };
 
         let USERS_DB = { ...BASE_USERS };
-        let currentUser = BASE_USERS['admin']; // Padrão seguro para prevenir bloqueio de cliques
+        let currentUser = null;
         let database = [];
         let pendingQueue = [];
 
@@ -755,6 +772,7 @@
 
         let chartDiario, chartLocal, chartEntradasDev, chartMensal;
 
+        // UI FEEDBACK TOASTS E MODAIS
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -811,10 +829,218 @@
             btnCancel.addEventListener('click', handleCancel);
         }
 
+        // FUNÇÕES DO SISTEMA DE LOGIN
+        function togglePassVisibility() {
+            const passInput = document.getElementById('login-pass');
+            const label = document.getElementById('pass-toggle-label');
+            if (!passInput) return;
+
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                if (label) label.innerText = 'Ocultar';
+            } else {
+                passInput.type = 'password';
+                if (label) label.innerText = 'Mostrar';
+            }
+        }
+
+        function quickFillCredentials(user, pass) {
+            const userInput = document.getElementById('login-user');
+            const passInput = document.getElementById('login-pass');
+            if (userInput) userInput.value = user;
+            if (passInput) passInput.value = pass;
+            const errEl = document.getElementById('login-error');
+            if (errEl) errEl.classList.add('hidden');
+            showToast(`Campos preenchidos com "${user}"`, 'info');
+        }
+
+        async function handleLoginSubmit(event) {
+            if (event) event.preventDefault();
+
+            const userInput = document.getElementById('login-user');
+            const passInput = document.getElementById('login-pass');
+            const errorEl = document.getElementById('login-error');
+            const submitBtn = document.getElementById('login-submit-btn');
+
+            if (!userInput || !passInput) return;
+
+            const u = userInput.value.trim().toLowerCase();
+            const p = passInput.value.trim();
+
+            if (!u || !p) {
+                if (errorEl) {
+                    errorEl.innerText = 'Por favor, preencha o usuário e a senha.';
+                    errorEl.classList.remove('hidden');
+                }
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Verificando...</span>';
+            }
+
+            // Tentar sincronizar usuários atualizados da planilha se houver rede
+            if (navigator.onLine && SCRIPT_URL) {
+                try {
+                    const fetchUrl = `${SCRIPT_URL}${SCRIPT_URL.includes('?') ? '&' : '?'}action=getUsers&t=${Date.now()}`;
+                    const res = await fetch(fetchUrl, { cache: 'no-store' });
+                    const remoteUsers = await res.json();
+                    if (remoteUsers && typeof remoteUsers === 'object') {
+                        USERS_DB = { ...BASE_USERS, ...remoteUsers };
+                        localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
+                    }
+                } catch (err) {
+                    console.warn("Validação usando banco local offline:", err);
+                }
+            }
+
+            // Validação de credenciais
+            const userObj = USERS_DB[u];
+            if (userObj && String(userObj.pass) === String(p)) {
+                currentUser = userObj;
+                localStorage.setItem('controle_agua_session', u);
+                
+                if (errorEl) errorEl.classList.add('hidden');
+                document.getElementById('login-overlay').classList.add('hidden');
+
+                initAppUI();
+                showToast(`Bem-vindo, ${currentUser.name}!`, 'success');
+            } else {
+                if (errorEl) {
+                    errorEl.innerText = 'Usuário ou senha incorretos!';
+                    errorEl.classList.remove('hidden');
+                }
+                showToast('Falha no login. Verifique os dados.', 'error');
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i><span>Entrar no Sistema</span>';
+            }
+        }
+
+        function checkAuthSession() {
+            // Carregar usuários salvos previamente
+            const savedUsers = localStorage.getItem('controle_agua_users');
+            if (savedUsers) {
+                try { USERS_DB = { ...BASE_USERS, ...JSON.parse(savedUsers) }; } catch(e){}
+            }
+
+            const savedUserKey = localStorage.getItem('controle_agua_session');
+            if (savedUserKey && USERS_DB[savedUserKey]) {
+                currentUser = USERS_DB[savedUserKey];
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) overlay.classList.add('hidden');
+                initAppUI();
+            } else {
+                currentUser = null;
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) overlay.classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            showConfirmDialog('Deseja realmente encerrar a sessão?', () => {
+                localStorage.removeItem('controle_agua_session');
+                currentUser = null;
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) overlay.classList.remove('hidden');
+                const userInput = document.getElementById('login-user');
+                const passInput = document.getElementById('login-pass');
+                if (userInput) userInput.value = '';
+                if (passInput) passInput.value = '';
+                showToast('Sessão encerrada com sucesso.', 'info');
+            });
+        }
+
+        // GESTÃO DE REDE E OFFLINE
+        function initNetworkListeners() {
+            window.addEventListener('online', updateNetworkStatus);
+            window.addEventListener('offline', updateNetworkStatus);
+            updateNetworkStatus();
+        }
+
+        function updateNetworkStatus() {
+            const banner = document.getElementById('network-banner');
+            const statusText = document.getElementById('network-status-text');
+            const badge = document.getElementById('pending-badge');
+
+            if (!banner) return;
+
+            if (!navigator.onLine) {
+                banner.classList.remove('hidden');
+                if (statusText) statusText.innerHTML = '<i class="fa-solid fa-wifi-slash"></i> Você está offline. Lançamentos serão salvos localmente.';
+            } else {
+                if (pendingQueue.length > 0) {
+                    banner.classList.remove('hidden');
+                    if (statusText) statusText.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin"></i> Conexão restabelecida. Sincronizando dados com o Google Sheets...';
+                    syncPendingQueue();
+                } else {
+                    banner.classList.add('hidden');
+                }
+            }
+            if (badge) badge.innerText = `${pendingQueue.length} pendentes`;
+        }
+
+        function loadPendingQueue() {
+            const savedQueue = localStorage.getItem('controle_agua_pending');
+            if (savedQueue) {
+                try { pendingQueue = JSON.parse(savedQueue) || []; } catch(e) { pendingQueue = []; }
+            }
+            updateNetworkStatus();
+        }
+
+        function savePendingQueue() {
+            localStorage.setItem('controle_agua_pending', JSON.stringify(pendingQueue));
+            updateNetworkStatus();
+        }
+
+        async function syncPendingQueue() {
+            if (!navigator.onLine || pendingQueue.length === 0) return;
+
+            const recordsToSend = [...pendingQueue];
+            try {
+                if (SCRIPT_URL) {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'addRecords', records: recordsToSend })
+                    });
+                }
+                pendingQueue = [];
+                savePendingQueue();
+                showToast('Lançamentos pendentes sincronizados com a nuvem!', 'success');
+            } catch(e) {
+                console.error("Falha ao sincronizar fila offline:", e);
+            } finally {
+                updateNetworkStatus();
+            }
+        }
+
+        function loadSavedConfig() {
+            try {
+                const saved = localStorage.getItem('controle_agua_config');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.systemConfig) systemConfig = { ...systemConfig, ...parsed.systemConfig };
+                    if (parsed.mainLocations) mainLocations = parsed.mainLocations;
+                    if (parsed.tiposLancamento) tiposLancamento = parsed.tiposLancamento;
+                    if (parsed.subLocationsMap) subLocationsMap = parsed.subLocationsMap;
+                    if (parsed.USERS_DB && typeof parsed.USERS_DB === 'object') {
+                        USERS_DB = { ...BASE_USERS, ...parsed.USERS_DB };
+                    }
+                }
+            } catch(e) {
+                console.error("Erro no carregamento de configurações:", e);
+                USERS_DB = { ...BASE_USERS };
+            }
+        }
+
         function startApp() {
             try {
                 loadSavedConfig();
-                setupLoginHandler();
                 checkAuthSession();
                 initNetworkListeners();
                 loadPendingQueue();
@@ -825,52 +1051,32 @@
             }
         }
 
-        // Sincronização periódica a cada 20 segundos e ao retornar ao app
+        // Sincronização periódica inteligente
         function initAutoSync() {
             setInterval(() => {
                 if (navigator.onLine && currentUser) {
                     loadDataFromSheet(false);
                 }
-            }, 20000);
+            }, 25000);
 
             document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible' && navigator.onLine) {
+                if (document.visibilityState === 'visible' && navigator.onLine && currentUser) {
                     loadDataFromSheet(false);
                 }
             });
         }
 
-        function checkAuthSession() {
-            const savedUsers = localStorage.getItem('controle_agua_users');
-            if (savedUsers) {
-                try { USERS_DB = { ...BASE_USERS, ...JSON.parse(savedUsers) }; } catch(e){}
-            }
-
-            const savedUser = localStorage.getItem('controle_agua_session');
-            if (savedUser && USERS_DB[savedUser]) {
-                currentUser = USERS_DB[savedUser];
-                document.getElementById('login-overlay').classList.add('hidden');
-                initAppUI();
-            } else {
-                currentUser = BASE_USERS['admin']; // Previne bloqueio de botões caso o usuário feche o modal
-                document.getElementById('login-overlay').classList.remove('hidden');
-                initAppUI();
-            }
-        }
-
-        function handleLogout() {
-            showConfirmDialog('Deseja realmente encerrar a sessão?', () => {
-                localStorage.removeItem('controle_agua_session');
-                currentUser = BASE_USERS['admin'];
-                document.getElementById('login-overlay').classList.remove('hidden');
-                showToast('Sessão encerrada com sucesso.', 'info');
-            });
+        // Inicialização robusta em qualquer ambiente
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startApp);
+        } else {
+            startApp();
         }
 
         function applyUserPermissions() {
-            if(!currentUser) currentUser = BASE_USERS['admin'];
+            if (!currentUser) return;
             const badge = document.getElementById('user-display-name');
-            if(badge) badge.innerText = `${currentUser.name} (${currentUser.role})`;
+            if (badge) badge.innerText = `${currentUser.name} (${currentUser.role})`;
             
             if (currentUser.role === 'OPERADOR') {
                 document.querySelectorAll('.adm-only').forEach(el => el.classList.add('hidden'));
@@ -890,10 +1096,10 @@
             const dashStartEl = document.getElementById('dash-date-start');
             const dashEndEl = document.getElementById('dash-date-end');
 
-            if(singleDataEl) singleDataEl.value = today;
-            if(batchDataEl) batchDataEl.value = today;
-            if(dashStartEl && !dashStartEl.value) dashStartEl.value = firstDayOfMonth;
-            if(dashEndEl && !dashEndEl.value) dashEndEl.value = today;
+            if (singleDataEl) singleDataEl.value = today;
+            if (batchDataEl) batchDataEl.value = today;
+            if (dashStartEl && !dashStartEl.value) dashStartEl.value = firstDayOfMonth;
+            if (dashEndEl && !dashEndEl.value) dashEndEl.value = today;
 
             updateAllSelectsUI();
             buildBatchInputs();
@@ -902,7 +1108,10 @@
         }
 
         function switchScreen(screenId) {
-            if (!currentUser) currentUser = BASE_USERS['admin'];
+            if (!currentUser) {
+                document.getElementById('login-overlay').classList.remove('hidden');
+                return;
+            }
 
             if (currentUser.role !== 'ADM' && ['screen5', 'screen6'].includes(screenId)) {
                 showToast('Acesso restrito ao Administrador.', 'error');
@@ -915,12 +1124,12 @@
 
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             const activeNav = document.getElementById(`nav-${screenId}`);
-            if(activeNav) activeNav.classList.add('active');
+            if (activeNav) activeNav.classList.add('active');
 
-            if(screenId === 'screen3') buildBatchInputs();
-            if(screenId === 'screen4') updateStockUI();
-            if(screenId === 'screen5') updateDashboard();
-            if(screenId === 'screen6') renderFullDatabaseTable();
+            if (screenId === 'screen3') buildBatchInputs();
+            if (screenId === 'screen4') updateStockUI();
+            if (screenId === 'screen5') updateDashboard();
+            if (screenId === 'screen6') renderFullDatabaseTable();
         }
 
         async function addNewUser() {
@@ -984,7 +1193,7 @@
 
         function renderUsersTable() {
             const tbody = document.getElementById('users-table-body');
-            if(!tbody) return;
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             Object.keys(USERS_DB).forEach(key => {
@@ -1009,7 +1218,7 @@
 
         function updateAllSelectsUI() {
             const singleLocalSelect = document.getElementById('single-local');
-            if(singleLocalSelect) {
+            if (singleLocalSelect) {
                 singleLocalSelect.innerHTML = '';
                 mainLocations.forEach(loc => {
                     const el = document.createElement('option');
@@ -1019,7 +1228,7 @@
             }
 
             const singleTipoSelect = document.getElementById('single-tipo');
-            if(singleTipoSelect) {
+            if (singleTipoSelect) {
                 singleTipoSelect.innerHTML = '';
                 tiposLancamento.forEach(t => {
                     const el = document.createElement('option');
@@ -1029,7 +1238,7 @@
             }
 
             const batchLocalSelect = document.getElementById('batch-local-select');
-            if(batchLocalSelect) {
+            if (batchLocalSelect) {
                 batchLocalSelect.innerHTML = '';
                 mainLocations.forEach(loc => {
                     const el = document.createElement('option');
@@ -1039,7 +1248,7 @@
             }
 
             const dashFilterSelect = document.getElementById('dash-filter-local');
-            if(dashFilterSelect) {
+            if (dashFilterSelect) {
                 dashFilterSelect.innerHTML = '<option value="Todos">Todos</option>';
                 mainLocations.forEach(loc => {
                     const el = document.createElement('option');
@@ -1049,7 +1258,7 @@
             }
 
             const cfgSubParent = document.getElementById('cfg-subloc-parent-select');
-            if(cfgSubParent) {
+            if (cfgSubParent) {
                 cfgSubParent.innerHTML = '';
                 mainLocations.forEach(loc => {
                     const el = document.createElement('option');
@@ -1134,10 +1343,10 @@
 
         function renderSubLocTags() {
             const parentSelect = document.getElementById('cfg-subloc-parent-select');
-            if(!parentSelect) return;
+            if (!parentSelect) return;
             const parentLoc = parentSelect.value;
             const container = document.getElementById('cfg-subloc-list');
-            if(!container) return;
+            if (!container) return;
             container.innerHTML = '';
             const list = subLocationsMap[parentLoc] || [];
             list.forEach(sub => {
@@ -1153,7 +1362,7 @@
             renderUsersTable();
 
             const mainTagContainer = document.getElementById('cfg-main-loc-list');
-            if(mainTagContainer) {
+            if (mainTagContainer) {
                 mainTagContainer.innerHTML = '';
                 mainLocations.forEach(loc => {
                     mainTagContainer.innerHTML += `
@@ -1165,7 +1374,7 @@
             }
 
             const tipoTagContainer = document.getElementById('cfg-tipos-list');
-            if(tipoTagContainer) {
+            if (tipoTagContainer) {
                 tipoTagContainer.innerHTML = '';
                 tiposLancamento.forEach(t => {
                     tipoTagContainer.innerHTML += `
@@ -1179,7 +1388,7 @@
             renderSubLocTags();
 
             const iniContainer = document.getElementById('cfg-ini-container');
-            if(iniContainer) {
+            if (iniContainer) {
                 iniContainer.innerHTML = '';
                 mainLocations.forEach(loc => {
                     const val = (systemConfig.estoqueInicial && systemConfig.estoqueInicial[loc]) || 0;
@@ -1193,7 +1402,7 @@
             }
 
             const iniVazContainer = document.getElementById('cfg-inivaz-container');
-            if(iniVazContainer) {
+            if (iniVazContainer) {
                 iniVazContainer.innerHTML = '';
                 mainLocations.forEach(loc => {
                     const val = (systemConfig.estoqueInicialVazios && systemConfig.estoqueInicialVazios[loc]) || 0;
@@ -1207,7 +1416,7 @@
             }
 
             const minContainer = document.getElementById('cfg-min-container');
-            if(minContainer) {
+            if (minContainer) {
                 minContainer.innerHTML = '';
                 mainLocations.forEach(loc => {
                     const val = (systemConfig.estoqueMinimo && systemConfig.estoqueMinimo[loc]) || 200;
@@ -1221,6 +1430,7 @@
             }
         }
 
+        // CÁLCULO E RENDERIZAÇÃO DO ESTOQUE
         function calculateStock() {
             const stock = {};
             mainLocations.forEach(loc => {
@@ -1339,6 +1549,7 @@
             }
         }
 
+        // DASHBOARD E GRÁFICOS
         function initCharts() {
             if (typeof Chart === 'undefined') {
                 console.warn('Biblioteca Chart.js indisponível no momento.');
@@ -1437,7 +1648,7 @@
             mainLocations.forEach(loc => localConsumption[loc] = 0);
 
             database.forEach(r => {
-                if(!r) return;
+                if (!r) return;
                 const q = parseInt(r.Quantidade) || 0;
                 const matchesLoc = selectedFilterLoc === 'Todos' || r.LocalPrincipal === selectedFilterLoc;
                 
@@ -1455,7 +1666,7 @@
                         }
                         if (r.Data) {
                             const monthIdx = new Date(r.Data + 'T00:00:00').getMonth();
-                            if(monthIdx >= 0 && monthIdx < 12) monthlyConsumption[monthIdx] += q;
+                            if (monthIdx >= 0 && monthIdx < 12) monthlyConsumption[monthIdx] += q;
                         }
                     } else if (r.Tipo === 'Entrada') {
                         totalEntradas += q;
@@ -1490,16 +1701,16 @@
             const elLitrosPess = document.getElementById('dash-litros-pessoa');
             const elMeta = document.getElementById('dash-meta');
 
-            if(elConsumo) elConsumo.innerText = totalConsumo;
-            if(elLitros) elLitros.innerText = `${totalLitros.toLocaleString()} litros`;
-            if(elEntradas) elEntradas.innerText = totalEntradas;
-            if(elDevol) elDevol.innerText = totalDevolucoes;
-            if(elEstoque) elEstoque.innerText = estoqueAtualLocal;
-            if(elMediaDia) elMediaDia.innerText = mediaDiaria;
-            if(elMediaDiaLit) elMediaDiaLit.innerText = `${mediaDiariaLitros} litros/dia`;
-            if(elEfetivo) elEfetivo.innerText = systemConfig.efetivo;
-            if(elLitrosPess) elLitrosPess.innerText = litrosPessoaDia.toString().replace('.', ',');
-            if(elMeta) elMeta.innerText = systemConfig.meta.toString().replace('.', ',');
+            if (elConsumo) elConsumo.innerText = totalConsumo;
+            if (elLitros) elLitros.innerText = `${totalLitros.toLocaleString()} litros`;
+            if (elEntradas) elEntradas.innerText = totalEntradas;
+            if (elDevol) elDevol.innerText = totalDevolucoes;
+            if (elEstoque) elEstoque.innerText = estoqueAtualLocal;
+            if (elMediaDia) elMediaDia.innerText = mediaDiaria;
+            if (elMediaDiaLit) elMediaDiaLit.innerText = `${mediaDiariaLitros} litros/dia`;
+            if (elEfetivo) elEfetivo.innerText = systemConfig.efetivo;
+            if (elLitrosPess) elLitrosPess.innerText = litrosPessoaDia.toString().replace('.', ',');
+            if (elMeta) elMeta.innerText = systemConfig.meta.toString().replace('.', ',');
 
             const sortedDates = Object.keys(dailyConsumption).sort();
             
@@ -1529,11 +1740,12 @@
             }
         }
 
+        // FORMULÁRIOS DE LANÇAMENTOS E SUBMISSOES
         function updateSubLocations() {
             const tipo = document.getElementById('single-tipo').value;
             const mainLoc = document.getElementById('single-local').value;
             const subSelect = document.getElementById('single-detalhe');
-            if(!subSelect) return;
+            if (!subSelect) return;
 
             subSelect.innerHTML = '';
 
@@ -1554,16 +1766,16 @@
         function changeBatchLocation() {
             const selectedLoc = document.getElementById('batch-local-select').value;
             const labelEl = document.getElementById('batch-total-label');
-            if(labelEl) labelEl.innerText = `TOTAL ${selectedLoc.toUpperCase()}`;
+            if (labelEl) labelEl.innerText = `TOTAL ${selectedLoc.toUpperCase()}`;
             buildBatchInputs();
         }
 
         function buildBatchInputs() {
             const selectEl = document.getElementById('batch-local-select');
-            if(!selectEl) return;
+            if (!selectEl) return;
             const selectedLoc = selectEl.value;
             const container = document.getElementById('batch-inputs');
-            if(!container) return;
+            if (!container) return;
             container.innerHTML = '';
 
             const subLocs = subLocationsMap[selectedLoc] || [];
@@ -1587,14 +1799,14 @@
         function updateBatchSummary() {
             const inputs = document.querySelectorAll('.batch-qtd-input');
             const summary = document.getElementById('batch-summary');
-            if(!summary) return;
+            if (!summary) return;
             summary.innerHTML = '';
             let total = 0;
 
             inputs.forEach(inp => {
                 const val = parseInt(inp.value) || 0;
                 total += val;
-                if(val > 0) {
+                if (val > 0) {
                     summary.innerHTML += `
                         <div class="flex justify-between border-b pb-0.5">
                             <span>${inp.dataset.loc}:</span>
@@ -1605,7 +1817,7 @@
             });
 
             const totalEl = document.getElementById('batch-total');
-            if(totalEl) totalEl.innerText = total;
+            if (totalEl) totalEl.innerText = total;
         }
 
         function submitBatch() {
@@ -1616,7 +1828,7 @@
 
             inputs.forEach(inp => {
                 const val = parseInt(inp.value) || 0;
-                if(val > 0) {
+                if (val > 0) {
                     records.push({
                         Data: date,
                         Tipo: 'Consumo',
@@ -1628,7 +1840,7 @@
                 }
             });
 
-            if(records.length === 0) {
+            if (records.length === 0) {
                 showToast('Preencha ao menos uma quantidade.', 'error');
                 return;
             }
@@ -1676,7 +1888,6 @@
                         body: JSON.stringify({ action: 'addRecords', records: records })
                     });
                     showToast('Lançamento registrado e salvo na nuvem!', 'success');
-                    // Recarregar dados frescos da planilha após 1.5s
                     setTimeout(() => loadDataFromSheet(false), 1500);
                 } catch(e) {
                     pendingQueue.push(...records);
@@ -1703,7 +1914,6 @@
 
             if (navigator.onLine && SCRIPT_URL) {
                 try {
-                    // Cache buster via timestamp para impedir leitura de dados defasados do cache do navegador
                     const fetchUrl = `${SCRIPT_URL}${SCRIPT_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
                     const res = await fetch(fetchUrl, { cache: 'no-store' });
                     const data = await res.json();
@@ -1747,48 +1957,14 @@
             }
         }
 
-        async function loadDataFromSheet() {
-            const savedLocalDB = localStorage.getItem('controle_agua_db');
-            if(savedLocalDB) {
-                try { database = JSON.parse(savedLocalDB) || []; } catch(e) { database = []; }
-            }
-
-            if (navigator.onLine && SCRIPT_URL) {
-                try {
-                    const res = await fetch(SCRIPT_URL);
-                    const data = await res.json();
-                    
-                    if(data && typeof data === 'object') {
-                        if(Array.isArray(data.records)) {
-                            database = data.records;
-                            localStorage.setItem('controle_agua_db', JSON.stringify(database));
-                        }
-                        if(data.users && typeof data.users === 'object') {
-                            USERS_DB = { ...BASE_USERS, ...data.users };
-                            localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
-                        }
-                    } else if(Array.isArray(data)) {
-                        database = data;
-                        localStorage.setItem('controle_agua_db', JSON.stringify(database));
-                    }
-                } catch (err) {
-                    console.warn("Carregamento remoto offline mantido.");
-                }
-            }
-
-            renderRecentTable();
-            updateStockUI();
-            updateDashboard();
-        }
-
         function renderRecentTable() {
             const tbody = document.getElementById('table-recent-body');
-            if(!tbody) return;
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             const list = [...database].reverse().slice(0, 5);
 
-            if(list.length === 0) {
+            if (list.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-xs text-slate-400">Nenhum lançamento.</td></tr>`;
                 return;
             }
@@ -1809,10 +1985,10 @@
 
         function renderFullDatabaseTable() {
             const tbody = document.getElementById('table-full-db');
-            if(!tbody) return;
+            if (!tbody) return;
             tbody.innerHTML = '';
 
-            if(database.length === 0) {
+            if (database.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-xs text-slate-400">Nenhum registro.</td></tr>`;
                 return;
             }
@@ -1900,7 +2076,7 @@
 
         function exportToExcel() {
             if (!currentUser || currentUser.role !== 'ADM') { showToast('Acesso restrito.', 'error'); return; }
-            if(database.length === 0) { showToast('Sem dados para exportar.', 'info'); return; }
+            if (database.length === 0) { showToast('Sem dados para exportar.', 'info'); return; }
             const ws = XLSX.utils.json_to_sheet(database);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Lancamentos");
@@ -1910,7 +2086,7 @@
 
         function exportToCSV() {
             if (!currentUser || currentUser.role !== 'ADM') { showToast('Acesso restrito.', 'error'); return; }
-            if(database.length === 0) { showToast('Sem dados para exportar.', 'info'); return; }
+            if (database.length === 0) { showToast('Sem dados para exportar.', 'info'); return; }
             const ws = XLSX.utils.json_to_sheet(database);
             const csv = XLSX.utils.sheet_to_csv(ws);
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
