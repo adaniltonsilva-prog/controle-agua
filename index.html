@@ -232,13 +232,13 @@
                     <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
                 </div>
 
-                <div onclick="exportToExcel()" class="card-menu adm-only cursor-pointer bg-[#17a2b8] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
+                <div onclick="openExportModal()" class="card-menu adm-only cursor-pointer bg-[#17a2b8] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
                     <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-file-excel"></i></div>
                     <div>
                         <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">RELATÓRIOS</h3>
-                        <p class="text-[10px] md:text-xs text-teal-100 mt-0.5">Exportar em Excel (.xlsx)</p>
+                        <p class="text-[10px] md:text-xs text-teal-100 mt-0.5">Exportar por Período e Filtros</p>
                     </div>
-                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-teal-200">BAIXAR &rarr;</div>
+                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-teal-200">GERAR &rarr;</div>
                 </div>
             </div>
         </section>
@@ -565,11 +565,11 @@
                     </h2>
                 </div>
                 <div class="flex gap-2 w-full sm:w-auto">
-                    <button onclick="exportToExcel()" class="flex-1 sm:flex-none bg-[#0e8a44] hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow">
-                        <i class="fa-solid fa-file-excel"></i> Excel
+                    <button onclick="openExportModal('excel')" class="flex-1 sm:flex-none bg-[#0e8a44] hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow">
+                        <i class="fa-solid fa-file-excel"></i> Exportar Excel
                     </button>
-                    <button onclick="exportToCSV()" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-sky-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow">
-                        <i class="fa-solid fa-file-csv"></i> CSV
+                    <button onclick="openExportModal('csv')" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-sky-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow">
+                        <i class="fa-solid fa-file-csv"></i> Exportar CSV
                     </button>
                 </div>
             </div>
@@ -729,6 +729,87 @@
             <div class="flex justify-end gap-2 pt-3 border-t">
                 <button onclick="closeConfigModal()" class="bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs">Cancelar</button>
                 <button onclick="saveConfigParameters()" class="bg-[#0b5394] text-white font-bold px-4 py-2 rounded-xl text-xs shadow">Salvar Configurações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE EXPORTAÇÃO COM SELEÇÃO DE PERÍODO -->
+    <div id="modal-export" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[160] flex items-center justify-center hidden p-3">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-5 space-y-4 relative border border-slate-200 max-h-[95vh] overflow-y-auto">
+            <div class="flex justify-between items-center pb-2.5 border-b border-slate-200">
+                <h3 class="text-base md:text-lg font-black text-slate-900 flex items-center gap-2 uppercase tracking-tight">
+                    <i class="fa-solid fa-file-export text-teal-600"></i> Exportar Relatório
+                </h3>
+                <button onclick="closeExportModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold leading-none">&times;</button>
+            </div>
+
+            <p class="text-xs text-slate-500">Selecione o intervalo de datas e os filtros desejados para gerar o arquivo:</p>
+
+            <div class="space-y-3.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                <!-- OPÇÃO DE EXPORTAR TUDO OU PERÍODO -->
+                <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+                    <span class="text-xs font-bold text-slate-800">Filtrar por período específico:</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="export-filter-by-date" onchange="toggleExportPeriodInputs()" checked class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-teal-600"></div>
+                    </label>
+                </div>
+
+                <!-- SELETORES DE DATA -->
+                <div id="export-dates-container" class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">
+                            <i class="fa-solid fa-calendar-day text-teal-600"></i> Data Inicial (De):
+                        </label>
+                        <input type="date" id="export-date-start" onchange="updateExportPreviewCount()" class="w-full p-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 bg-white outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">
+                            <i class="fa-solid fa-calendar-check text-teal-600"></i> Data Final (Até):
+                        </label>
+                        <input type="date" id="export-date-end" onchange="updateExportPreviewCount()" class="w-full p-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 bg-white outline-none focus:ring-2 focus:ring-teal-500">
+                    </div>
+                </div>
+
+                <!-- FILTROS OPCIONAIS (LOCAL E TIPO) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Local Principal:</label>
+                        <select id="export-filter-local" onchange="updateExportPreviewCount()" class="w-full p-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 bg-white outline-none focus:ring-2 focus:ring-teal-500">
+                            <option value="Todos">Todos os Locais</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Tipo de Lançamento:</label>
+                        <select id="export-filter-tipo" onchange="updateExportPreviewCount()" class="w-full p-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 bg-white outline-none focus:ring-2 focus:ring-teal-500">
+                            <option value="Todos">Todos os Tipos</option>
+                            <option value="Consumo">Consumo</option>
+                            <option value="Entrada">Entrada</option>
+                            <option value="Devolução">Devolução</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- INDICADOR DE REGISTROS ENCONTRADOS -->
+                <div class="bg-teal-50 border border-teal-200 text-teal-900 rounded-xl p-2.5 flex items-center justify-between text-xs font-bold">
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-list-check text-teal-600"></i> Registros correspondentes:</span>
+                    <span id="export-records-count" class="bg-teal-600 text-white px-2 py-0.5 rounded-full text-xs font-black">0</span>
+                </div>
+            </div>
+
+            <!-- BOTÕES DE EXPORTAÇÃO -->
+            <div class="space-y-2 pt-1">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <button onclick="executeFilteredExport('excel')" class="w-full bg-[#0e8a44] hover:bg-emerald-700 text-white font-extrabold p-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow transition">
+                        <i class="fa-solid fa-file-excel text-sm"></i> Baixar em Excel (.xlsx)
+                    </button>
+                    <button onclick="executeFilteredExport('csv')" class="w-full bg-[#0f5298] hover:bg-sky-700 text-white font-extrabold p-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow transition">
+                        <i class="fa-solid fa-file-csv text-sm"></i> Baixar em CSV
+                    </button>
+                </div>
+                <button onclick="closeExportModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold p-2.5 rounded-xl text-xs transition">
+                    Cancelar
+                </button>
             </div>
         </div>
     </div>
@@ -1121,6 +1202,11 @@
             if (dashStartEl && !dashStartEl.value) dashStartEl.value = firstDayOfMonth;
             if (dashEndEl && !dashEndEl.value) dashEndEl.value = today;
 
+            const expStartEl = document.getElementById('export-date-start');
+            const expEndEl = document.getElementById('export-date-end');
+            if (expStartEl && !expStartEl.value) expStartEl.value = firstDayOfMonth;
+            if (expEndEl && !expEndEl.value) expEndEl.value = today;
+
             updateAllSelectsUI();
             buildBatchInputs();
             loadDataFromSheet();
@@ -1274,6 +1360,16 @@
                     const el = document.createElement('option');
                     el.value = loc; el.innerText = loc;
                     dashFilterSelect.appendChild(el);
+                });
+            }
+
+            const expFilterLocal = document.getElementById('export-filter-local');
+            if (expFilterLocal) {
+                expFilterLocal.innerHTML = '<option value="Todos">Todos os Locais</option>';
+                mainLocations.forEach(loc => {
+                    const el = document.createElement('option');
+                    el.value = loc; el.innerText = loc;
+                    expFilterLocal.appendChild(el);
                 });
             }
 
@@ -2100,29 +2196,146 @@
             });
         }
 
+        function openExportModal(preferredType = null) {
+            if (!currentUser || currentUser.role !== 'ADM') {
+                showToast('Acesso restrito ao Administrador.', 'error');
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            const firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+
+            const expStartEl = document.getElementById('export-date-start');
+            const expEndEl = document.getElementById('export-date-end');
+            if (expStartEl && !expStartEl.value) expStartEl.value = firstDayOfMonth;
+            if (expEndEl && !expEndEl.value) expEndEl.value = today;
+
+            updateExportPreviewCount();
+            const modal = document.getElementById('modal-export');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeExportModal() {
+            const modal = document.getElementById('modal-export');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function toggleExportPeriodInputs() {
+            const byDateCheckbox = document.getElementById('export-filter-by-date');
+            const container = document.getElementById('export-dates-container');
+            if (container && byDateCheckbox) {
+                if (byDateCheckbox.checked) {
+                    container.classList.remove('opacity-40', 'pointer-events-none');
+                } else {
+                    container.classList.add('opacity-40', 'pointer-events-none');
+                }
+            }
+            updateExportPreviewCount();
+        }
+
+        function getFilteredExportData() {
+            const byDate = document.getElementById('export-filter-by-date')?.checked ?? true;
+            const startDate = document.getElementById('export-date-start')?.value || '';
+            const endDate = document.getElementById('export-date-end')?.value || '';
+            const filterLoc = document.getElementById('export-filter-local')?.value || 'Todos';
+            const filterTipo = document.getElementById('export-filter-tipo')?.value || 'Todos';
+
+            return database.filter(r => {
+                if (!r) return false;
+
+                // Filtro por período
+                if (byDate && (startDate || endDate)) {
+                    const normDate = normalizeDate(r.Data);
+                    if (startDate && normDate < startDate) return false;
+                    if (endDate && normDate > endDate) return false;
+                }
+
+                // Filtro por local
+                if (filterLoc !== 'Todos') {
+                    const rawLoc = (r.LocalPrincipal || '').trim().toLowerCase();
+                    if (rawLoc !== filterLoc.trim().toLowerCase()) return false;
+                }
+
+                // Filtro por tipo
+                if (filterTipo !== 'Todos') {
+                    const rawTipo = (r.Tipo || '').trim().toLowerCase();
+                    if (rawTipo !== filterTipo.trim().toLowerCase()) return false;
+                }
+
+                return true;
+            });
+        }
+
+        function updateExportPreviewCount() {
+            const countBadge = document.getElementById('export-records-count');
+            if (!countBadge) return;
+            const filtered = getFilteredExportData();
+            countBadge.innerText = filtered.length;
+        }
+
+        function executeFilteredExport(format = 'excel') {
+            if (!currentUser || currentUser.role !== 'ADM') {
+                showToast('Acesso restrito.', 'error');
+                return;
+            }
+
+            const filteredData = getFilteredExportData();
+
+            if (filteredData.length === 0) {
+                showToast('Nenhum registro encontrado para os filtros selecionados.', 'error');
+                return;
+            }
+
+            // Mapeamento organizado com cabeçalhos amigáveis
+            const exportRows = filteredData.map(r => ({
+                'Data Registro': r.DataRegistro || '-',
+                'Data Lançamento': formatDisplayDate(r.Data),
+                'Tipo': r.Tipo || '-',
+                'Local Principal': r.LocalPrincipal || '-',
+                'Local Detalhe': r.LocalDetalhe || '-',
+                'Quantidade (Galões)': Number(r.Quantidade) || 0,
+                'Observação': r.Observacao || '-',
+                'Usuário': r.Usuario || '-'
+            }));
+
+            const byDate = document.getElementById('export-filter-by-date')?.checked;
+            const startDate = document.getElementById('export-date-start')?.value;
+            const endDate = document.getElementById('export-date-end')?.value;
+
+            let fileNameSuffix = 'Historico_Completo';
+            if (byDate && startDate && endDate) {
+                fileNameSuffix = `${startDate}_a_${endDate}`;
+            }
+
+            if (format === 'excel') {
+                const ws = XLSX.utils.json_to_sheet(exportRows);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Lancamentos");
+                XLSX.writeFile(wb, `Relatorio_Agua_${fileNameSuffix}.xlsx`);
+                showToast(`Relatório Excel baixado (${exportRows.length} registros)!`, 'success');
+            } else {
+                const ws = XLSX.utils.json_to_sheet(exportRows);
+                const csv = XLSX.utils.sheet_to_csv(ws);
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute("download", `Relatorio_Agua_${fileNameSuffix}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast(`Relatório CSV baixado (${exportRows.length} registros)!`, 'success');
+            }
+
+            closeExportModal();
+        }
+
+        // Funções mantidas para compatibilidade direta
         function exportToExcel() {
-            if (!currentUser || currentUser.role !== 'ADM') { showToast('Acesso restrito.', 'error'); return; }
-            if (database.length === 0) { showToast('Sem dados para exportar.', 'info'); return; }
-            const ws = XLSX.utils.json_to_sheet(database);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Lancamentos");
-            XLSX.writeFile(wb, "Relatorio_Controle_Agua.xlsx");
-            showToast('Arquivo Excel gerado com sucesso!', 'success');
+            openExportModal('excel');
         }
 
         function exportToCSV() {
-            if (!currentUser || currentUser.role !== 'ADM') { showToast('Acesso restrito.', 'error'); return; }
-            if (database.length === 0) { showToast('Sem dados para exportar.', 'info'); return; }
-            const ws = XLSX.utils.json_to_sheet(database);
-            const csv = XLSX.utils.sheet_to_csv(ws);
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", "Relatorio_Controle_Agua.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast('Arquivo CSV gerado com sucesso!', 'success');
+            openExportModal('csv');
         }
     </script>
 </body>
