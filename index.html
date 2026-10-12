@@ -772,6 +772,35 @@
 
         let chartDiario, chartLocal, chartEntradasDev, chartMensal;
 
+        // Função de normalização para compatibilidade de datas entre Google Sheets e o App
+        function normalizeDate(d) {
+            if (!d) return '';
+            const str = String(d).trim();
+            if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.substring(0, 10);
+            const parts = str.split(/[\/\-]/);
+            if (parts.length === 3) {
+                if (parts[0].length === 2 && parts[2].length === 4) {
+                    return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                }
+            }
+            try {
+                const dt = new Date(str);
+                if (!isNaN(dt.getTime())) return dt.toISOString().split('T')[0];
+            } catch(e){}
+            return str;
+        }
+
+        // Formatação legível para tabelas (DD/MM/AAAA)
+        function formatDisplayDate(d) {
+            if (!d) return '-';
+            const norm = normalizeDate(d);
+            if (/^\d{4}-\d{2}-\d{2}$/.test(norm)) {
+                const [y, m, day] = norm.split('-');
+                return `${day}/${m}/${y}`;
+            }
+            return d;
+        }
+
         // UI FEEDBACK TOASTS E MODAIS
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
@@ -1825,17 +1854,20 @@
             const date = document.getElementById('batch-data').value;
             const inputs = document.querySelectorAll('.batch-qtd-input');
             const records = [];
+            const timestampNow = new Date().toLocaleString('pt-BR');
 
             inputs.forEach(inp => {
                 const val = parseInt(inp.value) || 0;
                 if (val > 0) {
                     records.push({
+                        DataRegistro: timestampNow,
                         Data: date,
                         Tipo: 'Consumo',
                         LocalPrincipal: selectedLoc,
                         LocalDetalhe: inp.dataset.loc,
                         Quantidade: val,
-                        Observacao: `Consumo Detalhado ${selectedLoc}`
+                        Observacao: `Consumo Detalhado ${selectedLoc}`,
+                        Usuario: currentUser ? currentUser.name : 'Operador'
                     });
                 }
             });
@@ -1856,13 +1888,16 @@
 
         function handleSingleSubmit(e) {
             e.preventDefault();
+            const timestampNow = new Date().toLocaleString('pt-BR');
             const record = {
+                DataRegistro: timestampNow,
                 Data: document.getElementById('single-data').value,
                 Tipo: document.getElementById('single-tipo').value,
                 LocalPrincipal: document.getElementById('single-local').value,
                 LocalDetalhe: document.getElementById('single-detalhe').value,
                 Quantidade: parseInt(document.getElementById('single-qtd').value) || 0,
-                Observacao: document.getElementById('single-obs').value || '-'
+                Observacao: document.getElementById('single-obs').value || '-',
+                Usuario: currentUser ? currentUser.name : 'Operador'
             };
 
             saveRecords([record]);
@@ -1870,23 +1905,37 @@
             document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
             updateSubLocations();
         }
+            database.forEach(r => {
+                if (!r) return;
+                const q = parseInt(r.Quantidade) || 0;
+                const matchesLoc = selectedFilterLoc === 'Todos' || r.LocalPrincipal === selectedFilterLoc;
+                
+                const normData = normalizeDate(r.Data);
+                let matchesDate = true;
+                if (normData && startDateVal && endDateVal) {
+                    matchesDate = (normData >= startDateVal && normData <= endDateVal);
+                }
 
-        async function saveRecords(records) {
-            database.push(...records);
-            localStorage.setItem('controle_agua_db', JSON.stringify(database));
-
-            renderRecentTable();
-            updateStockUI();
-            updateDashboard();
-
-            if (navigator.onLine && SCRIPT_URL) {
-                try {
-                    await fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ action: 'addRecords', records: records })
-                    });
+                if (matchesLoc && matchesDate) {
+                    if (r.Tipo === 'Consumo') {
+                        totalConsumo += q;
+                        dailyConsumption[normData] = (dailyConsumption[normData] || 0) + q;
+                        if (r.LocalPrincipal) {
+                            localConsumption[r.LocalPrincipal] = (localConsumption[r.LocalPrincipal] || 0) + q;
+                        }
+                        if (normData) {
+                            const monthIdx = new Date(normData + 'T00:00:00').getMonth();
+                            if (monthIdx >= 0 && monthIdx < 12) monthlyConsumption[monthIdx] += q;
+                        }
+                    } else if (r.Tipo === 'Entrada') {
+                        totalEntradas += q;
+                        dailyEntradas[normData] = (dailyEntradas[normData] || 0) + q;
+                    } else if (r.Tipo === 'Devolução') {
+                        totalDevolucoes += q;
+                        dailyDevolucoes[normData] = (dailyDevolucoes[normData] || 0) + q;
+                    }
+                }
+            });
                     showToast('Lançamento registrado e salvo na nuvem!', 'success');
                     setTimeout(() => loadDataFromSheet(false), 1500);
                 } catch(e) {
@@ -1972,7 +2021,7 @@
             list.forEach((r, idx) => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-2">${r.Data || '-'}</td>
+                        <td class="p-2" title="Gravado em: ${r.DataRegistro || '-'}">${formatDisplayDate(r.Data)}</td>
                         <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
                         <td class="p-2">${r.LocalPrincipal || '-'}</td>
                         <td class="p-2">${r.LocalDetalhe || '-'}</td>
@@ -1996,7 +2045,7 @@
             database.forEach((r, idx) => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
-                        <td class="p-2">${r.Data || '-'}</td>
+                        <td class="p-2" title="Gravado em: ${r.DataRegistro || '-'}">${formatDisplayDate(r.Data)}</td>
                         <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
                         <td class="p-2">${r.LocalPrincipal || '-'}</td>
                         <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
