@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OUD PRIME - Controle de Água</title>
     
-    <!-- CONEXÃO PWA (APLICATIVO MOBILE EM ECRÃ INTEIRO) -->
+    <!-- CONEXÃO PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -44,6 +44,12 @@
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
     </script>
 
+    <!-- BARRA INDICADORA DE REDE E PENDÊNCIAS OFFLINE -->
+    <div id="network-banner" class="hidden bg-amber-500 text-slate-950 text-xs font-extrabold px-4 py-1.5 text-center flex justify-between items-center z-[110]">
+        <span id="network-status-text"><i class="fa-solid fa-wifi"></i> Você está offline. Lançamentos serão salvos localmente.</span>
+        <span id="pending-badge" class="bg-slate-900 text-amber-400 px-2 py-0.5 rounded-full text-[10px] font-black">0 pendentes</span>
+    </div>
+
     <!-- TELA DE LOGIN -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 w-full h-full overflow-y-auto">
         <div class="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-6 space-y-5 border border-slate-800 my-auto text-center mx-auto">
@@ -78,7 +84,7 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO -->
+    <!-- CABEÇALHO DA APLICAÇÃO -->
     <header class="bg-nav text-white px-4 py-2.5 shadow-md w-full">
         <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2 md:gap-3">
             <div class="flex items-center justify-between w-full md:w-auto">
@@ -131,8 +137,6 @@
 
         <!-- 1. TELA – MENU PRINCIPAL -->
         <section id="screen1" class="screen-content space-y-3 md:space-y-6">
-            
-            <!-- BANNER AZUL REDUZIDO COMPACTO NO MOBILE -->
             <div class="banner-blue text-white p-3.5 md:p-8 rounded-xl shadow-lg flex justify-between items-center relative overflow-hidden">
                 <div class="space-y-0.5 z-10">
                     <span class="bg-white/20 text-[9px] md:text-xs uppercase font-extrabold px-2 py-0.5 rounded-full tracking-widest">OUD PRIME</span>
@@ -144,7 +148,6 @@
                 </div>
             </div>
 
-            <!-- BOTÕES DO MENU PRINCIPAL -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
                 <div onclick="switchScreen('screen2')" class="card-menu cursor-pointer bg-[#0f5298] text-white p-4.5 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
                     <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-pen-to-square"></i></div>
@@ -560,7 +563,7 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT COMPLETA E ESTÁVEL -->
+    <!-- LÓGICA JAVASCRIPT COM SUPORTE OFFLINE E SINCRONIZAÇÃO AUTOMÁTICA -->
     <script>
         const BASE_USERS = {
             'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
@@ -570,6 +573,7 @@
         let USERS_DB = { ...BASE_USERS };
         let currentUser = null;
         let database = [];
+        let pendingQueue = [];
 
         let mainLocations = ['Alojamento 01', 'Alojamento 03', 'Site'];
         let tiposLancamento = ['Consumo', 'Entrada', 'Devolução'];
@@ -592,7 +596,72 @@
             loadSavedConfig();
             setupLoginHandler();
             checkAuthSession();
+            initNetworkListeners();
+            loadPendingQueue();
         });
+
+        // MONITORIZAÇÃO DE REDE
+        function initNetworkListeners() {
+            window.addEventListener('online', updateNetworkStatus);
+            window.addEventListener('offline', updateNetworkStatus);
+            updateNetworkStatus();
+        }
+
+        function updateNetworkStatus() {
+            const banner = document.getElementById('network-banner');
+            const statusText = document.getElementById('network-status-text');
+            const badge = document.getElementById('pending-badge');
+
+            if (!navigator.onLine) {
+                banner.classList.remove('hidden');
+                statusText.innerHTML = '<i class="fa-solid fa-wifi-slash"></i> Você está offline. Lançamentos serão salvos localmente.';
+            } else {
+                if (pendingQueue.length > 0) {
+                    banner.classList.remove('hidden');
+                    statusText.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin"></i> Conexão restabelecida. Sincronizando dados com o Google Sheets...';
+                    syncPendingQueue();
+                } else {
+                    banner.classList.add('hidden');
+                }
+            }
+            if(badge) badge.innerText = `${pendingQueue.length} pendentes`;
+        }
+
+        function loadPendingQueue() {
+            const savedQueue = localStorage.getItem('controle_agua_pending');
+            if(savedQueue) {
+                try { pendingQueue = JSON.parse(savedQueue) || []; } catch(e) { pendingQueue = []; }
+            }
+            updateNetworkStatus();
+        }
+
+        function savePendingQueue() {
+            localStorage.setItem('controle_agua_pending', JSON.stringify(pendingQueue));
+            updateNetworkStatus();
+        }
+
+        async function syncPendingQueue() {
+            if (!navigator.onLine || pendingQueue.length === 0) return;
+
+            const recordsToSend = [...pendingQueue];
+            try {
+                if (SCRIPT_URL) {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(recordsToSend)
+                    });
+                }
+                pendingQueue = [];
+                savePendingQueue();
+                alert('Sincronização concluída! Todos os registros offline foram salvos na nuvem.');
+            } catch(e) {
+                console.error("Falha ao sincronizar em segundo plano:", e);
+            } finally {
+                updateNetworkStatus();
+            }
+        }
 
         function loadSavedConfig() {
             try {
@@ -903,7 +972,6 @@
             }
 
             saveRecords(records);
-            alert(`Consumo de ${selectedLoc} registrado com sucesso!`);
             clearBatch();
         }
 
@@ -973,16 +1041,24 @@
         }
 
         async function loadDataFromSheet() {
-            try {
-                if (SCRIPT_URL) {
+            const savedLocalDB = localStorage.getItem('controle_agua_db');
+            if(savedLocalDB) {
+                try { database = JSON.parse(savedLocalDB) || []; } catch(e) { database = []; }
+            }
+
+            if (navigator.onLine && SCRIPT_URL) {
+                try {
                     const res = await fetch(SCRIPT_URL);
                     const data = await res.json();
-                    if(Array.isArray(data)) database = data;
+                    if(Array.isArray(data) && data.length > 0) {
+                        database = data;
+                        localStorage.setItem('controle_agua_db', JSON.stringify(database));
+                    }
+                } catch (err) {
+                    console.error("Erro no carregamento remoto:", err);
                 }
-            } catch (err) {
-                console.error("Erro no carregamento:", err);
-                database = [];
             }
+
             renderRecentTable();
             updateStockUI();
             updateDashboard();
@@ -996,7 +1072,7 @@
             updateStockUI();
             updateDashboard();
 
-            if (SCRIPT_URL) {
+            if (navigator.onLine && SCRIPT_URL) {
                 try {
                     await fetch(SCRIPT_URL, {
                         method: 'POST',
@@ -1004,9 +1080,16 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(records)
                     });
+                    alert('Lançamento registrado e enviado para o Google Sheets!');
                 } catch(e) {
-                    console.error("Erro ao enviar:", e);
+                    pendingQueue.push(...records);
+                    savePendingQueue();
+                    alert('Conexão oscilou. O lançamento foi salvo localmente e será enviado em breve.');
                 }
+            } else {
+                pendingQueue.push(...records);
+                savePendingQueue();
+                alert('Você está OFFLINE. O lançamento foi salvo no telemóvel e será sincronizado assim que recuperar a conexão!');
             }
         }
 
@@ -1022,7 +1105,6 @@
             };
 
             saveRecords([record]);
-            alert('Lançamento registrado!');
             document.getElementById('form-single').reset();
             document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
             updateSubLocations();
