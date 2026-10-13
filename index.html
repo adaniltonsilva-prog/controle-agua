@@ -149,7 +149,7 @@
                 <p class="text-[10px] text-sky-400 font-extrabold uppercase tracking-widest mt-1">SISTEMAS INTELIGENTES PARA O SEU DIA A DIA</p>
             </div>
 
-            <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4 text-left w-full">
+            <form id="login-form" onsubmit="return handleLoginSubmit(event)" class="space-y-4 text-left w-full">
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Usuário / E-mail</label>
                     <input type="text" id="login-user" required autocomplete="username" placeholder="admin ou operador" class="w-full p-3 border border-slate-700 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-sky-500 bg-slate-800 text-white">
@@ -258,7 +258,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE VISUALIZAÇÃO DO COMPROVANTE -->
+    <!-- MODAL DE VISUALIZAÇÃO DO COMPROVANTE ATUALIZADO -->
     <div id="modal-view-proof" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[250] flex items-center justify-center hidden p-4">
         <div class="bg-slate-900 border border-slate-700 rounded-3xl p-5 max-w-lg w-full text-center space-y-4 shadow-2xl relative">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -267,11 +267,20 @@
                 </h3>
                 <button onclick="closeProofModal()" class="text-slate-400 hover:text-white text-2xl font-bold leading-none">&times;</button>
             </div>
-            <div class="max-h-[60vh] overflow-auto rounded-xl border border-slate-800 bg-slate-950 flex items-center justify-center p-2">
+            
+            <div class="max-h-[60vh] overflow-auto rounded-xl border border-slate-800 bg-slate-950 flex flex-col items-center justify-center p-3 space-y-3">
                 <img id="proof-img-display" src="" alt="Comprovante" class="max-w-full h-auto rounded-lg object-contain">
+                
+                <div id="proof-external-link" class="hidden text-center p-4 space-y-2">
+                    <p class="text-xs text-slate-300">Este comprovante está armazenado com segurança no Google Drive.</p>
+                </div>
             </div>
-            <div class="flex justify-end pt-2">
-                <button onclick="closeProofModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-4 py-2 rounded-xl text-xs">
+
+            <div class="flex justify-between items-center pt-2">
+                <a id="proof-btn-open-drive" href="#" target="_blank" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir no Google Drive
+                </a>
+                <button onclick="closeProofModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-4 py-2 rounded-xl text-xs ml-auto">
                     Fechar
                 </button>
             </div>
@@ -1260,16 +1269,58 @@
             btnCancel.addEventListener('click', handleCancel);
         }
 
-        // VISUALIZAÇÃO DO COMPROVANTE
+        // CONVERTER URL DO GOOGLE DRIVE EM LINK DE IMAGEM DIRETO
+        function formatDriveImageUrl(url) {
+            if (!url) return '';
+            if (url.indexOf('drive.google.com') !== -1) {
+                var match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    return 'https://lh3.googleusercontent.com/d/' + match[1];
+                }
+            }
+            return url;
+        }
+
+        // MODAL DE VISUALIZAÇÃO DE COMPROVANTE
         function viewProofModal(index) {
             const record = database[index];
             if (record && record.Comprovante) {
+                const rawUrl = record.Comprovante;
                 const imgEl = document.getElementById('proof-img-display');
                 const modalEl = document.getElementById('modal-view-proof');
-                if (imgEl && modalEl) {
-                    imgEl.src = record.Comprovante;
-                    modalEl.classList.remove('hidden');
+                const linkContainer = document.getElementById('proof-external-link');
+
+                if (rawUrl.indexOf('http://') === 0 || rawUrl.indexOf('https://') === 0) {
+                    const directImgUrl = formatDriveImageUrl(rawUrl);
+                    
+                    if (imgEl) {
+                        imgEl.src = directImgUrl;
+                        imgEl.onerror = function() {
+                            imgEl.style.display = 'none';
+                            if (linkContainer) linkContainer.classList.remove('hidden');
+                        };
+                        imgEl.onload = function() {
+                            imgEl.style.display = 'block';
+                            if (linkContainer) linkContainer.classList.add('hidden');
+                        };
+                    }
+                } else {
+                    if (imgEl) {
+                        imgEl.style.display = 'block';
+                        imgEl.src = rawUrl;
+                    }
+                    if (linkContainer) linkContainer.classList.add('hidden');
                 }
+
+                const btnLink = document.getElementById('proof-btn-open-drive');
+                if (btnLink && (rawUrl.indexOf('http') === 0)) {
+                    btnLink.href = rawUrl;
+                    btnLink.classList.remove('hidden');
+                } else if (btnLink) {
+                    btnLink.classList.add('hidden');
+                }
+
+                if (modalEl) modalEl.classList.remove('hidden');
             } else {
                 showToast('Nenhum comprovante localizado para este registro.', 'error');
             }
@@ -1280,7 +1331,7 @@
             if (modalEl) modalEl.classList.add('hidden');
         }
 
-        // CONTROLE DO COMPROVANTE (ENTRADA E DEVOLUÇÃO)
+        // VISIBILIDADE DO ANEXO APENAS PARA ENTRADA OU DEVOLUÇÃO
         function toggleComprovanteVisibility() {
             const tipoEl = document.getElementById('single-tipo');
             const containerEl = document.getElementById('container-comprovante');
@@ -1330,6 +1381,43 @@
                 reader.onload = () => resolve(reader.result);
                 reader.onerror = error => reject(error);
                 reader.readAsDataURL(file);
+            });
+        }
+
+        function compressImage(file, maxWidth = 1000, quality = 0.7) {
+            return new Promise((resolve, reject) => {
+                if (!file) return resolve('');
+                if (file.type.indexOf('image') === -1) {
+                    readFileAsBase64(file).then(resolve).catch(reject);
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = event => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(dataUrl);
+                    };
+                    img.onerror = error => reject(error);
+                };
+                reader.onerror = error => reject(error);
             });
         }
 
@@ -1434,7 +1522,6 @@
                 submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Verificando...</span>';
             }
 
-            // Tenta obter banco atualizado local/nuvem
             const savedUsers = localStorage.getItem('controle_agua_users');
             if (savedUsers) {
                 try { USERS_DB = { ...BASE_USERS, ...JSON.parse(savedUsers) }; } catch(e){}
@@ -2504,7 +2591,8 @@
             let comprovanteBase64 = '';
             if (compFileEl.files && compFileEl.files[0]) {
                 try {
-                    comprovanteBase64 = await readFileAsBase64(compFileEl.files[0]);
+                    showToast('Otimizando imagem do comprovante...', 'info');
+                    comprovanteBase64 = await compressImage(compFileEl.files[0]);
                 } catch (err) {
                     showToast('Erro ao carregar imagem do comprovante.', 'error');
                     return;
@@ -2620,6 +2708,7 @@
             }
         }
 
+        // TABELA DE ÚLTIMOS LANÇAMENTOS
         function renderRecentTable() {
             const tbody = document.getElementById('table-recent-body');
             if (!tbody) return;
@@ -2652,6 +2741,7 @@
             });
         }
 
+        // TABELA DA BASE DE DADOS COMPLETA
         function renderFullDatabaseTable() {
             const tbody = document.getElementById('table-full-db');
             if (!tbody) return;
