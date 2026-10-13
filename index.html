@@ -49,6 +49,7 @@
         
         main input, main select, main textarea,
         #modal-config input, #modal-config select, #modal-config textarea,
+        #modal-edit-user input, #modal-edit-user select,
         #modal-export input, #modal-export select, #modal-export textarea,
         #modal-reset-pass input, #modal-reset-pass select {
             color: #000000 !important;
@@ -66,6 +67,7 @@
 
         main input::placeholder, 
         #modal-config input::placeholder,
+        #modal-edit-user input::placeholder,
         #modal-export input::placeholder,
         #modal-reset-pass input::placeholder {
             color: #475569 !important;
@@ -139,7 +141,7 @@
         </div>
     </div>
 
-    <!-- TELA DE LOGIN SEM QUADRADO NA LOGO -->
+    <!-- TELA DE LOGIN -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 w-full h-full overflow-y-auto">
         <div class="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-6 space-y-5 border border-slate-800 my-auto text-center mx-auto">
             <div class="space-y-2 flex flex-col items-center justify-center">
@@ -207,6 +209,49 @@
                     </button>
                     <button type="submit" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-bold p-2.5 rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-check"></i> Salvar Senha
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE EDIÇÃO DE USUÁRIO -->
+    <div id="modal-edit-user" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[230] flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl border border-slate-200">
+            <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-xl mx-auto shadow-inner">
+                <i class="fa-solid fa-user-gear"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-black uppercase tracking-wide text-slate-900">Editar Usuário</h3>
+                <p class="text-xs text-slate-500 mt-1">Altere as informações de acesso cadastradas.</p>
+            </div>
+            <form onsubmit="saveEditedUser(event)" class="space-y-3 text-left">
+                <input type="hidden" id="edit-user-key">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Nome Completo</label>
+                    <input type="text" id="edit-user-name" required class="w-full p-2.5 border-2 border-slate-300 rounded-xl text-xs font-bold text-black outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Login (Identificador)</label>
+                    <input type="text" id="edit-user-login" disabled class="w-full p-2.5 border-2 border-slate-200 rounded-xl text-xs font-bold text-slate-500 bg-slate-100 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Nova Senha</label>
+                    <input type="text" id="edit-user-pass" required minlength="4" class="w-full p-2.5 border-2 border-slate-300 rounded-xl text-xs font-bold text-black outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Perfil de Acesso</label>
+                    <select id="edit-user-role" class="w-full p-2.5 border-2 border-slate-300 rounded-xl text-xs font-bold text-black outline-none focus:ring-2 focus:ring-sky-500">
+                        <option value="OPERADOR">Operador de Campo</option>
+                        <option value="ADM">Administrador</option>
+                    </select>
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeEditUserModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold p-2.5 rounded-xl text-xs transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold p-2.5 rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-floppy-disk"></i> Salvar
                     </button>
                 </div>
             </form>
@@ -897,7 +942,7 @@
         </div>
     </div>
 
-    <!-- MODAL CONFIGURAÇÕES COMPLETO -->
+    <!-- MODAL CONFIGURAÇÕES COMPLETO COM SUPORTE A EDIÇÃO -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3">
         <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-5 space-y-5 relative border max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2 border-b">
@@ -908,7 +953,7 @@
             </div>
 
             <div class="space-y-5">
-                <!-- 1. GESTÃO DE USUÁRIOS -->
+                <!-- 1. GESTÃO DE USUÁRIOS COM BOTOES DE EDITAR -->
                 <div class="bg-blue-50/60 border border-blue-200 p-3.5 rounded-2xl space-y-3">
                     <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1">GESTÃO DE USUÁRIOS E PERMISSÕES</h4>
 
@@ -932,7 +977,7 @@
                                     <th class="p-2">NOME</th>
                                     <th class="p-2">LOGIN</th>
                                     <th class="p-2 text-center">PERFIL</th>
-                                    <th class="p-2 text-center">AÇÃO</th>
+                                    <th class="p-2 text-center">AÇÕES</th>
                                 </tr>
                             </thead>
                             <tbody id="users-table-body" class="divide-y text-[10px]"></tbody>
@@ -1215,7 +1260,7 @@
             btnCancel.addEventListener('click', handleCancel);
         }
 
-        // LÓGICA DE EXIBIÇÃO DO COMPROVANTE NO MODAL INTERNO
+        // VISUALIZAÇÃO DO COMPROVANTE
         function viewProofModal(index) {
             const record = database[index];
             if (record && record.Comprovante) {
@@ -1235,7 +1280,7 @@
             if (modalEl) modalEl.classList.add('hidden');
         }
 
-        // VISIBILIDADE DO ANEXO APENAS PARA ENTRADA OU DEVOLUÇÃO
+        // CONTROLE DO COMPROVANTE (ENTRADA E DEVOLUÇÃO)
         function toggleComprovanteVisibility() {
             const tipoEl = document.getElementById('single-tipo');
             const containerEl = document.getElementById('container-comprovante');
@@ -1362,6 +1407,7 @@
             closeResetPasswordModal();
         }
 
+        // LOGIN CORRIGIDO SEM ZERAR NEM RECARREGAR A PÁGINA
         async function handleLoginSubmit(event) {
             if (event) event.preventDefault();
 
@@ -1370,7 +1416,7 @@
             const errorEl = document.getElementById('login-error');
             const submitBtn = document.getElementById('login-submit-btn');
 
-            if (!userInput || !passInput) return;
+            if (!userInput || !passInput) return false;
 
             const u = userInput.value.trim().toLowerCase();
             const p = passInput.value.trim();
@@ -1380,7 +1426,7 @@
                     errorEl.innerText = 'Por favor, preencha o usuário e a senha.';
                     errorEl.classList.remove('hidden');
                 }
-                return;
+                return false;
             }
 
             if (submitBtn) {
@@ -1388,23 +1434,10 @@
                 submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Verificando...</span>';
             }
 
-            const activeUrl = getActiveScriptUrl();
-
-            if (navigator.onLine && activeUrl) {
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 2500);
-                    const fetchUrl = `${activeUrl}${activeUrl.includes('?') ? '&' : '?'}action=getUsers&t=${Date.now()}`;
-                    const res = await fetch(fetchUrl, { cache: 'no-store', signal: controller.signal });
-                    clearTimeout(timeoutId);
-                    const remoteUsers = await res.json();
-                    if (remoteUsers && typeof remoteUsers === 'object') {
-                        USERS_DB = { ...BASE_USERS, ...remoteUsers };
-                        localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
-                    }
-                } catch (err) {
-                    console.warn("Validação usando base local/cache:", err);
-                }
+            // Tenta obter banco atualizado local/nuvem
+            const savedUsers = localStorage.getItem('controle_agua_users');
+            if (savedUsers) {
+                try { USERS_DB = { ...BASE_USERS, ...JSON.parse(savedUsers) }; } catch(e){}
             }
 
             const userObj = USERS_DB[u];
@@ -1429,6 +1462,8 @@
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i><span>Entrar no Sistema</span>';
             }
+
+            return false;
         }
 
         function checkAuthSession() {
@@ -1524,7 +1559,7 @@
                 showToast('Lançamentos pendentes sincronizados com a nuvem!', 'success');
             } catch(e) {
                 console.error("Falha ao sincronizar fila offline:", e);
-            } flexy {
+            } finally {
                 updateNetworkStatus();
             }
         }
@@ -1646,6 +1681,7 @@
             if (screenId === 'screen6') renderFullDatabaseTable();
         }
 
+        // CADASTRO E EDIÇÃO DE USUÁRIOS
         async function addNewUser() {
             const name = document.getElementById('add-user-name').value.trim();
             const login = document.getElementById('add-user-login').value.trim().toLowerCase();
@@ -1658,7 +1694,7 @@
             }
 
             if (USERS_DB[login]) {
-                showToast('Este login já existe.', 'error');
+                showToast('Este login já existe no sistema.', 'error');
                 return;
             }
 
@@ -1680,7 +1716,59 @@
             document.getElementById('add-user-pass').value = '';
 
             renderUsersTable();
-            showToast(`Usuário "${name}" cadastrado!`, 'success');
+            showToast(`Usuário "${name}" cadastrado com sucesso!`, 'success');
+        }
+
+        function openEditUserModal(loginKey) {
+            const user = USERS_DB[loginKey];
+            if (!user) return;
+
+            document.getElementById('edit-user-key').value = loginKey;
+            document.getElementById('edit-user-name').value = user.name;
+            document.getElementById('edit-user-login').value = loginKey;
+            document.getElementById('edit-user-pass').value = user.pass;
+            document.getElementById('edit-user-role').value = user.role;
+
+            document.getElementById('modal-edit-user').classList.remove('hidden');
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('modal-edit-user').classList.add('hidden');
+        }
+
+        function saveEditedUser(e) {
+            if (e) e.preventDefault();
+            const key = document.getElementById('edit-user-key').value;
+            const name = document.getElementById('edit-user-name').value.trim();
+            const pass = document.getElementById('edit-user-pass').value.trim();
+            const role = document.getElementById('edit-user-role').value;
+
+            if (!name || !pass) {
+                showToast('Nome e Senha não podem ficar em branco.', 'error');
+                return;
+            }
+
+            if (USERS_DB[key]) {
+                USERS_DB[key].name = name;
+                USERS_DB[key].pass = pass;
+                USERS_DB[key].role = role;
+
+                localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
+
+                const activeUrl = getActiveScriptUrl();
+                if (navigator.onLine && activeUrl) {
+                    fetch(activeUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'saveUsers', users: USERS_DB })
+                    }).catch(err => console.error("Erro ao sincronizar alteração de usuário:", err));
+                }
+
+                renderUsersTable();
+                closeEditUserModal();
+                showToast(`Usuário "${name}" atualizado!`, 'success');
+            }
         }
 
         function removeUser(loginKey) {
@@ -1703,7 +1791,7 @@
                     });
                 }
                 renderUsersTable();
-                showToast('Usuário removido.', 'info');
+                showToast('Usuário removido com sucesso.', 'info');
             });
         }
 
@@ -1724,8 +1812,9 @@
                                 ${u.role}
                             </span>
                         </td>
-                        <td class="p-1.5 text-center">
-                            ${key !== 'admin' ? `<button onclick="removeUser('${key}')" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button>` : `<span class="text-slate-300 text-[9px]">Fix</span>`}
+                        <td class="p-1.5 text-center flex items-center justify-center gap-2">
+                            <button onclick="openEditUserModal('${key}')" class="text-indigo-600 font-bold hover:text-indigo-800" title="Editar Usuário"><i class="fa-solid fa-pen-to-square"></i></button>
+                            ${key !== 'admin' ? `<button onclick="removeUser('${key}')" class="text-red-500 font-bold hover:text-red-700" title="Remover Usuário"><i class="fa-solid fa-trash"></i></button>` : `<span class="text-slate-300 text-[9px]">Fix</span>`}
                         </td>
                     </tr>
                 `;
