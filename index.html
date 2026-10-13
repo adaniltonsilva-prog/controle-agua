@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OUD PRIME - Controle de Água</title>
     
-    <!-- FAVICON (ÍCONE DA GUIA/ABA DO NAVEGADOR) -->
+    <!-- FAVICON -->
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="shortcut icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
 
-    <!-- CONEXÃO PWA E CONFIGURAÇÕES DE NAVEGADOR MOBILE -->
+    <!-- CONEXÃO PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,10 +18,9 @@
     <meta name="theme-color" content="#0f172a">
 
     <script>
-      // Registro seguro do Service Worker em HTTP/HTTPS
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
         navigator.serviceWorker.register('sw.js').catch(function(err) {
-          console.warn('Registro de Service Worker ignorado no ambiente atual:', err);
+          console.warn('Registro de Service Worker ignorado:', err);
         });
       }
     </script>
@@ -48,11 +47,10 @@
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* REGRA GLOBAL DE MÁXIMA PRIORIDADE PARA CONTRASTE E LEGIBILIDADE AO DIGITAR */
-        /* Todos os inputs dentro de áreas claras (formulários, modais, configurações, exportação) */
         main input, main select, main textarea,
         #modal-config input, #modal-config select, #modal-config textarea,
-        #modal-export input, #modal-export select, #modal-export textarea {
+        #modal-export input, #modal-export select, #modal-export textarea,
+        #modal-reset-pass input, #modal-reset-pass select {
             color: #000000 !important;
             -webkit-text-fill-color: #000000 !important;
             font-weight: 700 !important;
@@ -60,24 +58,22 @@
             opacity: 1 !important;
         }
 
-        /* Inputs específicos com fundos destacados (ex: quantidade com verde suave) */
         #single-qtd {
             background-color: #e8f8f2 !important;
             color: #064e3b !important;
             -webkit-text-fill-color: #064e3b !important;
         }
 
-        /* Cores nítidas e escuras para o texto de ajuda (placeholder) em fundos brancos */
         main input::placeholder, 
         #modal-config input::placeholder,
-        #modal-export input::placeholder {
+        #modal-export input::placeholder,
+        #modal-reset-pass input::placeholder {
             color: #475569 !important;
             -webkit-text-fill-color: #475569 !important;
             font-weight: 500 !important;
             opacity: 1 !important;
         }
 
-        /* Telas com fundo escuro (Login e Painel Dev) mantêm texto branco de alto contraste */
         #login-overlay input,
         #modal-master-auth input,
         #modal-dev-panel input {
@@ -91,6 +87,14 @@
         #modal-dev-panel input::placeholder {
             color: #94a3b8 !important;
             -webkit-text-fill-color: #94a3b8 !important;
+        }
+
+        /* Estilo limpo para imagens de logo sem molduras ou sombras de fundo */
+        .clean-logo {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            mix-blend-mode: normal;
         }
     </style>
 </head>
@@ -136,11 +140,11 @@
         </div>
     </div>
 
-    <!-- TELA DE LOGIN CORRIGIDA COM SUPORTE ROBUSTO -->
+    <!-- TELA DE LOGIN SEM QUADRADO NA LOGO -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 w-full h-full overflow-y-auto">
         <div class="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-6 space-y-5 border border-slate-800 my-auto text-center mx-auto">
             <div class="space-y-2 flex flex-col items-center justify-center">
-                <img src="logo.png" alt="OUD PRIME Logo" class="max-w-[170px] w-full h-auto object-contain drop-shadow-lg mx-auto" onerror="this.src='https://placehold.co/180x60/0284c7/ffffff?text=OUD+PRIME'">
+                <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OUD PRIME Logo" class="clean-logo max-w-[170px] w-full h-auto object-contain mx-auto">
                 <p class="text-[10px] text-sky-400 font-extrabold uppercase tracking-widest mt-1">SISTEMAS INTELIGENTES PARA O SEU DIA A DIA</p>
             </div>
 
@@ -151,7 +155,10 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-300 mb-1">Senha</label>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold uppercase text-slate-300">Senha</label>
+                        <button type="button" onclick="openResetPasswordModal()" class="text-[11px] text-sky-400 hover:text-sky-300 font-bold transition">Esqueceu a senha?</button>
+                    </div>
                     <div class="relative flex items-center">
                         <input type="password" id="login-pass" required autocomplete="current-password" placeholder="••••••••" class="w-full p-3 pr-11 border border-slate-700 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-sky-500 bg-slate-800 text-white">
                         <button type="button" onclick="togglePassVisibility()" class="absolute right-3.5 text-slate-400 hover:text-sky-400 transition-colors p-1" title="Mostrar/Ocultar senha">
@@ -176,12 +183,43 @@
         </div>
     </div>
 
+    <!-- MODAL DE REDEFINIÇÃO DE SENHA -->
+    <div id="modal-reset-pass" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-[210] flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl border border-slate-200">
+            <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center text-xl mx-auto shadow-inner">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-black uppercase tracking-wide text-slate-900">Redefinir Senha</h3>
+                <p class="text-xs text-slate-500 mt-1">Informe seu usuário cadastrado e escolha uma nova senha.</p>
+            </div>
+            <form onsubmit="handleResetPassword(event)" class="space-y-3 text-left">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Seu Usuário / E-mail</label>
+                    <input type="text" id="reset-username" required placeholder="Ex: admin ou operador" class="w-full p-2.5 border-2 border-slate-300 rounded-xl text-xs font-bold text-black outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Nova Senha</label>
+                    <input type="password" id="reset-new-pass" required minlength="4" placeholder="••••••••" class="w-full p-2.5 border-2 border-slate-300 rounded-xl text-xs font-bold text-black outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeResetPasswordModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold p-2.5 rounded-xl text-xs transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-bold p-2.5 rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-check"></i> Salvar Senha
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- CABEÇALHO DA APLICAÇÃO -->
     <header class="bg-nav text-white px-3 md:px-6 py-2.5 shadow-md w-full">
         <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2.5">
             <div class="flex items-center justify-between w-full md:w-auto">
                 <div class="flex items-center gap-2.5">
-                    <img src="logo.png" alt="OUD PRIME" class="h-7 md:h-10 object-contain" onerror="this.src='https://placehold.co/100x40/0284c7/ffffff?text=OP'">
+                    <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OUD PRIME" class="clean-logo h-7 md:h-10 object-contain">
                     <div>
                         <h1 class="text-sm md:text-lg font-black uppercase tracking-wider leading-none text-white">CONTROLE DE ÁGUA</h1>
                         <p class="text-[8px] md:text-[10px] text-sky-400 font-bold uppercase tracking-wide mt-0.5">Sistemas Inteligentes para o seu dia a dia</p>
@@ -303,13 +341,13 @@
             </div>
         </section>
 
-        <!-- 2. TELA – LANÇAMENTOS -->
+        <!-- 2. TELA – LANÇAMENTOS COM ANEXO DE COMPROVANTE -->
         <section id="screen2" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
             <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex justify-between items-center">
                 <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
                     <i class="fa-solid fa-calendar-days"></i> 2. LANÇAMENTOS
                 </h2>
-                <span class="bg-blue-800 text-[10px] md:text-xs px-2.5 py-1 rounded-md text-blue-100">Direto ou Detalhado</span>
+                <span class="bg-blue-800 text-[10px] md:text-xs px-2.5 py-1 rounded-md text-blue-100">Comprovante obrigatório para Entrada</span>
             </div>
 
             <form id="form-single" onsubmit="handleSingleSubmit(event)" class="space-y-4">
@@ -325,7 +363,7 @@
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-droplet text-blue-600"></i> TIPO DE LANÇAMENTO
                         </label>
-                        <select id="single-tipo" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
+                        <select id="single-tipo" onchange="updateSubLocations(); toggleComprovanteRequirement();" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
                     </div>
 
                     <div>
@@ -351,11 +389,19 @@
                         <input type="number" id="single-qtd" min="1" placeholder="Ex: 35" required class="w-full p-2.5 border-2 border-emerald-300 bg-[#e8f8f2] text-emerald-900 font-extrabold text-xl rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
 
-                    <div class="md:col-span-2">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                            <i class="fa-solid fa-paperclip text-blue-600"></i> ANEXAR COMPROVANTE
+                            <span id="comprovante-badge-required" class="hidden text-[9px] bg-rose-600 text-white font-black px-1.5 py-0.5 rounded uppercase">Obrigatório</span>
+                        </label>
+                        <input type="file" id="single-comprovante" accept="image/*,.pdf" class="w-full p-2 border border-slate-300 rounded-lg text-xs bg-slate-50 font-bold outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div>
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-comment text-blue-600"></i> OBSERVAÇÃO (OPCIONAL)
                         </label>
-                        <input type="text" id="single-obs" placeholder="Ex: Recebimento de carga, troca semanal, etc." class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="single-obs" placeholder="Ex: Carga fornecedor, nota fiscal..." class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 
@@ -364,7 +410,7 @@
                         <button type="submit" class="flex-1 sm:flex-none bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
                             <i class="fa-solid fa-check"></i> Registrar
                         </button>
-                        <button type="reset" onclick="setTimeout(updateSubLocations, 50)" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
+                        <button type="reset" onclick="setTimeout(() => { updateSubLocations(); toggleComprovanteRequirement(); }, 50)" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
                             <i class="fa-solid fa-broom"></i> Limpar
                         </button>
                     </div>
@@ -387,6 +433,7 @@
                                 <th class="p-2.5">LOCAL</th>
                                 <th class="p-2.5">DETALHE</th>
                                 <th class="p-2.5 text-center">QTD</th>
+                                <th class="p-2.5 text-center">COMPROVANTE</th>
                                 <th class="p-2.5 text-center">AÇÕES</th>
                             </tr>
                         </thead>
@@ -647,6 +694,7 @@
                             <th class="p-2.5">LOCAL</th>
                             <th class="p-2.5">DETALHE</th>
                             <th class="p-2.5 text-center">QTD</th>
+                            <th class="p-2.5 text-center">COMPROVANTE</th>
                             <th class="p-2.5">RESPONSÁVEL</th>
                             <th class="p-2.5 text-center">AÇÃO</th>
                         </tr>
@@ -963,7 +1011,6 @@
             <p class="text-xs text-slate-500">Selecione o intervalo de datas e os filtros desejados para gerar o arquivo:</p>
 
             <div class="space-y-3.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                <!-- OPÇÃO DE EXPORTAR TUDO OU PERÍODO -->
                 <div class="flex items-center justify-between pb-2 border-b border-slate-200">
                     <span class="text-xs font-bold text-slate-800">Filtrar por período específico:</span>
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -972,7 +1019,6 @@
                     </label>
                 </div>
 
-                <!-- SELETORES DE DATA -->
                 <div id="export-dates-container" class="grid grid-cols-2 gap-2.5">
                     <div>
                         <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">
@@ -988,7 +1034,6 @@
                     </div>
                 </div>
 
-                <!-- FILTROS OPCIONAIS (LOCAL E TIPO) -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
                     <div>
                         <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Local Principal:</label>
@@ -1007,14 +1052,12 @@
                     </div>
                 </div>
 
-                <!-- INDICADOR DE REGISTROS ENCONTRADOS -->
                 <div class="bg-teal-50 border border-teal-200 text-teal-900 rounded-xl p-2.5 flex items-center justify-between text-xs font-bold">
                     <span class="flex items-center gap-1.5"><i class="fa-solid fa-list-check text-teal-600"></i> Registros correspondentes:</span>
                     <span id="export-records-count" class="bg-teal-600 text-white px-2 py-0.5 rounded-full text-xs font-black">0</span>
                 </div>
             </div>
 
-            <!-- BOTÕES DE EXPORTAÇÃO -->
             <div class="space-y-2 pt-1">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <button onclick="executeFilteredExport('excel')" class="w-full bg-[#0e8a44] hover:bg-emerald-700 text-white font-extrabold p-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow transition">
@@ -1062,7 +1105,6 @@
 
         let chartDiario, chartLocal, chartEntradasDev, chartMensal;
 
-        // Função de normalização para compatibilidade de datas entre Google Sheets e o App
         function normalizeDate(d) {
             if (!d) return '';
             const str = String(d).trim();
@@ -1080,7 +1122,6 @@
             return str;
         }
 
-        // Formatação legível para tabelas (DD/MM/AAAA)
         function formatDisplayDate(d) {
             if (!d) return '-';
             const norm = normalizeDate(d);
@@ -1091,7 +1132,6 @@
             return d;
         }
 
-        // UI FEEDBACK TOASTS E MODAIS
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -1148,7 +1188,34 @@
             btnCancel.addEventListener('click', handleCancel);
         }
 
-        // FUNÇÕES DO SISTEMA DE LOGIN
+        // LÓGICA DE EXIGÊNCIA DE COMPROVANTE NA "ENTRADA"
+        function toggleComprovanteRequirement() {
+            const tipoEl = document.getElementById('single-tipo');
+            const badgeEl = document.getElementById('comprovante-badge-required');
+            const compInput = document.getElementById('single-comprovante');
+
+            if (!tipoEl || !badgeEl || !compInput) return;
+
+            if (tipoEl.value === 'Entrada') {
+                badgeEl.classList.remove('hidden');
+                compInput.setAttribute('required', 'true');
+            } else {
+                badgeEl.classList.add('hidden');
+                compInput.removeAttribute('required');
+            }
+        }
+
+        // CONVERTER ARQUIVO EM BASE64
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                if (!file) return resolve('');
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
         function togglePassVisibility() {
             const passInput = document.getElementById('login-pass');
             const icon = document.getElementById('pass-toggle-icon');
@@ -1167,6 +1234,60 @@
                     icon.classList.add('fa-eye');
                 }
             }
+        }
+
+        function openResetPasswordModal() {
+            const modal = document.getElementById('modal-reset-pass');
+            const userInp = document.getElementById('reset-username');
+            const passInp = document.getElementById('reset-new-pass');
+            if (modal) {
+                if (userInp) userInp.value = '';
+                if (passInp) passInp.value = '';
+                modal.classList.remove('hidden');
+            }
+        }
+
+        function closeResetPasswordModal() {
+            const modal = document.getElementById('modal-reset-pass');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        async function handleResetPassword(e) {
+            if (e) e.preventDefault();
+            const u = document.getElementById('reset-username').value.trim().toLowerCase();
+            const newPass = document.getElementById('reset-new-pass').value.trim();
+
+            if (!u || !newPass) {
+                showToast('Preencha o usuário e a nova senha.', 'error');
+                return;
+            }
+
+            if (!USERS_DB[u]) {
+                showToast('Usuário não localizado no cadastro.', 'error');
+                return;
+            }
+
+            USERS_DB[u].pass = newPass;
+            localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
+
+            const activeUrl = getActiveScriptUrl();
+            if (navigator.onLine && activeUrl) {
+                fetch(activeUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'saveUsers', users: USERS_DB })
+                }).catch(err => console.error("Erro ao sincronizar nova senha:", err));
+            }
+
+            showToast('Senha redefinida com sucesso! Você já pode entrar.', 'success');
+            
+            const loginUserEl = document.getElementById('login-user');
+            const loginPassEl = document.getElementById('login-pass');
+            if (loginUserEl) loginUserEl.value = u;
+            if (loginPassEl) loginPassEl.value = newPass;
+
+            closeResetPasswordModal();
         }
 
         async function handleLoginSubmit(event) {
@@ -1197,7 +1318,6 @@
 
             const activeUrl = getActiveScriptUrl();
 
-            // Tentativa de sincronização com timeout rápido de 2.5s para não travar o login
             if (navigator.onLine && activeUrl) {
                 try {
                     const controller = new AbortController();
@@ -1215,7 +1335,6 @@
                 }
             }
 
-            // Validação de credenciais
             const userObj = USERS_DB[u];
             if (userObj && String(userObj.pass) === String(p)) {
                 currentUser = userObj;
@@ -1241,7 +1360,6 @@
         }
 
         function checkAuthSession() {
-            // Carregar usuários salvos previamente
             const savedUsers = localStorage.getItem('controle_agua_users');
             if (savedUsers) {
                 try { USERS_DB = { ...BASE_USERS, ...JSON.parse(savedUsers) }; } catch(e){}
@@ -1274,7 +1392,6 @@
             });
         }
 
-        // GESTÃO DE REDE E OFFLINE
         function initNetworkListeners() {
             window.addEventListener('online', updateNetworkStatus);
             window.addEventListener('offline', updateNetworkStatus);
@@ -1372,7 +1489,6 @@
             }
         }
 
-        // Sincronização periódica inteligente
         function initAutoSync() {
             setInterval(() => {
                 if (navigator.onLine && currentUser) {
@@ -1387,7 +1503,6 @@
             });
         }
 
-        // Inicialização robusta em qualquer ambiente
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', startApp);
         } else {
@@ -1428,6 +1543,7 @@
             if (expEndEl && !expEndEl.value) expEndEl.value = today;
 
             updateAllSelectsUI();
+            toggleComprovanteRequirement();
             buildBatchInputs();
             loadDataFromSheet();
             initCharts();
@@ -1729,7 +1845,7 @@
             if (iniContainer) {
                 iniContainer.innerHTML = '';
                 mainLocations.forEach(loc => {
-                    const val = (systemConfig.estoqueInicial && systemConfig.estoqueInicial[loc]) || 0;
+                    const val = (systemConfig.estoqueInicial && systemConfig.estoqueInicial[loc]) != null ? systemConfig.estoqueInicial[loc] : 0;
                     iniContainer.innerHTML += `
                         <div>
                             <label class="block text-[10px] font-bold text-slate-700 mb-0.5">${loc}:</label>
@@ -1743,7 +1859,7 @@
             if (iniVazContainer) {
                 iniVazContainer.innerHTML = '';
                 mainLocations.forEach(loc => {
-                    const val = (systemConfig.estoqueInicialVazios && systemConfig.estoqueInicialVazios[loc]) || 0;
+                    const val = (systemConfig.estoqueInicialVazios && systemConfig.estoqueInicialVazios[loc]) != null ? systemConfig.estoqueInicialVazios[loc] : 0;
                     iniVazContainer.innerHTML += `
                         <div>
                             <label class="block text-[10px] font-bold text-slate-700 mb-0.5">${loc}:</label>
@@ -1757,7 +1873,7 @@
             if (minContainer) {
                 minContainer.innerHTML = '';
                 mainLocations.forEach(loc => {
-                    const val = (systemConfig.estoqueMinimo && systemConfig.estoqueMinimo[loc]) || 200;
+                    const val = (systemConfig.estoqueMinimo && systemConfig.estoqueMinimo[loc]) != null ? systemConfig.estoqueMinimo[loc] : 200;
                     minContainer.innerHTML += `
                         <div>
                             <label class="block text-[10px] font-bold text-slate-700 mb-0.5">${loc}:</label>
@@ -1768,7 +1884,6 @@
             }
         }
 
-        // CÁLCULO E RENDERIZAÇÃO DO ESTOQUE
         function calculateStock() {
             const stock = {};
             mainLocations.forEach(loc => {
@@ -1869,7 +1984,6 @@
                 });
             }
 
-            // Gerenciar banner de estoque crítico no topo da tela
             if (criticalBanner) {
                 if (criticalLocs.length > 0) {
                     criticalBanner.classList.remove('hidden');
@@ -1907,7 +2021,6 @@
             }
         }
 
-        // DASHBOARD E GRÁFICOS
         function initCharts() {
             if (typeof Chart === 'undefined') {
                 console.warn('Biblioteca Chart.js indisponível no momento.');
@@ -2098,7 +2211,6 @@
             }
         }
 
-        // FORMULÁRIOS DE LANÇAMENTOS E SUBMISSOES
         function updateSubLocations() {
             const tipo = document.getElementById('single-tipo').value;
             const mainLoc = document.getElementById('single-local').value;
@@ -2195,6 +2307,7 @@
                         LocalPrincipal: selectedLoc,
                         LocalDetalhe: inp.dataset.loc,
                         Quantidade: val,
+                        Comprovante: '',
                         Observacao: `Consumo Detalhado ${selectedLoc}`,
                         Usuario: currentUser ? currentUser.name : 'Operador'
                     });
@@ -2215,16 +2328,37 @@
             updateBatchSummary();
         }
 
-        function handleSingleSubmit(e) {
+        async function handleSingleSubmit(e) {
             e.preventDefault();
+
+            const tipo = document.getElementById('single-tipo').value;
+            const compFileEl = document.getElementById('single-comprovante');
+            
+            // Validação estrita para "Entrada"
+            if (tipo === 'Entrada' && (!compFileEl.files || compFileEl.files.length === 0)) {
+                showToast('É obrigatório anexar um comprovante de recebimento para lançamentos de Entrada!', 'error');
+                return;
+            }
+
+            let comprovanteBase64 = '';
+            if (compFileEl.files && compFileEl.files[0]) {
+                try {
+                    comprovanteBase64 = await readFileAsBase64(compFileEl.files[0]);
+                } catch (err) {
+                    showToast('Erro ao carregar imagem do comprovante.', 'error');
+                    return;
+                }
+            }
+
             const timestampNow = new Date().toLocaleString('pt-BR');
             const record = {
                 DataRegistro: timestampNow,
                 Data: document.getElementById('single-data').value,
-                Tipo: document.getElementById('single-tipo').value,
+                Tipo: tipo,
                 LocalPrincipal: document.getElementById('single-local').value,
                 LocalDetalhe: document.getElementById('single-detalhe').value,
                 Quantidade: parseInt(document.getElementById('single-qtd').value) || 0,
+                Comprovante: comprovanteBase64,
                 Observacao: document.getElementById('single-obs').value || '-',
                 Usuario: currentUser ? currentUser.name : 'Operador'
             };
@@ -2233,6 +2367,7 @@
             document.getElementById('form-single').reset();
             document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
             updateSubLocations();
+            toggleComprovanteRequirement();
         }
 
         async function saveRecords(records) {
@@ -2331,11 +2466,12 @@
             const list = [...database].reverse().slice(0, 5);
 
             if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-xs text-slate-400">Nenhum lançamento.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="p-3 text-center text-xs text-slate-400">Nenhum lançamento.</td></tr>`;
                 return;
             }
 
             list.forEach((r, idx) => {
+                const compBtn = r.Comprovante ? `<a href="${r.Comprovante}" target="_blank" class="text-emerald-600 font-black text-xs hover:underline"><i class="fa-solid fa-file-image"></i> Ver Anexo</a>` : `<span class="text-slate-300 text-[10px]">-</span>`;
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-2" title="Gravado em: ${r.DataRegistro || '-'}">${formatDisplayDate(r.Data)}</td>
@@ -2343,6 +2479,7 @@
                         <td class="p-2">${r.LocalPrincipal || '-'}</td>
                         <td class="p-2">${r.LocalDetalhe || '-'}</td>
                         <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
+                        <td class="p-2 text-center">${compBtn}</td>
                         <td class="p-2 text-center"><button onclick="deleteRecord(${database.length - 1 - idx})" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>
                 `;
@@ -2355,12 +2492,13 @@
             tbody.innerHTML = '';
 
             if (database.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="p-3 text-center text-xs text-slate-400">Nenhum registro.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="p-3 text-center text-xs text-slate-400">Nenhum registro.</td></tr>`;
                 return;
             }
 
             database.forEach((r, idx) => {
                 const userName = r.Usuario || 'Não informado';
+                const compBtn = r.Comprovante ? `<a href="${r.Comprovante}" target="_blank" class="text-emerald-600 font-black text-xs hover:underline"><i class="fa-solid fa-file-image"></i> Ver Anexo</a>` : `<span class="text-slate-300 text-[10px]">-</span>`;
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-2" title="Gravado em: ${r.DataRegistro || '-'}">${formatDisplayDate(r.Data)}</td>
@@ -2368,6 +2506,7 @@
                         <td class="p-2">${r.LocalPrincipal || '-'}</td>
                         <td class="p-2 text-slate-500">${r.LocalDetalhe || '-'}</td>
                         <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
+                        <td class="p-2 text-center">${compBtn}</td>
                         <td class="p-2">
                             <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-800 px-2 py-0.5 rounded-full text-[10px] font-bold border border-slate-200">
                                 <i class="fa-solid fa-user-check text-sky-600 text-[9px]"></i> ${userName}
@@ -2378,7 +2517,7 @@
                 `;
             });
         }
-        // FUNÇÃO DE COMPARTILHAMENTO DE RESUMO NO WHATSAPP
+
         function shareDashboardWhatsApp() {
             const filterLoc = document.getElementById('dash-filter-local')?.value || 'Todos';
             const startDate = document.getElementById('dash-date-start')?.value || '';
@@ -2527,20 +2666,17 @@
             return database.filter(r => {
                 if (!r) return false;
 
-                // Filtro por período
                 if (byDate && (startDate || endDate)) {
                     const normDate = normalizeDate(r.Data);
                     if (startDate && normDate < startDate) return false;
                     if (endDate && normDate > endDate) return false;
                 }
 
-                // Filtro por local
                 if (filterLoc !== 'Todos') {
                     const rawLoc = (r.LocalPrincipal || '').trim().toLowerCase();
                     if (rawLoc !== filterLoc.trim().toLowerCase()) return false;
                 }
 
-                // Filtro por tipo
                 if (filterTipo !== 'Todos') {
                     const rawTipo = (r.Tipo || '').trim().toLowerCase();
                     if (rawTipo !== filterTipo.trim().toLowerCase()) return false;
@@ -2570,7 +2706,6 @@
                 return;
             }
 
-            // Mapeamento organizado com cabeçalhos amigáveis
             const exportRows = filteredData.map(r => ({
                 'Data Registro': r.DataRegistro || '-',
                 'Data Lançamento': formatDisplayDate(r.Data),
@@ -2578,6 +2713,7 @@
                 'Local Principal': r.LocalPrincipal || '-',
                 'Local Detalhe': r.LocalDetalhe || '-',
                 'Quantidade (Galões)': Number(r.Quantidade) || 0,
+                'Comprovante Anexado': r.Comprovante ? 'Sim' : 'Não',
                 'Observação': r.Observacao || '-',
                 'Usuário': r.Usuario || '-'
             }));
@@ -2613,16 +2749,10 @@
             closeExportModal();
         }
 
-        // Funções mantidas para compatibilidade direta
-        function exportToExcel() {
-            openExportModal('excel');
-        }
+        function exportToExcel() { openExportModal('excel'); }
+        function exportToCSV() { openExportModal('csv'); }
 
-        function exportToCSV() {
-            openExportModal('csv');
-        }
-
-        // FUNÇÕES DO PAINEL DO DESENVOLVEDOR (SUPERADMIN)
+        // PAINEL DO DESENVOLVEDOR (SUPERADMIN)
         function promptDevAccess() {
             const modal = document.getElementById('modal-master-auth');
             const passInput = document.getElementById('input-master-pass');
