@@ -89,7 +89,6 @@
             -webkit-text-fill-color: #94a3b8 !important;
         }
 
-        /* Estilo limpo para imagens de logo sem molduras ou sombras de fundo */
         .clean-logo {
             background: transparent !important;
             border: none !important;
@@ -341,13 +340,13 @@
             </div>
         </section>
 
-        <!-- 2. TELA – LANÇAMENTOS COM ANEXO DE COMPROVANTE -->
+        <!-- 2. TELA – LANÇAMENTOS (CAMPO DE COMPROVANTE APENAS PARA ENTRADA OU DEVOLUÇÃO) -->
         <section id="screen2" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
             <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex justify-between items-center">
                 <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
                     <i class="fa-solid fa-calendar-days"></i> 2. LANÇAMENTOS
                 </h2>
-                <span class="bg-blue-800 text-[10px] md:text-xs px-2.5 py-1 rounded-md text-blue-100">Comprovante obrigatório para Entrada</span>
+                <span class="bg-blue-800 text-[10px] md:text-xs px-2.5 py-1 rounded-md text-blue-100">Comprovante visível para Entrada e Devolução</span>
             </div>
 
             <form id="form-single" onsubmit="handleSingleSubmit(event)" class="space-y-4">
@@ -363,7 +362,7 @@
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-droplet text-blue-600"></i> TIPO DE LANÇAMENTO
                         </label>
-                        <select id="single-tipo" onchange="updateSubLocations(); toggleComprovanteRequirement();" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
+                        <select id="single-tipo" onchange="updateSubLocations(); toggleComprovanteVisibility();" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
                     </div>
 
                     <div>
@@ -389,15 +388,17 @@
                         <input type="number" id="single-qtd" min="1" placeholder="Ex: 35" required class="w-full p-2.5 border-2 border-emerald-300 bg-[#e8f8f2] text-emerald-900 font-extrabold text-xl rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
 
-                    <div>
+                    <!-- CAMPO DE ANEXO EXIBIDO SÓ PARA ENTRADA OU DEVOLUÇÃO -->
+                    <div id="container-comprovante" class="hidden">
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-paperclip text-blue-600"></i> ANEXAR COMPROVANTE
                             <span id="comprovante-badge-required" class="hidden text-[9px] bg-rose-600 text-white font-black px-1.5 py-0.5 rounded uppercase">Obrigatório</span>
+                            <span id="comprovante-badge-optional" class="hidden text-[9px] bg-slate-500 text-white font-black px-1.5 py-0.5 rounded uppercase">Opcional</span>
                         </label>
                         <input type="file" id="single-comprovante" accept="image/*,.pdf" class="w-full p-2 border border-slate-300 rounded-lg text-xs bg-slate-50 font-bold outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
-                    <div>
+                    <div id="container-observacao" class="md:col-span-2">
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
                             <i class="fa-solid fa-comment text-blue-600"></i> OBSERVAÇÃO (OPCIONAL)
                         </label>
@@ -410,7 +411,7 @@
                         <button type="submit" class="flex-1 sm:flex-none bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
                             <i class="fa-solid fa-check"></i> Registrar
                         </button>
-                        <button type="reset" onclick="setTimeout(() => { updateSubLocations(); toggleComprovanteRequirement(); }, 50)" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
+                        <button type="reset" onclick="setTimeout(() => { updateSubLocations(); toggleComprovanteVisibility(); }, 50)" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
                             <i class="fa-solid fa-broom"></i> Limpar
                         </button>
                     </div>
@@ -1188,24 +1189,42 @@
             btnCancel.addEventListener('click', handleCancel);
         }
 
-        // LÓGICA DE EXIGÊNCIA DE COMPROVANTE NA "ENTRADA"
-        function toggleComprovanteRequirement() {
+        // LÓGICA DE EXIBIÇÃO DO COMPROVANTE APENAS PARA ENTRADA OU DEVOLUÇÃO
+        function toggleComprovanteVisibility() {
             const tipoEl = document.getElementById('single-tipo');
-            const badgeEl = document.getElementById('comprovante-badge-required');
+            const containerEl = document.getElementById('container-comprovante');
+            const badgeReq = document.getElementById('comprovante-badge-required');
+            const badgeOpt = document.getElementById('comprovante-badge-optional');
             const compInput = document.getElementById('single-comprovante');
+            const obsContainer = document.getElementById('container-observacao');
 
-            if (!tipoEl || !badgeEl || !compInput) return;
+            if (!tipoEl || !containerEl || !badgeReq || !badgeOpt || !compInput) return;
 
-            if (tipoEl.value === 'Entrada') {
-                badgeEl.classList.remove('hidden');
+            const tipoVal = tipoEl.value;
+
+            if (tipoVal === 'Entrada') {
+                containerEl.classList.remove('hidden');
+                badgeReq.classList.remove('hidden');
+                badgeOpt.classList.add('hidden');
                 compInput.setAttribute('required', 'true');
-            } else {
-                badgeEl.classList.add('hidden');
+                if (obsContainer) obsContainer.classList.remove('md:col-span-2');
+            } else if (tipoVal === 'Devolução') {
+                containerEl.classList.remove('hidden');
+                badgeReq.classList.add('hidden');
+                badgeOpt.classList.remove('hidden');
                 compInput.removeAttribute('required');
+                if (obsContainer) obsContainer.classList.remove('md:col-span-2');
+            } else {
+                // Consumo -> Esconde o anexo de comprovante
+                containerEl.classList.add('hidden');
+                badgeReq.classList.add('hidden');
+                badgeOpt.classList.add('hidden');
+                compInput.removeAttribute('required');
+                compInput.value = '';
+                if (obsContainer) obsContainer.classList.add('md:col-span-2');
             }
         }
 
-        // CONVERTER ARQUIVO EM BASE64
         function readFileAsBase64(file) {
             return new Promise((resolve, reject) => {
                 if (!file) return resolve('');
@@ -1543,7 +1562,7 @@
             if (expEndEl && !expEndEl.value) expEndEl.value = today;
 
             updateAllSelectsUI();
-            toggleComprovanteRequirement();
+            toggleComprovanteVisibility();
             buildBatchInputs();
             loadDataFromSheet();
             initCharts();
@@ -2334,9 +2353,9 @@
             const tipo = document.getElementById('single-tipo').value;
             const compFileEl = document.getElementById('single-comprovante');
             
-            // Validação estrita para "Entrada"
+            // Validação de obrigatoriedade do comprovante APENAS para Entrada
             if (tipo === 'Entrada' && (!compFileEl.files || compFileEl.files.length === 0)) {
-                showToast('É obrigatório anexar um comprovante de recebimento para lançamentos de Entrada!', 'error');
+                showToast('É obrigatório anexar o comprovante para lançamentos de Entrada!', 'error');
                 return;
             }
 
@@ -2367,7 +2386,7 @@
             document.getElementById('form-single').reset();
             document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
             updateSubLocations();
-            toggleComprovanteRequirement();
+            toggleComprovanteVisibility();
         }
 
         async function saveRecords(records) {
