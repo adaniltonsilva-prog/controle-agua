@@ -1495,7 +1495,7 @@
             closeResetPasswordModal();
         }
 
-        // LOGIN CORRIGIDO SEM ZERAR NEM RECARREGAR A PÁGINA
+        // LOGIN CORRIGIDO: SINCRONIZA OS USUÁRIOS DA NUVEM ANTES DE VALIDAR EM QUALQUER DISPOSITIVO
         async function handleLoginSubmit(event) {
             if (event) event.preventDefault();
 
@@ -1519,14 +1519,40 @@
 
             if (submitBtn) {
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Verificando...</span>';
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Verificando na Nuvem...</span>';
             }
 
-            const savedUsers = localStorage.getItem('controle_agua_users');
-            if (savedUsers) {
-                try { USERS_DB = { ...BASE_USERS, ...JSON.parse(savedUsers) }; } catch(e){}
+            const activeUrl = getActiveScriptUrl();
+
+            // FORÇA A BUSCA DOS USUÁRIOS ATUALIZADOS NA PLANILHA GOOGLE SHEETS
+            if (navigator.onLine && activeUrl) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 3500);
+                    const fetchUrl = `${activeUrl}${activeUrl.includes('?') ? '&' : '?'}action=getUsers&t=${Date.now()}`;
+                    const res = await fetch(fetchUrl, { cache: 'no-store', signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    const remoteUsers = await res.json();
+                    
+                    if (remoteUsers && typeof remoteUsers === 'object' && Object.keys(remoteUsers).length > 0) {
+                        USERS_DB = { ...BASE_USERS, ...remoteUsers };
+                        localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
+                    }
+                } catch (err) {
+                    console.warn("Sem resposta da nuvem no login, usando cache local:", err);
+                    const savedUsers = localStorage.getItem('controle_agua_users');
+                    if (savedUsers) {
+                        try { USERS_DB = { ...BASE_USERS, ...JSON.parse(savedUsers) }; } catch(e){}
+                    }
+                }
+            } else {
+                const savedUsers = localStorage.getItem('controle_agua_users');
+                if (savedUsers) {
+                    try { USERS_DB = { ...BASE_USERS, ...JSON.parse(savedUsers) }; } catch(e){}
+                }
             }
 
+            // VALIDAÇÃO DAS CREDENCIAIS APÓS A BUSCA NA NUVEM
             const userObj = USERS_DB[u];
             if (userObj && String(userObj.pass) === String(p)) {
                 currentUser = userObj;
