@@ -20,9 +20,13 @@
     <script>
       // Registro seguro do Service Worker em HTTP/HTTPS
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
-        navigator.serviceWorker.register('sw.js').catch(function(err) {
-          console.warn('Registro de Service Worker ignorado no ambiente atual:', err);
-        });
+        navigator.serviceWorker.register('sw.js', { scope: './' })
+          .then(function(reg) {
+            console.log('Service Worker ativo com sucesso:', reg.scope);
+          })
+          .catch(function(err) {
+            console.warn('Registro de Service Worker ignorado ou arquivo sw.js ausente:', err);
+          });
       }
     </script>
 
@@ -1195,13 +1199,19 @@
                 submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Verificando...</span>';
             }
 
+            // 1. Sempre recarrega usuários locais do aparelho primeiro
+            const savedUsers = localStorage.getItem('controle_agua_users');
+            if (savedUsers) {
+                try { USERS_DB = { ...BASE_USERS, ...JSON.parse(savedUsers) }; } catch(e){}
+            }
+
             const activeUrl = getActiveScriptUrl();
 
-            // Tentativa de sincronização com timeout rápido de 2.5s para não travar o login
+            // 2. Se houver internet, tenta atualizar a lista da nuvem com timeout rápido (2s)
             if (navigator.onLine && activeUrl) {
                 try {
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 2500);
+                    const timeoutId = setTimeout(() => controller.abort(), 2000);
                     const fetchUrl = `${activeUrl}${activeUrl.includes('?') ? '&' : '?'}action=getUsers&t=${Date.now()}`;
                     const res = await fetch(fetchUrl, { cache: 'no-store', signal: controller.signal });
                     clearTimeout(timeoutId);
@@ -1211,11 +1221,11 @@
                         localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
                     }
                 } catch (err) {
-                    console.warn("Validação usando base local/cache:", err);
+                    console.warn("Validação usando base local/cache offline:", err);
                 }
             }
 
-            // Validação de credenciais
+            // 3. Validação de credenciais na memória local
             const userObj = USERS_DB[u];
             if (userObj && String(userObj.pass) === String(p)) {
                 currentUser = userObj;
@@ -2236,6 +2246,7 @@
         }
 
         async function saveRecords(records) {
+            // Adiciona na memória local e no cache imediatamente
             database.push(...records);
             localStorage.setItem('controle_agua_db', JSON.stringify(database));
 
@@ -2244,25 +2255,36 @@
             updateDashboard();
 
             const activeUrl = getActiveScriptUrl();
-            if (navigator.onLine && activeUrl) {
-                try {
-                    await fetch(activeUrl, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ action: 'addRecords', records: records })
-                    });
-                    showToast('Lançamento registrado e salvo na nuvem!', 'success');
-                    setTimeout(() => loadDataFromSheet(false), 1500);
-                } catch(e) {
-                    pendingQueue.push(...records);
-                    savePendingQueue();
-                    showToast('Conexão instável. Registro salvo no aparelho.', 'info');
-                }
-            } else {
+
+            // Se estiver sem conexão declarada, salva na fila offline imediatamente
+            if (!navigator.onLine || !activeUrl) {
                 pendingQueue.push(...records);
                 savePendingQueue();
-                showToast('Você está offline. Lançamento salvo no aparelho!', 'info');
+                showToast('Modo Offline: Lançamento guardado com segurança no aparelho!', 'info');
+                return;
+            }
+
+            // Se o aparelho reportar que está online, faz tentativa com timeout de 3 segundos
+            // para não travar caso o sinal de campo esteja fraco ou sem resposta
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+                await fetch(activeUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    signal: controller.signal,
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'addRecords', records: records })
+                });
+                clearTimeout(timeoutId);
+                showToast('Lançamento registrado e salvo na nuvem!', 'success');
+                setTimeout(() => loadDataFromSheet(false), 1500);
+            } catch(e) {
+                // Se der timeout ou erro de rede, guarda na fila offline
+                pendingQueue.push(...records);
+                savePendingQueue();
+                showToast('Sinal fraco. Lançamento guardado offline para envio posterior!', 'info');
             }
         }
 
@@ -2280,18 +2302,27 @@
             const activeUrl = getActiveScriptUrl();
             if (navigator.onLine && activeUrl) {
                 try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 3500);
                     const fetchUrl = `${activeUrl}${activeUrl.includes('?') ? '&' : '?'}t=${Date.now()}`;
-                    const res = await fetch(fetchUrl, { cache: 'no-store' });
+                    const res = await fetch(fetchUrl, { cache: 'no-store', signal: controller.signal });
+                    clearTimeout(timeoutId);
                     const data = await res.json();
                     
                     if (data && typeof data === 'object') {
+                        let remoteList = [];
                         if (Array.isArray(data.records)) {
-                            database = data.records;
-                            localStorage.setItem('controle_agua_db', JSON.stringify(database));
+                            remoteList = data.records;
                         } else if (Array.isArray(data)) {
-                            database = data;
+                            remoteList = data;
+                        }
+
+                        // Preserva registros pendentes que ainda não subiram para a nuvem
+                        if (remoteList.length > 0) {
+                            database = [...remoteList, ...pendingQueue];
                             localStorage.setItem('controle_agua_db', JSON.stringify(database));
                         }
+
                         if (data.users && typeof data.users === 'object') {
                             USERS_DB = { ...BASE_USERS, ...data.users };
                             localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
@@ -2304,7 +2335,7 @@
                 } catch (err) {
                     console.warn("Carregamento remoto:", err);
                     if (userTriggered) {
-                        showToast('Não foi possível sincronizar agora. Verifique sua conexão.', 'error');
+                        showToast('Sem resposta da nuvem. Operando com dados locais.', 'info');
                     }
                 }
             }
