@@ -213,6 +213,26 @@
         </div>
     </div>
 
+    <!-- MODAL DE VISUALIZAÇÃO DO COMPROVANTE -->
+    <div id="modal-view-proof" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[250] flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl p-5 max-w-lg w-full text-center space-y-4 shadow-2xl relative">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-black uppercase text-white flex items-center gap-2">
+                    <i class="fa-solid fa-file-image text-emerald-400"></i> Comprovante Anexado
+                </h3>
+                <button onclick="closeProofModal()" class="text-slate-400 hover:text-white text-2xl font-bold leading-none">&times;</button>
+            </div>
+            <div class="max-h-[60vh] overflow-auto rounded-xl border border-slate-800 bg-slate-950 flex items-center justify-center p-2">
+                <img id="proof-img-display" src="" alt="Comprovante" class="max-w-full h-auto rounded-lg object-contain">
+            </div>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeProofModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-4 py-2 rounded-xl text-xs">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- CABEÇALHO DA APLICAÇÃO -->
     <header class="bg-nav text-white px-3 md:px-6 py-2.5 shadow-md w-full">
         <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2.5">
@@ -340,7 +360,7 @@
             </div>
         </section>
 
-        <!-- 2. TELA – LANÇAMENTOS (CAMPO DE COMPROVANTE OBRIGATÓRIO PARA ENTRADA E DEVOLUÇÃO) -->
+        <!-- 2. TELA – LANÇAMENTOS -->
         <section id="screen2" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
             <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex justify-between items-center">
                 <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
@@ -388,7 +408,6 @@
                         <input type="number" id="single-qtd" min="1" placeholder="Ex: 35" required class="w-full p-2.5 border-2 border-emerald-300 bg-[#e8f8f2] text-emerald-900 font-extrabold text-xl rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
 
-                    <!-- CAMPO DE ANEXO ELEGANTE E COMBINANDO COM O DESIGN DO SISTEMA -->
                     <div id="container-comprovante" class="hidden">
                         <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center justify-between">
                             <span class="flex items-center gap-1"><i class="fa-solid fa-paperclip text-blue-600"></i> ANEXAR COMPROVANTE</span>
@@ -1196,7 +1215,27 @@
             btnCancel.addEventListener('click', handleCancel);
         }
 
-        // LÓGICA DE EXIBIÇÃO DO COMPROVANTE (OBRIGATÓRIO PARA ENTRADA E DEVOLUÇÃO)
+        // LÓGICA DE EXIBIÇÃO DO COMPROVANTE NO MODAL INTERNO
+        function viewProofModal(index) {
+            const record = database[index];
+            if (record && record.Comprovante) {
+                const imgEl = document.getElementById('proof-img-display');
+                const modalEl = document.getElementById('modal-view-proof');
+                if (imgEl && modalEl) {
+                    imgEl.src = record.Comprovante;
+                    modalEl.classList.remove('hidden');
+                }
+            } else {
+                showToast('Nenhum comprovante localizado para este registro.', 'error');
+            }
+        }
+
+        function closeProofModal() {
+            const modalEl = document.getElementById('modal-view-proof');
+            if (modalEl) modalEl.classList.add('hidden');
+        }
+
+        // VISIBILIDADE DO ANEXO APENAS PARA ENTRADA OU DEVOLUÇÃO
         function toggleComprovanteVisibility() {
             const tipoEl = document.getElementById('single-tipo');
             const containerEl = document.getElementById('container-comprovante');
@@ -1212,7 +1251,6 @@
                 compInput.setAttribute('required', 'true');
                 if (obsContainer) obsContainer.classList.remove('md:col-span-2');
             } else {
-                // Consumo -> Esconde o anexo de comprovante
                 containerEl.classList.add('hidden');
                 compInput.removeAttribute('required');
                 compInput.value = '';
@@ -1486,7 +1524,7 @@
                 showToast('Lançamentos pendentes sincronizados com a nuvem!', 'success');
             } catch(e) {
                 console.error("Falha ao sincronizar fila offline:", e);
-            } finally {
+            } flexy {
                 updateNetworkStatus();
             }
         }
@@ -2368,7 +2406,7 @@
             const tipo = document.getElementById('single-tipo').value;
             const compFileEl = document.getElementById('single-comprovante');
             
-            // Validação de obrigatoriedade para Entrada e Devolução
+            // Obrigatoriedade de comprovante para Entrada E Devolução
             if ((tipo === 'Entrada' || tipo === 'Devolução') && (!compFileEl.files || compFileEl.files.length === 0)) {
                 showToast(`É obrigatório anexar um comprovante para lançamentos de ${tipo}!`, 'error');
                 return;
@@ -2506,7 +2544,11 @@
             }
 
             list.forEach((r, idx) => {
-                const compBtn = r.Comprovante ? `<a href="${r.Comprovante}" target="_blank" class="text-emerald-600 font-black text-xs hover:underline"><i class="fa-solid fa-file-image"></i> Ver Anexo</a>` : `<span class="text-slate-300 text-[10px]">-</span>`;
+                const realIndex = database.length - 1 - idx;
+                const compBtn = r.Comprovante 
+                    ? `<button onclick="viewProofModal(${realIndex})" class="text-emerald-600 font-black text-xs hover:underline flex items-center justify-center gap-1 mx-auto"><i class="fa-solid fa-eye"></i> Ver Anexo</button>` 
+                    : `<span class="text-slate-300 text-[10px]">-</span>`;
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-2" title="Gravado em: ${r.DataRegistro || '-'}">${formatDisplayDate(r.Data)}</td>
@@ -2515,7 +2557,7 @@
                         <td class="p-2">${r.LocalDetalhe || '-'}</td>
                         <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
                         <td class="p-2 text-center">${compBtn}</td>
-                        <td class="p-2 text-center"><button onclick="deleteRecord(${database.length - 1 - idx})" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="p-2 text-center"><button onclick="deleteRecord(${realIndex})" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>
                 `;
             });
@@ -2533,7 +2575,10 @@
 
             database.forEach((r, idx) => {
                 const userName = r.Usuario || 'Não informado';
-                const compBtn = r.Comprovante ? `<a href="${r.Comprovante}" target="_blank" class="text-emerald-600 font-black text-xs hover:underline"><i class="fa-solid fa-file-image"></i> Ver Anexo</a>` : `<span class="text-slate-300 text-[10px]">-</span>`;
+                const compBtn = r.Comprovante 
+                    ? `<button onclick="viewProofModal(${idx})" class="text-emerald-600 font-black text-xs hover:underline flex items-center justify-center gap-1 mx-auto"><i class="fa-solid fa-eye"></i> Ver Anexo</button>` 
+                    : `<span class="text-slate-300 text-[10px]">-</span>`;
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="p-2" title="Gravado em: ${r.DataRegistro || '-'}">${formatDisplayDate(r.Data)}</td>
