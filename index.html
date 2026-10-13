@@ -340,13 +340,13 @@
             </div>
         </section>
 
-        <!-- 2. TELA – LANÇAMENTOS (CAMPO DE COMPROVANTE APENAS PARA ENTRADA OU DEVOLUÇÃO) -->
+        <!-- 2. TELA – LANÇAMENTOS (CAMPO DE COMPROVANTE OBRIGATÓRIO PARA ENTRADA E DEVOLUÇÃO) -->
         <section id="screen2" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
             <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex justify-between items-center">
                 <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
                     <i class="fa-solid fa-calendar-days"></i> 2. LANÇAMENTOS
                 </h2>
-                <span class="bg-blue-800 text-[10px] md:text-xs px-2.5 py-1 rounded-md text-blue-100">Comprovante visível para Entrada e Devolução</span>
+                <span class="bg-blue-800 text-[10px] md:text-xs px-2.5 py-1 rounded-md text-blue-100">Comprovante obrigatório para Entrada e Devolução</span>
             </div>
 
             <form id="form-single" onsubmit="handleSingleSubmit(event)" class="space-y-4">
@@ -388,14 +388,21 @@
                         <input type="number" id="single-qtd" min="1" placeholder="Ex: 35" required class="w-full p-2.5 border-2 border-emerald-300 bg-[#e8f8f2] text-emerald-900 font-extrabold text-xl rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
 
-                    <!-- CAMPO DE ANEXO EXIBIDO SÓ PARA ENTRADA OU DEVOLUÇÃO -->
+                    <!-- CAMPO DE ANEXO ELEGANTE E COMBINANDO COM O DESIGN DO SISTEMA -->
                     <div id="container-comprovante" class="hidden">
-                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-paperclip text-blue-600"></i> ANEXAR COMPROVANTE
-                            <span id="comprovante-badge-required" class="hidden text-[9px] bg-rose-600 text-white font-black px-1.5 py-0.5 rounded uppercase">Obrigatório</span>
-                            <span id="comprovante-badge-optional" class="hidden text-[9px] bg-slate-500 text-white font-black px-1.5 py-0.5 rounded uppercase">Opcional</span>
+                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center justify-between">
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-paperclip text-blue-600"></i> ANEXAR COMPROVANTE</span>
+                            <span id="comprovante-badge-required" class="text-[9px] bg-rose-600 text-white font-black px-1.5 py-0.5 rounded uppercase">Obrigatório</span>
                         </label>
-                        <input type="file" id="single-comprovante" accept="image/*,.pdf" class="w-full p-2 border border-slate-300 rounded-lg text-xs bg-slate-50 font-bold outline-none focus:ring-2 focus:ring-blue-500">
+                        <div class="relative flex items-center">
+                            <input type="file" id="single-comprovante" accept="image/*,.pdf" onchange="updateFileLabel(this)" class="hidden">
+                            <label for="single-comprovante" class="w-full flex items-center justify-between p-2.5 border-2 border-sky-300 bg-sky-50/60 hover:bg-sky-100/80 rounded-xl cursor-pointer transition shadow-sm">
+                                <span id="file-chosen-text" class="text-xs font-bold text-sky-950 truncate max-w-[200px]">Selecionar comprovante...</span>
+                                <span class="bg-sky-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg uppercase flex items-center gap-1 shadow">
+                                    <i class="fa-solid fa-upload"></i> Arquivo
+                                </span>
+                            </label>
+                        </div>
                     </div>
 
                     <div id="container-observacao" class="md:col-span-2">
@@ -411,7 +418,7 @@
                         <button type="submit" class="flex-1 sm:flex-none bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
                             <i class="fa-solid fa-check"></i> Registrar
                         </button>
-                        <button type="reset" onclick="setTimeout(() => { updateSubLocations(); toggleComprovanteVisibility(); }, 50)" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
+                        <button type="reset" onclick="setTimeout(() => { updateSubLocations(); toggleComprovanteVisibility(); resetFileLabel(); }, 50)" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
                             <i class="fa-solid fa-broom"></i> Limpar
                         </button>
                     </div>
@@ -1189,39 +1196,47 @@
             btnCancel.addEventListener('click', handleCancel);
         }
 
-        // LÓGICA DE EXIBIÇÃO DO COMPROVANTE APENAS PARA ENTRADA OU DEVOLUÇÃO
+        // LÓGICA DE EXIBIÇÃO DO COMPROVANTE (OBRIGATÓRIO PARA ENTRADA E DEVOLUÇÃO)
         function toggleComprovanteVisibility() {
             const tipoEl = document.getElementById('single-tipo');
             const containerEl = document.getElementById('container-comprovante');
-            const badgeReq = document.getElementById('comprovante-badge-required');
-            const badgeOpt = document.getElementById('comprovante-badge-optional');
             const compInput = document.getElementById('single-comprovante');
             const obsContainer = document.getElementById('container-observacao');
 
-            if (!tipoEl || !containerEl || !badgeReq || !badgeOpt || !compInput) return;
+            if (!tipoEl || !containerEl || !compInput) return;
 
             const tipoVal = tipoEl.value;
 
-            if (tipoVal === 'Entrada') {
+            if (tipoVal === 'Entrada' || tipoVal === 'Devolução') {
                 containerEl.classList.remove('hidden');
-                badgeReq.classList.remove('hidden');
-                badgeOpt.classList.add('hidden');
                 compInput.setAttribute('required', 'true');
-                if (obsContainer) obsContainer.classList.remove('md:col-span-2');
-            } else if (tipoVal === 'Devolução') {
-                containerEl.classList.remove('hidden');
-                badgeReq.classList.add('hidden');
-                badgeOpt.classList.remove('hidden');
-                compInput.removeAttribute('required');
                 if (obsContainer) obsContainer.classList.remove('md:col-span-2');
             } else {
                 // Consumo -> Esconde o anexo de comprovante
                 containerEl.classList.add('hidden');
-                badgeReq.classList.add('hidden');
-                badgeOpt.classList.add('hidden');
                 compInput.removeAttribute('required');
                 compInput.value = '';
+                resetFileLabel();
                 if (obsContainer) obsContainer.classList.add('md:col-span-2');
+            }
+        }
+
+        function updateFileLabel(input) {
+            const textEl = document.getElementById('file-chosen-text');
+            if (!textEl) return;
+            if (input.files && input.files.length > 0) {
+                textEl.innerText = input.files[0].name;
+                textEl.classList.add('text-emerald-700');
+            } else {
+                resetFileLabel();
+            }
+        }
+
+        function resetFileLabel() {
+            const textEl = document.getElementById('file-chosen-text');
+            if (textEl) {
+                textEl.innerText = 'Selecionar comprovante...';
+                textEl.classList.remove('text-emerald-700');
             }
         }
 
@@ -2353,9 +2368,9 @@
             const tipo = document.getElementById('single-tipo').value;
             const compFileEl = document.getElementById('single-comprovante');
             
-            // Validação de obrigatoriedade do comprovante APENAS para Entrada
-            if (tipo === 'Entrada' && (!compFileEl.files || compFileEl.files.length === 0)) {
-                showToast('É obrigatório anexar o comprovante para lançamentos de Entrada!', 'error');
+            // Validação de obrigatoriedade para Entrada e Devolução
+            if ((tipo === 'Entrada' || tipo === 'Devolução') && (!compFileEl.files || compFileEl.files.length === 0)) {
+                showToast(`É obrigatório anexar um comprovante para lançamentos de ${tipo}!`, 'error');
                 return;
             }
 
@@ -2387,6 +2402,7 @@
             document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
             updateSubLocations();
             toggleComprovanteVisibility();
+            resetFileLabel();
         }
 
         async function saveRecords(records) {
