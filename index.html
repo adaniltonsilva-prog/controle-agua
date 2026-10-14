@@ -343,7 +343,7 @@
     <header class="bg-nav-dark text-white px-3.5 md:px-6 py-2 shadow-lg w-full sticky top-0 z-40 h-[65px] flex items-center">
         <div class="max-w-[1800px] w-full mx-auto flex justify-between items-center gap-2">
             
-            <!-- BRANDING: LOGO E NOME EM LINHA (LADO A LADO) -->
+            <!-- BRANDING: LOGO E NOME EM LINHA -->
             <div class="flex items-center gap-2.5 shrink-0">
                 <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OP" class="brand-logo-clean h-8 sm:h-9 md:h-10">
                 <div class="flex flex-col justify-center leading-none">
@@ -422,13 +422,13 @@
             </div>
         </aside>
 
-        <!-- ÁREA DE CONTEÚDO PRINCIPAL (COM ROLAGEM INDEPENDENTE) -->
+        <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
         <main class="flex-1 p-3.5 sm:p-5 md:p-6 text-slate-800 w-full min-w-0 lg:ml-64 h-[calc(100vh-65px)] overflow-y-auto pb-12">
 
             <!-- 1. TELA – MENU PRINCIPAL -->
             <section id="screen1" class="screen-content space-y-4 md:space-y-6">
                 
-                <!-- BANNER PAINEL OPERACIONAL FIXO AO ROLAR A TELA NA INICIAL -->
+                <!-- BANNER PAINEL OPERACIONAL FIXO AO ROLAR A TELA -->
                 <div class="banner-op text-white p-4 sm:p-5 md:p-6 rounded-3xl shadow-2xl flex flex-col space-y-3 sticky top-0 z-20 backdrop-blur-md">
                     <div class="flex justify-between items-center w-full relative">
                         <span class="inline-block bg-sky-500/20 backdrop-blur-md text-sky-200 border border-sky-400/40 text-[10px] sm:text-xs uppercase font-black px-3 py-1 rounded-full tracking-widest shadow-sm">
@@ -549,21 +549,21 @@
 
             <!-- 2. TELA – LANÇAMENTOS -->
             <section id="screen2" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
-                <!-- CABEÇALHO DA TELA COM BOTÃO VOLTAR -->
-                <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5 shadow-lg">
+                <!-- CABEÇALHO REORGANIZADO -->
+                <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-lg">
                     <div class="flex items-center gap-2.5">
-                        <button onclick="switchScreen('screen1')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                        <button onclick="switchScreen('screen1')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shrink-0">
                             <i class="fa-solid fa-arrow-left"></i> Voltar
                         </button>
-                        <h2 class="text-base md:text-lg font-black uppercase flex items-center gap-2">
-                            <i class="fa-solid fa-calendar-days"></i> 2. LANÇAMENTOS
+                        <h2 class="text-sm md:text-base font-black uppercase tracking-wide">
+                            LANÇAMENTOS
                         </h2>
                     </div>
 
-                    <!-- AJUSTE COMPACTO DA BADGE DE COMPROVANTE OBRIGATÓRIO -->
-                    <span class="bg-blue-950/80 text-[10px] md:text-xs px-3 py-1 rounded-full text-blue-100 font-bold border border-blue-700/50 max-w-full truncate">
-                        Comprovante obrigatório p/ Entrada e Devolução
-                    </span>
+                    <div class="bg-blue-950/80 text-blue-100 text-[10px] md:text-xs font-bold px-3 py-1 rounded-full border border-blue-700/50 flex items-center gap-1.5">
+                        <i class="fa-solid fa-paperclip text-sky-400"></i>
+                        <span>Comprovante obrigatório p/ Entrada e Devolução</span>
+                    </div>
                 </div>
 
                 <form id="form-single" onsubmit="handleSingleSubmit(event)" class="space-y-4">
@@ -671,11 +671,11 @@
             <section id="screen3" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
                 <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full shadow-lg">
                     <div class="flex items-center gap-2.5">
-                        <button onclick="switchScreen('screen2')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                        <button onclick="switchScreen('screen2')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shrink-0">
                             <i class="fa-solid fa-arrow-left"></i> Voltar
                         </button>
                         <h2 id="batch-screen-title" class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
-                            <i class="fa-solid fa-building"></i> 3. CONSUMO DETALHADO
+                            <i class="fa-solid fa-building"></i> CONSUMO DETALHADO
                         </h2>
                     </div>
                     
@@ -725,13 +725,13 @@
 
             <!-- 4. TELA – ESTOQUE DA APLICAÇÃO COM BOTÃO VOLTAR -->
             <section id="screen4" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
-                <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex justify-between items-center shadow-lg">
+                <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-2.5 shadow-lg">
                     <div class="flex items-center gap-2.5">
-                        <button onclick="switchScreen('screen1')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                        <button onclick="switchScreen('screen1')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shrink-0">
                             <i class="fa-solid fa-arrow-left"></i> Voltar
                         </button>
-                        <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
-                            <i class="fa-solid fa-cubes"></i> 4. ESTOQUE
+                        <h2 class="text-base md:text-lg font-black uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-cubes"></i> ESTOQUE
                         </h2>
                     </div>
                     <span class="bg-blue-900/80 text-[10px] md:text-xs px-3 py-1 rounded-full text-blue-100 font-bold border border-blue-700/50">Indicadores</span>
@@ -761,39 +761,40 @@
                 </div>
             </section>
 
-            <!-- 5. TELA – DASHBOARD COM BOTÃO VOLTAR -->
+            <!-- 5. TELA – DASHBOARD COM BOTÃO VOLTAR E CALENDÁRIO PADRONIZADO -->
             <section id="screen5" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
                 <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full shadow-lg">
                     <div class="flex items-center gap-2.5">
-                        <button onclick="switchScreen('screen1')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                        <button onclick="switchScreen('screen1')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shrink-0">
                             <i class="fa-solid fa-arrow-left"></i> Voltar
                         </button>
                         <div>
-                            <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
-                                <i class="fa-solid fa-chart-line"></i> 5. DASHBOARD COMPLETO
+                            <h2 class="text-base md:text-lg font-black uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line"></i> DASHBOARD COMPLETO
                             </h2>
-                            <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
+                            <p class="text-[11px] text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
                         </div>
                     </div>
                     
+                    <!-- CALENDÁRIOS PADRONIZADOS -->
                     <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2 rounded-xl flex flex-wrap items-center gap-2 text-xs font-semibold">
-                        <div class="grid grid-cols-2 gap-1.5 bg-blue-950/60 p-1.5 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
-                            <div class="flex items-center gap-1 min-w-0">
-                                <span class="text-blue-200 font-bold uppercase text-[9px] shrink-0">DE:</span>
-                                <input type="date" id="dash-date-start" onchange="updateDashboard()" class="bg-white text-slate-800 px-1.5 py-1 rounded font-bold text-[11px] outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0">
+                        <div class="grid grid-cols-2 gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">DE:</span>
+                                <input type="date" id="dash-date-start" onchange="updateDashboard()" class="w-full p-2 border rounded-xl text-xs font-bold text-slate-800 bg-white outline-none focus:ring-2 focus:ring-sky-400">
                             </div>
-                            <div class="flex items-center gap-1 min-w-0">
-                                <span class="text-blue-200 font-bold uppercase text-[9px] shrink-0">ATÉ:</span>
-                                <input type="date" id="dash-date-end" onchange="updateDashboard()" class="bg-white text-slate-800 px-1.5 py-1 rounded font-bold text-[11px] outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">ATÉ:</span>
+                                <input type="date" id="dash-date-end" onchange="updateDashboard()" class="w-full p-2 border rounded-xl text-xs font-bold text-slate-800 bg-white outline-none focus:ring-2 focus:ring-sky-400">
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between sm:justify-start gap-1.5 bg-blue-950/60 p-1.5 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
-                            <span class="text-blue-200 font-bold uppercase text-[9px] shrink-0">LOCAL:</span>
-                            <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 px-1.5 py-1 rounded font-bold text-[11px] outline-none focus:ring-2 focus:ring-sky-400 w-full sm:w-28 min-w-0"></select>
+                        <div class="flex items-center justify-between sm:justify-start gap-1.5 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
+                            <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">LOCAL:</span>
+                            <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-2 rounded-xl font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full sm:w-28 min-w-0"></select>
                         </div>
 
-                        <button onclick="shareDashboardWhatsApp()" class="w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-slate-950 font-black px-3 py-1.5 rounded-lg text-xs flex items-center justify-center gap-1 shadow transition shrink-0" title="Compartilhar resumo no WhatsApp">
+                        <button onclick="shareDashboardWhatsApp()" class="w-full sm:w-auto bg-[#25D366] hover:bg-[#20ba5a] text-slate-950 font-black px-3.5 py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow transition shrink-0" title="Compartilhar resumo no WhatsApp">
                             <i class="fa-brands fa-whatsapp text-sm"></i> <span>WhatsApp</span>
                         </button>
                     </div>
@@ -910,7 +911,7 @@
             <section id="screen6" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
                 <div class="bg-[#6f42c1] text-white p-3.5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-lg">
                     <div class="flex items-center gap-2.5">
-                        <button onclick="switchScreen('screen1')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                        <button onclick="switchScreen('screen1')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shrink-0">
                             <i class="fa-solid fa-arrow-left"></i> Voltar
                         </button>
                         <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
@@ -2019,9 +2020,7 @@
             if (targetScreen) targetScreen.classList.remove('hidden');
 
             document.querySelectorAll('.nav-btn, .sidebar-btn').forEach(el => el.classList.remove('active'));
-            const activeNav = document.getElementById(`nav-${screenId}`);
             const activeSideNav = document.getElementById(`side-nav-${screenId}`);
-            if (activeNav) activeNav.classList.add('active');
             if (activeSideNav) activeSideNav.classList.add('active');
 
             if (screenId === 'screen3') buildBatchInputs();
