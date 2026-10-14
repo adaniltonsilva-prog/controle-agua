@@ -178,12 +178,6 @@
         <span id="pending-badge" class="bg-slate-900 text-amber-400 px-2.5 py-0.5 rounded-full text-[10px] font-black">0 pendentes</span>
     </div>
 
-    <!-- BANNER DE ALERTA DE ESTOQUE CRÍTICO -->
-    <div id="critical-stock-banner" class="hidden bg-rose-600 text-white text-xs font-bold px-4 py-2 text-center flex justify-between items-center z-[109] shadow-md transition-all">
-        <span id="critical-stock-text" class="flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation text-amber-300"></i> Atenção: Estoque Crítico detectado!</span>
-        <button onclick="switchScreen('screen4')" class="bg-white text-rose-700 hover:bg-rose-100 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shadow transition">Ver Estoque</button>
-    </div>
-
     <!-- NOTIFICAÇÃO TOAST MODERNA -->
     <div id="toast-container" class="fixed top-4 right-4 z-[200] space-y-2 pointer-events-none max-w-sm w-full px-4 sm:px-0"></div>
 
@@ -346,64 +340,64 @@
     </div>
 
     <!-- CABEÇALHO SUPERIOR EXECUTIVO -->
-    <header class="bg-nav-dark text-white px-3.5 md:px-6 py-2.5 shadow-lg w-full sticky top-0 z-40 h-[65px] flex items-center">
+    <header class="bg-nav-dark text-white px-3 md:px-6 py-2 shadow-lg w-full sticky top-0 z-40 h-[65px] flex items-center">
         <div class="max-w-[1800px] w-full mx-auto flex justify-between items-center gap-2">
             
-            <!-- LOGO OP SEM MOLDURA/QUADRADO + NOME E SUBTÍTULO "CONTROLE DE ÁGUA" -->
-            <div class="flex items-center gap-3">
+            <!-- LOGO OP SEM MOLDURA + "OUD PRIME" LADO A LADO -->
+            <div class="flex items-center gap-2.5 shrink-0">
                 <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OP" class="brand-logo-clean h-8 md:h-10">
-                <div class="leading-none">
-                    <h1 class="text-sm md:text-lg font-black uppercase tracking-wider text-white">
-                        OUD PRIME
-                    </h1>
-                    <p class="text-[9px] md:text-[11px] text-sky-400 font-bold uppercase tracking-widest mt-0.5">
+                <div class="flex flex-col justify-center">
+                    <div class="flex items-center gap-1.5 leading-none">
+                        <span class="text-xs sm:text-base font-black tracking-wider text-white whitespace-nowrap">OUD PRIME</span>
+                    </div>
+                    <p class="text-[8px] sm:text-[10px] text-sky-400 font-bold uppercase tracking-widest mt-0.5 whitespace-nowrap">
                         CONTROLE DE ÁGUA
                     </p>
                 </div>
             </div>
 
-            <!-- NAVEGAÇÃO SUPERIOR RESPONSIVA MÓVEL -->
-            <nav class="lg:hidden flex items-center gap-1 text-xs overflow-x-auto max-w-[40vw] pb-0.5 scrollbar-none">
-                <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-2.5 py-1 flex items-center gap-1">
-                    <i class="fa-solid fa-house"></i> Menu
+            <!-- NAVEGAÇÃO MÓVEL EM BARRINHA DE SCROLL -->
+            <nav class="lg:hidden flex items-center gap-1 text-xs overflow-x-auto max-w-[35vw] pb-0.5 scrollbar-none">
+                <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-2 py-1 flex items-center gap-1 text-[11px]">
+                    <i class="fa-solid fa-house"></i> Início
                 </button>
-                <button onclick="switchScreen('screen2')" id="nav-screen2" class="nav-btn px-2.5 py-1 flex items-center gap-1">
+                <button onclick="switchScreen('screen2')" id="nav-screen2" class="nav-btn px-2 py-1 flex items-center gap-1 text-[11px]">
                     <i class="fa-solid fa-pen-to-square"></i> Lançamentos
                 </button>
-                <button onclick="switchScreen('screen4')" id="nav-screen4" class="nav-btn px-2.5 py-1 flex items-center gap-1">
+                <button onclick="switchScreen('screen4')" id="nav-screen4" class="nav-btn px-2 py-1 flex items-center gap-1 text-[11px]">
                     <i class="fa-solid fa-boxes-stacked"></i> Estoque
                 </button>
-                <button onclick="switchScreen('screen5')" id="nav-screen5" class="nav-btn adm-only px-2.5 py-1 flex items-center gap-1">
+                <button onclick="switchScreen('screen5')" id="nav-screen5" class="nav-btn adm-only px-2 py-1 flex items-center gap-1 text-[11px]">
                     <i class="fa-solid fa-chart-line"></i> Dashboard
                 </button>
-                <button onclick="switchScreen('screen6')" id="nav-screen6" class="nav-btn adm-only px-2.5 py-1 flex items-center gap-1">
+                <button onclick="switchScreen('screen6')" id="nav-screen6" class="nav-btn adm-only px-2 py-1 flex items-center gap-1 text-[11px]">
                     <i class="fa-solid fa-database"></i> Base
                 </button>
             </nav>
 
-            <!-- EXCLUSIVAMENTE OS 3 ÍCONES DE AÇÃO SEGUIDOS DA IDENTIFICAÇÃO DO USUÁRIO -->
-            <div class="flex items-center gap-1.5 md:gap-2.5">
+            <!-- AÇÕES E IDENTIFICAÇÃO DO USUÁRIO DA DIREITA -->
+            <div class="flex items-center gap-1 sm:gap-2">
                 <!-- 1. NOTIFICAÇÕES -->
-                <button onclick="requestNotificationPermission()" title="Ativar Notificações" class="w-8 h-8 md:w-9 md:h-9 bg-slate-800/80 hover:bg-slate-700 text-amber-300 border border-slate-700/60 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center transition shadow">
+                <button onclick="requestNotificationPermission()" title="Ativar Notificações" class="w-8 h-8 md:w-9 md:h-9 bg-slate-800/80 hover:bg-slate-700 text-amber-300 border border-slate-700/60 rounded-xl text-xs font-bold flex items-center justify-center transition shadow shrink-0">
                     <i class="fa-solid fa-bell"></i>
                 </button>
                 
                 <!-- 2. SINCRONIZAÇÃO -->
-                <button onclick="loadDataFromSheet(true)" title="Sincronizar Dados na Nuvem" class="w-8 h-8 md:w-9 md:h-9 bg-slate-800/80 hover:bg-slate-700 text-sky-300 border border-slate-700/60 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center transition shadow">
+                <button onclick="loadDataFromSheet(true)" title="Sincronizar Dados" class="w-8 h-8 md:w-9 md:h-9 bg-slate-800/80 hover:bg-slate-700 text-sky-300 border border-slate-700/60 rounded-xl text-xs font-bold flex items-center justify-center transition shadow shrink-0">
                     <i id="sync-icon-desktop" class="fa-solid fa-arrows-rotate"></i>
                 </button>
 
-                <!-- 3. SAIR DO SISTEMA -->
-                <button onclick="handleLogout()" title="Sair do Sistema" class="w-8 h-8 md:w-9 md:h-9 bg-rose-950/50 hover:bg-rose-900/80 text-rose-300 border border-rose-800/60 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center transition shadow">
+                <!-- 3. SAIR -->
+                <button onclick="handleLogout()" title="Sair do Sistema" class="w-8 h-8 md:w-9 md:h-9 bg-rose-950/50 hover:bg-rose-900/80 text-rose-300 border border-rose-800/60 rounded-xl text-xs font-bold flex items-center justify-center transition shadow shrink-0">
                     <i class="fa-solid fa-right-from-bracket"></i>
                 </button>
 
-                <!-- IDENTIFICAÇÃO DO USUÁRIO AUTENTICADO -->
-                <div id="user-badge-container" class="ml-1 bg-slate-900/90 border border-slate-800 text-slate-200 text-xs px-2.5 py-1 md:px-3 md:py-1.5 rounded-xl font-bold flex items-center gap-2 shadow-inner">
-                    <div class="w-6 h-6 rounded-lg bg-sky-600/30 text-sky-400 border border-sky-500/40 flex items-center justify-center text-[11px] font-black"><i class="fa-solid fa-user"></i></div>
+                <!-- USUÁRIO AUTENTICADO -->
+                <div id="user-badge-container" class="bg-slate-900/90 border border-slate-800 text-slate-200 text-xs px-2 py-1 md:px-3 md:py-1.5 rounded-xl font-bold flex items-center gap-1.5 shadow-inner shrink-0">
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-sky-600/30 text-sky-400 border border-sky-500/40 flex items-center justify-center text-[10px] font-black"><i class="fa-solid fa-user"></i></div>
                     <div class="hidden sm:block text-left leading-tight">
-                        <span id="user-display-name" class="block font-bold text-white text-xs">Carregando...</span>
-                        <span id="user-display-role" class="block text-[9px] text-sky-400 font-bold uppercase">Usuário</span>
+                        <span id="user-display-name" class="block font-bold text-white text-[11px] truncate max-w-[90px]">Carregando...</span>
+                        <span id="user-display-role" class="block text-[8px] text-sky-400 font-bold uppercase">Usuário</span>
                     </div>
                 </div>
             </div>
@@ -411,11 +405,11 @@
         </div>
     </header>
 
-    <!-- CORPO PRINCIPAL COM SIDEBAR FIXA NO DESKTOP -->
-    <div class="flex-1 flex max-w-[1800px] w-full mx-auto relative">
+    <!-- CORPO PRINCIPAL COM SIDEBAR TOTALMENTE FIXA E SEM BARRA DE ROLAGEM NO DESKTOP -->
+    <div class="flex-1 flex max-w-[1800px] w-full mx-auto relative overflow-hidden">
 
-        <!-- SIDEBAR FIXA NO DESKTOP COM ROLAGEM INDEPENDENTE -->
-        <aside class="hidden lg:flex flex-col w-64 bg-sidebar p-4 space-y-2 shrink-0 fixed top-[65px] left-0 h-[calc(100vh-65px)] overflow-y-auto z-30">
+        <!-- SIDEBAR FIXA SEM BARRA DE ROLAGEM -->
+        <aside class="hidden lg:flex flex-col w-64 bg-sidebar p-4 space-y-2 shrink-0 fixed top-[65px] left-0 h-[calc(100vh-65px)] overflow-hidden z-30">
             <div class="text-[10px] font-black uppercase text-slate-500 tracking-wider px-3 pt-2 pb-1">Navegação</div>
             
             <button onclick="switchScreen('screen1')" id="side-nav-screen1" class="sidebar-btn active w-full px-3.5 py-3 flex items-center gap-3 text-sm">
@@ -449,7 +443,7 @@
             </div>
         </aside>
 
-        <!-- ÁREA DE CONTEÚDO PRINCIPAL COM DESLOCAMENTO NO DESKTOP PARA SIDEBAR FIXA -->
+        <!-- ÁREA DE CONTEÚDO PRINCIPAL (COM ROLAGEM INDEPENDENTE) -->
         <main class="flex-1 p-3.5 sm:p-5 md:p-6 text-slate-800 w-full min-w-0 lg:ml-64 h-[calc(100vh-65px)] overflow-y-auto">
 
             <!-- 1. TELA – MENU PRINCIPAL -->
@@ -469,7 +463,7 @@
                     </div>
                 </div>
 
-                <!-- APENAS OS 4 MÓDULOS OPERACIONAIS PRINCIPAIS NA TELA INICIAL (SEM CONFIGS E RELATÓRIOS) -->
+                <!-- 4 MÓDULOS OPERACIONAIS DA TELA INICIAL -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4.5">
                     <!-- 1. LANÇAMENTOS -->
                     <div onclick="switchScreen('screen2')" class="card-module cursor-pointer bg-gradient-to-r from-[#0284c7] to-[#0369a1] text-white p-3.5 sm:p-4 md:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[80px] sm:min-h-[95px]">
@@ -1340,11 +1334,16 @@
         }
 
         function checkAndTriggerStockPush(stock) {
+            const criticalLocs = [];
             mainLocations.forEach(loc => {
                 const s = stock[loc];
                 if (s && s.cheios < s.min) {
+                    criticalLocs.push(`${loc} (${s.cheios}/${s.min} gal.)`);
                     if (!notifiedCriticalLocs.has(loc)) {
                         notifiedCriticalLocs.add(loc);
+                        // ALERTA EM NOTIFICAÇÃO TOAST NO APP
+                        showToast(`⚠️ ESTOQUE CRÍTICO: ${loc} está com apenas ${s.cheios} galões!`, 'error');
+                        // NOTIFICAÇÃO PUSH DO SISTEMA OPERACIONAL
                         triggerLocalPushNotification(
                             '⚠️ ESTOQUE CRÍTICO DETECTADO!',
                             `O local ${loc} está com apenas ${s.cheios} galões (Mínimo: ${s.min}).`
@@ -2380,19 +2379,12 @@
             const stock = calculateStock();
             const cardContainer = document.getElementById('stock-cards-container');
             const tbody = document.getElementById('stock-summary-table');
-            const criticalBanner = document.getElementById('critical-stock-banner');
-            const criticalText = document.getElementById('critical-stock-text');
-
-            const criticalLocs = [];
 
             if (cardContainer) {
                 cardContainer.innerHTML = '';
                 mainLocations.forEach(loc => {
                     const s = stock[loc] || { inicial: 0, inicialVazios: 0, min: 200, cheios: 0, vazios: 0, entrada: 0, consumo: 0, devolucao: 0 };
                     const isNormal = s.cheios >= s.min;
-                    if (!isNormal) {
-                        criticalLocs.push({ name: loc, cheios: s.cheios, min: s.min });
-                    }
                     const statusClass = isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800 animate-pulse';
                     const statusText = isNormal ? '● NORMAL' : '● CRÍTICO (BAIXO)';
 
@@ -2428,18 +2420,6 @@
                         </div>
                     `;
                 });
-            }
-
-            if (criticalBanner) {
-                if (criticalLocs.length > 0) {
-                    criticalBanner.classList.remove('hidden');
-                    if (criticalText) {
-                        const locNames = criticalLocs.map(c => `${c.name} (${c.cheios}/${c.min} gal.)`).join(', ');
-                        criticalText.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-300 text-sm"></i> <span><strong>ESTOQUE CRÍTICO:</strong> ${locNames}</span>`;
-                    }
-                } else {
-                    criticalBanner.classList.add('hidden');
-                }
             }
 
             if (tbody) {
