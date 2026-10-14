@@ -300,6 +300,9 @@
                 </div>
 
                 <div class="flex items-center gap-1.5 md:hidden">
+                    <button onclick="requestNotificationPermission()" title="Ativar Notificações" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded-lg text-xs font-bold shadow flex items-center gap-1">
+                        <i class="fa-solid fa-bell"></i>
+                    </button>
                     <button onclick="loadDataFromSheet(true)" title="Sincronizar" class="bg-sky-700 hover:bg-sky-600 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow flex items-center gap-1">
                         <i id="sync-icon-mobile" class="fa-solid fa-arrows-rotate"></i>
                     </button>
@@ -329,6 +332,9 @@
             </nav>
 
             <div class="hidden md:flex items-center gap-3">
+                <button onclick="requestNotificationPermission()" title="Ativar Notificações no Celular/Navegador" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow transition">
+                    <i class="fa-solid fa-bell"></i> <span>Notificações</span>
+                </button>
                 <button onclick="loadDataFromSheet(true)" title="Sincronizar Dados" class="bg-sky-700 hover:bg-sky-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow transition">
                     <i id="sync-icon-desktop" class="fa-solid fa-arrows-rotate"></i> <span>Sincronizar</span>
                 </button>
@@ -1185,6 +1191,60 @@
         };
 
         let chartDiario, chartLocal, chartEntradasDev, chartMensal;
+        let notifiedCriticalLocs = new Set();
+
+        // 1. SOLICITAR PERMISSÃO DE NOTIFICAÇÃO NO NAVEGADOR/CELULAR
+        async function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                showToast('Este dispositivo não suporta Notificações Push.', 'error');
+                return;
+            }
+
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                showToast('Notificações ativadas com sucesso!', 'success');
+                triggerLocalPushNotification('OUD PRIME - Notificações Ativas', 'Alertas de Estoque Crítico serão enviados para o seu dispositivo.');
+            } else if (permission === 'denied') {
+                showToast('Permissão de notificação negada no navegador.', 'error');
+            }
+        }
+
+        // 2. DISPARAR NOTIFICAÇÃO PUSH NATIVA
+        function triggerLocalPushNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.ready.then(reg => {
+                        reg.showNotification(title, {
+                            body: body,
+                            icon: './logo.png',
+                            badge: './logo.png',
+                            vibrate: [300, 100, 300],
+                            tag: 'estoque-critico'
+                        });
+                    });
+                } else {
+                    new Notification(title, { body: body, icon: './logo.png' });
+                }
+            }
+        }
+
+        // 3. MONITORAMENTO DE ESTOQUE CRÍTICO COM NOTIFICAÇÃO PUSH
+        function checkAndTriggerStockPush(stock) {
+            mainLocations.forEach(loc => {
+                const s = stock[loc];
+                if (s && s.cheios < s.min) {
+                    if (!notifiedCriticalLocs.has(loc)) {
+                        notifiedCriticalLocs.add(loc);
+                        triggerLocalPushNotification(
+                            '⚠️ ESTOQUE CRÍTICO DETECTADO!',
+                            `O local ${loc} está com apenas ${s.cheios} galões (Mínimo: ${s.min}).`
+                        );
+                    }
+                } else {
+                    notifiedCriticalLocs.delete(loc);
+                }
+            });
+        }
 
         function normalizeDate(d) {
             if (!d) return '';
@@ -1269,7 +1329,6 @@
             btnCancel.addEventListener('click', handleCancel);
         }
 
-        // CONVERTER URL DO GOOGLE DRIVE EM LINK DE IMAGEM DIRETO
         function formatDriveImageUrl(url) {
             if (!url) return '';
             if (url.indexOf('drive.google.com') !== -1) {
@@ -1281,7 +1340,6 @@
             return url;
         }
 
-        // MODAL DE VISUALIZAÇÃO DE COMPROVANTE
         function viewProofModal(index) {
             const record = database[index];
             if (record && record.Comprovante) {
@@ -1331,7 +1389,6 @@
             if (modalEl) modalEl.classList.add('hidden');
         }
 
-        // VISIBILIDADE DO ANEXO APENAS PARA ENTRADA OU DEVOLUÇÃO
         function toggleComprovanteVisibility() {
             const tipoEl = document.getElementById('single-tipo');
             const containerEl = document.getElementById('container-comprovante');
@@ -1495,7 +1552,6 @@
             closeResetPasswordModal();
         }
 
-        // LOGIN BLINDADO CONTRA ERROS DE OFFLINE E CONEXÃO
         async function handleLoginSubmit(event) {
             if (event) event.preventDefault();
 
@@ -1522,18 +1578,16 @@
                 submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Verificando...</span>';
             }
 
-            // CARREGA PRIMEIRO A BASE LOCAL/CACHE PARA GARANTIR FUNCIONAMENTO 100% OFFLINE
             const savedUsers = localStorage.getItem('controle_agua_users');
             if (savedUsers) {
                 try { USERS_DB = { ...BASE_USERS, ...JSON.parse(savedUsers) }; } catch(e){}
             }
 
-            // SE ESTIVER ONLINE, TENTA ATUALIZAR A LISTA DE USUÁRIOS DA NUVEM DE FORMA RÁPIDA
             const activeUrl = getActiveScriptUrl();
             if (navigator.onLine && activeUrl) {
                 try {
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 segundos máximo
+                    const timeoutId = setTimeout(() => controller.abort(), 2000);
                     const fetchUrl = `${activeUrl}${activeUrl.includes('?') ? '&' : '?'}action=getUsers&t=${Date.now()}`;
                     const res = await fetch(fetchUrl, { cache: 'no-store', signal: controller.signal });
                     clearTimeout(timeoutId);
@@ -1546,11 +1600,10 @@
                         }
                     }
                 } catch (err) {
-                    console.warn("Nuvem indisponível ou lenta, validando com a base do aparelho:", err);
+                    console.warn("Nuvem indisponível ou lenta, usando base local:", err);
                 }
             }
 
-            // VALIDA AS CREDENCIAIS (FUNCIONA OFFLINE E ONLINE)
             const userObj = USERS_DB[u];
             if (userObj && String(userObj.pass) === String(p)) {
                 currentUser = userObj;
@@ -1792,7 +1845,6 @@
             if (screenId === 'screen6') renderFullDatabaseTable();
         }
 
-        // CADASTRO E EDIÇÃO DE USUÁRIOS
         async function addNewUser() {
             const name = document.getElementById('add-user-name').value.trim();
             const login = document.getElementById('add-user-login').value.trim().toLowerCase();
@@ -1932,9 +1984,7 @@
             });
         }
 
-        // PREENCHIMENTO COMPLETO DE TODOS OS DROPDOWNS E OPÇÕES DO SISTEMA
         function updateAllSelectsUI() {
-            // Garantir que os tipos padrão sempre fiquem disponíveis
             if (!tiposLancamento || tiposLancamento.length === 0) {
                 tiposLancamento = ['Consumo', 'Entrada', 'Devolução'];
             }
@@ -2301,6 +2351,9 @@
                     `;
                 });
             }
+
+            // CHECA E DISPARA NOTIFICAÇÃO PUSH AUTOMÁTICA
+            checkAndTriggerStockPush(stock);
         }
 
         function initCharts() {
@@ -2616,7 +2669,6 @@
             const tipo = document.getElementById('single-tipo').value;
             const compFileEl = document.getElementById('single-comprovante');
             
-            // Obrigatoriedade de comprovante para Entrada E Devolução
             if ((tipo === 'Entrada' || tipo === 'Devolução') && (!compFileEl.files || compFileEl.files.length === 0)) {
                 showToast(`É obrigatório anexar um comprovante para lançamentos de ${tipo}!`, 'error');
                 return;
@@ -2742,7 +2794,6 @@
             }
         }
 
-        // TABELA DE ÚLTIMOS LANÇAMENTOS
         function renderRecentTable() {
             const tbody = document.getElementById('table-recent-body');
             if (!tbody) return;
@@ -2775,7 +2826,6 @@
             });
         }
 
-        // TABELA DA BASE DE DADOS COMPLETA
         function renderFullDatabaseTable() {
             const tbody = document.getElementById('table-full-db');
             if (!tbody) return;
@@ -3045,7 +3095,6 @@
         function exportToExcel() { openExportModal('excel'); }
         function exportToCSV() { openExportModal('csv'); }
 
-        // PAINEL DO DESENVOLVEDOR (SUPERADMIN)
         function promptDevAccess() {
             const modal = document.getElementById('modal-master-auth');
             const passInput = document.getElementById('input-master-pass');
