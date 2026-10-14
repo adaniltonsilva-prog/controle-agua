@@ -103,7 +103,6 @@
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* MASCARA E INTEGRAÇÃO DA LOGO SEM QUADRADO DE FUNDO */
         .brand-logo-clean {
             background: transparent !important;
             border: none !important;
@@ -346,11 +345,11 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO SUPERIOR EXECUTIVO (REQ 2 & REQ 3) -->
+    <!-- CABEÇALHO SUPERIOR EXECUTIVO -->
     <header class="bg-nav-dark text-white px-3.5 md:px-6 py-2.5 shadow-lg w-full sticky top-0 z-40 h-[65px] flex items-center">
         <div class="max-w-[1800px] w-full mx-auto flex justify-between items-center gap-2">
             
-            <!-- REQ 2: LOGO OP SEM MOLDURA/QUADRADO + NOME E SUBTÍTULO "CONTROLE DE ÁGUA" -->
+            <!-- LOGO OP SEM MOLDURA/QUADRADO + NOME E SUBTÍTULO "CONTROLE DE ÁGUA" -->
             <div class="flex items-center gap-3">
                 <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OP" class="brand-logo-clean h-8 md:h-10">
                 <div class="leading-none">
@@ -382,7 +381,7 @@
                 </button>
             </nav>
 
-            <!-- REQ 3: EXCLUSIVAMENTE OS 3 ÍCONES DE AÇÃO SEGUIDOS DA IDENTIFICAÇÃO DO USUÁRIO -->
+            <!-- EXCLUSIVAMENTE OS 3 ÍCONES DE AÇÃO SEGUIDOS DA IDENTIFICAÇÃO DO USUÁRIO -->
             <div class="flex items-center gap-1.5 md:gap-2.5">
                 <!-- 1. NOTIFICAÇÕES -->
                 <button onclick="requestNotificationPermission()" title="Ativar Notificações" class="w-8 h-8 md:w-9 md:h-9 bg-slate-800/80 hover:bg-slate-700 text-amber-300 border border-slate-700/60 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center transition shadow">
@@ -412,10 +411,10 @@
         </div>
     </header>
 
-    <!-- CORPO PRINCIPAL COM REQ 6: SIDEBAR FIXA NO DESKTOP -->
+    <!-- CORPO PRINCIPAL COM SIDEBAR FIXA NO DESKTOP -->
     <div class="flex-1 flex max-w-[1800px] w-full mx-auto relative">
 
-        <!-- REQ 6: SIDEBAR FIXA NO DESKTOP COM ROLAGEM INDEPENDENTE -->
+        <!-- SIDEBAR FIXA NO DESKTOP COM ROLAGEM INDEPENDENTE -->
         <aside class="hidden lg:flex flex-col w-64 bg-sidebar p-4 space-y-2 shrink-0 fixed top-[65px] left-0 h-[calc(100vh-65px)] overflow-y-auto z-30">
             <div class="text-[10px] font-black uppercase text-slate-500 tracking-wider px-3 pt-2 pb-1">Navegação</div>
             
@@ -453,13 +452,12 @@
         <!-- ÁREA DE CONTEÚDO PRINCIPAL COM DESLOCAMENTO NO DESKTOP PARA SIDEBAR FIXA -->
         <main class="flex-1 p-3.5 sm:p-5 md:p-6 text-slate-800 w-full min-w-0 lg:ml-64 h-[calc(100vh-65px)] overflow-y-auto">
 
-            <!-- 1. TELA – MENU PRINCIPAL (REQ 4 & REQ 5 & REQ 8) -->
+            <!-- 1. TELA – MENU PRINCIPAL -->
             <section id="screen1" class="screen-content space-y-4 md:space-y-6">
                 
-                <!-- REQ 4: BANNER PAINEL OPERACIONAL COM IDENTIFICAÇÃO OUD PRIME DESTACADA -->
+                <!-- BANNER PAINEL OPERACIONAL COM IDENTIFICAÇÃO OUD PRIME DESTACADA -->
                 <div class="banner-op text-white p-4 sm:p-5 md:p-6 rounded-3xl shadow-2xl flex justify-between items-center relative overflow-hidden">
                     <div class="space-y-1.5 z-10 max-w-xl">
-                        <!-- IDENTIFICAÇÃO OUD PRIME COM CONTRASTE REFORÇADO -->
                         <span class="inline-block bg-sky-500/20 backdrop-blur-md text-sky-200 border border-sky-400/40 text-[10px] sm:text-xs uppercase font-black px-3 py-1 rounded-full tracking-widest shadow-sm">
                             OUD PRIME
                         </span>
@@ -471,8 +469,7 @@
                     </div>
                 </div>
 
-                <!-- REQ 5: APENAS OS 4 MÓDULOS OPERACIONAIS PRINCIPAIS NA TELA INICIAL (SEM CONFIGS E RELATÓRIOS) -->
-                <!-- REQ 7 & REQ 8: CARTÕES COMPACTOS NO MOBILE (ALTURA REDUZIDA ENTRADINHA) E 2 COLUNAS NO DESKTOP -->
+                <!-- APENAS OS 4 MÓDULOS OPERACIONAIS PRINCIPAIS NA TELA INICIAL (SEM CONFIGS E RELATÓRIOS) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4.5">
                     <!-- 1. LANÇAMENTOS -->
                     <div onclick="switchScreen('screen2')" class="card-module cursor-pointer bg-gradient-to-r from-[#0284c7] to-[#0369a1] text-white p-3.5 sm:p-4 md:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[80px] sm:min-h-[95px]">
@@ -914,7 +911,7 @@
         </main>
     </div>
 
-    <!-- REQ 1: RODAPÉ INSTITUCIONAL INSTITUÍDO -->
+    <!-- RODAPÉ INSTITUCIONAL -->
     <footer class="bg-slate-950 text-slate-400 text-xs py-3 px-4 md:px-8 border-t border-slate-900 w-full z-10">
         <div class="max-w-[1800px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left">
             <div class="flex items-center gap-2">
@@ -2443,6 +2440,30 @@
                 } else {
                     criticalBanner.classList.add('hidden');
                 }
+            }
+
+            if (tbody) {
+                tbody.innerHTML = '';
+                mainLocations.forEach(loc => {
+                    const s = stock[loc] || { inicial: 0, inicialVazios: 0, min: 200, cheios: 0, vazios: 0, entrada: 0, consumo: 0, devolucao: 0 };
+                    const isNormal = s.cheios >= s.min;
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-2.5 font-bold text-slate-800">${loc}</td>
+                            <td class="p-2.5 text-center">${s.inicial}</td>
+                            <td class="p-2.5 text-center text-emerald-600 font-bold">+${s.entrada}</td>
+                            <td class="p-2.5 text-center text-blue-600 font-bold">-${s.consumo}</td>
+                            <td class="p-2.5 text-center text-amber-600 font-bold">-${s.devolucao}</td>
+                            <td class="p-2.5 text-center font-black ${isNormal ? 'text-slate-900' : 'text-rose-600'} text-sm">${s.cheios}</td>
+                            <td class="p-2.5 text-center font-black text-amber-600 text-sm">${s.vazios}</td>
+                            <td class="p-2.5 text-center">
+                                <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'} font-bold px-2 py-0.5 rounded-full text-[10px]">
+                                    ● ${isNormal ? 'OK' : 'Crítico'}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
             }
 
             checkAndTriggerStockPush(stock);
