@@ -1,58 +1,74 @@
-const CACHE_NAME = 'oud-prime-v3';
+const CACHE_NAME = 'oud-prime-agua-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
   './logo.png',
+  './logo_2.jpg',
   'https://cdn.tailwindcss.com',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
   'https://cdn.jsdelivr.net/npm/chart.js',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
 ];
 
-self.addEventListener('install', (event) => {
+// Instalação do Service Worker e gravação do Cache Inicial
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
+    caches.open(CACHE_NAME).then(cache => {
+      console.log('[SW] Salvando recursos para uso offline...');
+      return cache.addAll(ASSETS_TO_CACHE).catch(err => {
+        console.warn('[SW] Falha parcial ao armazenar assets em cache:', err);
+      });
     }).then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', (event) => {
+// Ativação e limpeza de caches antigos
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then((keys) => {
+    caches.keys().then(cacheNames => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        cacheNames.map(cache => {
+          if (cache !== CACHE_NAME) {
+            console.log('[SW] Apagando cache antigo:', cache);
+            return caches.delete(cache);
+          }
+        })
       );
     }).then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  // Ignora chamadas para a API do Google Apps Script
+// Estratégia de busca: Tenta a rede primeiro. Se estiver offline, entrega o Cache
+self.addEventListener('fetch', event => {
+  // Ignora requisições para o Google Apps Script (essas devem ser tratadas pelo app no formato offline queue)
   if (event.request.url.includes('script.google.com')) {
     return;
   }
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200) {
-          return networkResponse;
+    fetch(event.request)
+      .then(networkResponse => {
+        // Se a requisição foi bem sucedida, atualiza uma cópia no cache
+        if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
         }
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
         return networkResponse;
-      }).catch(() => {
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
-      });
-    })
+      })
+      .catch(() => {
+        // Se falhar (offline), busca no cache do aparelho
+        return caches.match(event.request).then(cachedResponse => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          // Se for uma navegação de página principal, entrega o index.html salvo
+          if (event.request.mode === 'navigate') {
+            return caches.match('./index.html') || caches.match('./');
+          }
+        });
+      })
   );
 });
