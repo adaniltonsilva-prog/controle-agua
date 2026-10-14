@@ -1836,7 +1836,7 @@
                 showToast('Lançamentos pendentes sincronizados com a nuvem!', 'success');
             } catch(e) {
                 console.error("Falha ao sincronizar fila offline:", e);
-            } flexy {
+            } finally {
                 updateNetworkStatus();
             }
         }
