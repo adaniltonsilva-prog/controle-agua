@@ -78,6 +78,10 @@
             box-shadow: 0 4px 14px rgba(0, 102, 204, 0.4);
         }
 
+        .nav-btn { transition: all 0.2s ease-in-out; color: #94a3b8; opacity: 0.85; white-space: nowrap; }
+        .nav-btn:hover { opacity: 1; color: #ffffff; background-color: rgba(255, 255, 255, 0.08); }
+        .nav-btn.active { background: linear-gradient(135deg, #0066cc 0%, #004499 100%); color: #ffffff; opacity: 1; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.35); }
+
         .card-module { 
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
             border: 1px solid rgba(255, 255, 255, 0.12); 
@@ -424,48 +428,48 @@
             <!-- 1. TELA – MENU PRINCIPAL -->
             <section id="screen1" class="screen-content space-y-4 md:space-y-6">
                 
-                <!-- BANNER PAINEL OPERACIONAL -->
-                <div class="banner-op text-white p-4 sm:p-5 md:p-6 rounded-3xl shadow-2xl flex flex-col space-y-3 relative overflow-hidden">
-                    <div class="flex justify-between items-center z-10 w-full">
+                <!-- BANNER PAINEL OPERACIONAL COM O NOVO MENU TRÊS PONTINHOS POSICIONADO FORA DE SOBREPOSIÇÃO -->
+                <div class="banner-op text-white p-4 sm:p-5 md:p-6 rounded-3xl shadow-2xl flex flex-col space-y-3 relative">
+                    <div class="flex justify-between items-center w-full relative">
                         <span class="inline-block bg-sky-500/20 backdrop-blur-md text-sky-200 border border-sky-400/40 text-[10px] sm:text-xs uppercase font-black px-3 py-1 rounded-full tracking-widest shadow-sm">
                             OUD PRIME
                         </span>
 
-                        <!-- NOVO MENU DROPDOWN "TRÊS PONTINHOS" (EXCLUSIVO MOBILE) LOCALIZADO ABAIXO DA LOGO -->
+                        <!-- BOTÃO "TRÊS PONTINHOS" DROPDOWN PARA CELULAR -->
                         <div class="lg:hidden relative">
-                            <button onclick="toggleMobileDropdownMenu()" class="bg-slate-900/80 hover:bg-slate-800 text-sky-300 border border-sky-500/40 px-3 py-1 rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-md">
-                                <i class="fa-solid fa-ellipsis-vertical text-sm"></i> Menu
+                            <button onclick="toggleMobileDropdownMenu()" class="bg-slate-900/90 hover:bg-slate-800 text-sky-300 border border-sky-500/40 px-3 py-1 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-lg">
+                                <i class="fa-solid fa-ellipsis-vertical text-sm text-sky-400"></i> Menu
                             </button>
 
-                            <!-- OPÇÕES DO MENU SUSPENSO DROPDOWN -->
-                            <div id="mobile-dropdown-menu" class="hidden absolute right-0 top-9 w-48 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl py-2 z-[100] text-xs space-y-1">
-                                <button onclick="selectMobileMenuOption('screen1')" class="w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                            <!-- DROPDOWN FLUTUANTE FORA DO BANNER COM Z-INDEX ELEVADO -->
+                            <div id="mobile-dropdown-menu" class="hidden absolute right-0 top-9 w-52 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl py-2 z-[300] text-xs space-y-1">
+                                <button onclick="selectMobileMenuOption('screen1')" class="w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2.5">
                                     <i class="fa-solid fa-house text-sky-400 w-4"></i> Início
                                 </button>
-                                <button onclick="selectMobileMenuOption('screen2')" class="w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                <button onclick="selectMobileMenuOption('screen2')" class="w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2.5">
                                     <i class="fa-solid fa-pen-to-square text-sky-400 w-4"></i> Lançamentos
                                 </button>
-                                <button onclick="selectMobileMenuOption('screen4')" class="w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                <button onclick="selectMobileMenuOption('screen4')" class="w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2.5">
                                     <i class="fa-solid fa-boxes-stacked text-sky-400 w-4"></i> Estoque
                                 </button>
-                                <button onclick="selectMobileMenuOption('screen5')" class="adm-only w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                <button onclick="selectMobileMenuOption('screen5')" class="adm-only w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2.5">
                                     <i class="fa-solid fa-chart-line text-sky-400 w-4"></i> Dashboard
                                 </button>
-                                <button onclick="selectMobileMenuOption('screen6')" class="adm-only w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                <button onclick="selectMobileMenuOption('screen6')" class="adm-only w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2.5">
                                     <i class="fa-solid fa-database text-sky-400 w-4"></i> Base de Dados
                                 </button>
                                 <div class="border-t border-slate-800 my-1"></div>
-                                <button onclick="selectMobileMenuOption('modal-config')" class="adm-only w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                <button onclick="selectMobileMenuOption('modal-config')" class="adm-only w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2.5">
                                     <i class="fa-solid fa-gear text-amber-400 w-4"></i> Configurações
                                 </button>
-                                <button onclick="selectMobileMenuOption('modal-export')" class="adm-only w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                <button onclick="selectMobileMenuOption('modal-export')" class="adm-only w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2.5">
                                     <i class="fa-solid fa-file-excel text-emerald-400 w-4"></i> Relatórios
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="space-y-1 z-10">
+                    <div class="space-y-1">
                         <h2 class="text-base sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-white leading-tight">PAINEL OPERACIONAL</h2>
                         <p class="text-sky-100 text-xs sm:text-sm font-medium opacity-90">Sistemas Inteligentes para o seu dia a dia</p>
                     </div>
@@ -1312,7 +1316,6 @@
         let chartDiario, chartLocal, chartEntradasDev, chartMensal;
         let notifiedCriticalLocs = new Set();
 
-        // CONTROLE DO MENU DROPDOWN MÓVEL
         function toggleMobileDropdownMenu() {
             const dropdown = document.getElementById('mobile-dropdown-menu');
             if (dropdown) {
@@ -1331,7 +1334,6 @@
             }
         }
 
-        // FECHAR DROPDOWN AO CLICAR FORA
         document.addEventListener('click', function(e) {
             const dropdown = document.getElementById('mobile-dropdown-menu');
             const btn = e.target.closest('button');
