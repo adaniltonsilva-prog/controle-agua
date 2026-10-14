@@ -1932,7 +1932,13 @@
             });
         }
 
+        // PREENCHIMENTO COMPLETO DE TODOS OS DROPDOWNS E OPÇÕES DO SISTEMA
         function updateAllSelectsUI() {
+            // Garantir que os tipos padrão sempre fiquem disponíveis
+            if (!tiposLancamento || tiposLancamento.length === 0) {
+                tiposLancamento = ['Consumo', 'Entrada', 'Devolução'];
+            }
+
             const singleLocalSelect = document.getElementById('single-local');
             if (singleLocalSelect) {
                 singleLocalSelect.innerHTML = '';
@@ -1945,12 +1951,16 @@
 
             const singleTipoSelect = document.getElementById('single-tipo');
             if (singleTipoSelect) {
+                const currVal = singleTipoSelect.value;
                 singleTipoSelect.innerHTML = '';
                 tiposLancamento.forEach(t => {
                     const el = document.createElement('option');
                     el.value = t; el.innerText = t;
                     singleTipoSelect.appendChild(el);
                 });
+                if (currVal && tiposLancamento.includes(currVal)) {
+                    singleTipoSelect.value = currVal;
+                }
             }
 
             const batchLocalSelect = document.getElementById('batch-local-select');
@@ -2481,6 +2491,369 @@
                 chartMensal.data.datasets[0].data = monthlyConsumption;
                 chartMensal.update();
             }
+        }
+
+        function updateSubLocations() {
+            const tipo = document.getElementById('single-tipo').value;
+            const mainLoc = document.getElementById('single-local').value;
+            const subSelect = document.getElementById('single-detalhe');
+            if (!subSelect) return;
+
+            subSelect.innerHTML = '';
+
+            if (tipo === 'Entrada' || tipo === 'Devolução') {
+                const el = document.createElement('option');
+                el.value = 'Geral'; el.innerText = 'Geral';
+                subSelect.appendChild(el);
+            } else {
+                const options = subLocationsMap[mainLoc] || [];
+                options.forEach(opt => {
+                    const el = document.createElement('option');
+                    el.value = opt; el.innerText = opt;
+                    subSelect.appendChild(el);
+                });
+            }
+        }
+
+        function changeBatchLocation() {
+            const selectedLoc = document.getElementById('batch-local-select').value;
+            const labelEl = document.getElementById('batch-total-label');
+            if (labelEl) labelEl.innerText = `TOTAL ${selectedLoc.toUpperCase()}`;
+            buildBatchInputs();
+        }
+
+        function buildBatchInputs() {
+            const selectEl = document.getElementById('batch-local-select');
+            if (!selectEl) return;
+            const selectedLoc = selectEl.value;
+            const container = document.getElementById('batch-inputs');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const subLocs = subLocationsMap[selectedLoc] || [];
+
+            subLocs.forEach(loc => {
+                container.innerHTML += `
+                    <div class="flex items-center justify-between border-b pb-1.5">
+                        <span class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                            <i class="fa-solid fa-house text-blue-600"></i> ${loc}
+                        </span>
+                        <div class="flex items-center gap-1.5">
+                            <input type="number" min="0" data-loc="${loc}" oninput="updateBatchSummary()" class="batch-qtd-input w-16 p-1 border rounded text-center font-bold text-xs" placeholder="0">
+                            <span class="text-[11px] text-slate-500">gal.</span>
+                        </div>
+                    </div>
+                `;
+            });
+            updateBatchSummary();
+        }
+
+        function updateBatchSummary() {
+            const inputs = document.querySelectorAll('.batch-qtd-input');
+            const summary = document.getElementById('batch-summary');
+            if (!summary) return;
+            summary.innerHTML = '';
+            let total = 0;
+
+            inputs.forEach(inp => {
+                const val = parseInt(inp.value) || 0;
+                total += val;
+                if (val > 0) {
+                    summary.innerHTML += `
+                        <div class="flex justify-between border-b pb-0.5">
+                            <span>${inp.dataset.loc}:</span>
+                            <strong>${val} galões</strong>
+                        </div>
+                    `;
+                }
+            });
+
+            const totalEl = document.getElementById('batch-total');
+            if (totalEl) totalEl.innerText = total;
+        }
+
+        function submitBatch() {
+            const selectedLoc = document.getElementById('batch-local-select').value;
+            const date = document.getElementById('batch-data').value;
+            const inputs = document.querySelectorAll('.batch-qtd-input');
+            const records = [];
+            const timestampNow = new Date().toLocaleString('pt-BR');
+
+            inputs.forEach(inp => {
+                const val = parseInt(inp.value) || 0;
+                if (val > 0) {
+                    records.push({
+                        DataRegistro: timestampNow,
+                        Data: date,
+                        Tipo: 'Consumo',
+                        LocalPrincipal: selectedLoc,
+                        LocalDetalhe: inp.dataset.loc,
+                        Quantidade: val,
+                        Comprovante: '',
+                        Observacao: `Consumo Detalhado ${selectedLoc}`,
+                        Usuario: currentUser ? currentUser.name : 'Operador'
+                    });
+                }
+            });
+
+            if (records.length === 0) {
+                showToast('Preencha ao menos uma quantidade.', 'error');
+                return;
+            }
+
+            saveRecords(records);
+            clearBatch();
+        }
+
+        function clearBatch() {
+            document.querySelectorAll('.batch-qtd-input').forEach(i => i.value = '');
+            updateBatchSummary();
+        }
+
+        async function handleSingleSubmit(e) {
+            e.preventDefault();
+
+            const tipo = document.getElementById('single-tipo').value;
+            const compFileEl = document.getElementById('single-comprovante');
+            
+            // Obrigatoriedade de comprovante para Entrada E Devolução
+            if ((tipo === 'Entrada' || tipo === 'Devolução') && (!compFileEl.files || compFileEl.files.length === 0)) {
+                showToast(`É obrigatório anexar um comprovante para lançamentos de ${tipo}!`, 'error');
+                return;
+            }
+
+            let comprovanteBase64 = '';
+            if (compFileEl.files && compFileEl.files[0]) {
+                try {
+                    showToast('Otimizando imagem do comprovante...', 'info');
+                    comprovanteBase64 = await compressImage(compFileEl.files[0]);
+                } catch (err) {
+                    showToast('Erro ao carregar imagem do comprovante.', 'error');
+                    return;
+                }
+            }
+
+            const timestampNow = new Date().toLocaleString('pt-BR');
+            const record = {
+                DataRegistro: timestampNow,
+                Data: document.getElementById('single-data').value,
+                Tipo: tipo,
+                LocalPrincipal: document.getElementById('single-local').value,
+                LocalDetalhe: document.getElementById('single-detalhe').value,
+                Quantidade: parseInt(document.getElementById('single-qtd').value) || 0,
+                Comprovante: comprovanteBase64,
+                Observacao: document.getElementById('single-obs').value || '-',
+                Usuario: currentUser ? currentUser.name : 'Operador'
+            };
+
+            saveRecords([record]);
+            document.getElementById('form-single').reset();
+            document.getElementById('single-data').value = new Date().toISOString().split('T')[0];
+            updateSubLocations();
+            toggleComprovanteVisibility();
+            resetFileLabel();
+        }
+
+        async function saveRecords(records) {
+            database.push(...records);
+            localStorage.setItem('controle_agua_db', JSON.stringify(database));
+
+            renderRecentTable();
+            updateStockUI();
+            updateDashboard();
+
+            const activeUrl = getActiveScriptUrl();
+            if (navigator.onLine && activeUrl) {
+                try {
+                    await fetch(activeUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'addRecords', records: records })
+                    });
+                    showToast('Lançamento registrado e salvo na nuvem!', 'success');
+                    setTimeout(() => loadDataFromSheet(false), 1500);
+                } catch(e) {
+                    pendingQueue.push(...records);
+                    savePendingQueue();
+                    showToast('Conexão instável. Registro salvo no aparelho.', 'info');
+                }
+            } else {
+                pendingQueue.push(...records);
+                savePendingQueue();
+                showToast('Você está offline. Lançamento salvo no aparelho!', 'info');
+            }
+        }
+
+        async function loadDataFromSheet(userTriggered = false) {
+            const iconMobile = document.getElementById('sync-icon-mobile');
+            const iconDesktop = document.getElementById('sync-icon-desktop');
+            if (iconMobile) iconMobile.classList.add('fa-spin');
+            if (iconDesktop) iconDesktop.classList.add('fa-spin');
+
+            const savedLocalDB = localStorage.getItem('controle_agua_db');
+            if (savedLocalDB && database.length === 0) {
+                try { database = JSON.parse(savedLocalDB) || []; } catch(e) { database = []; }
+            }
+
+            const activeUrl = getActiveScriptUrl();
+            if (navigator.onLine && activeUrl) {
+                try {
+                    const fetchUrl = `${activeUrl}${activeUrl.includes('?') ? '&' : '?'}t=${Date.now()}`;
+                    const res = await fetch(fetchUrl, { cache: 'no-store' });
+                    const data = await res.json();
+                    
+                    if (data && typeof data === 'object') {
+                        if (Array.isArray(data.records)) {
+                            database = data.records;
+                            localStorage.setItem('controle_agua_db', JSON.stringify(database));
+                        } else if (Array.isArray(data)) {
+                            database = data;
+                            localStorage.setItem('controle_agua_db', JSON.stringify(database));
+                        }
+                        if (data.users && typeof data.users === 'object') {
+                            USERS_DB = { ...BASE_USERS, ...data.users };
+                            localStorage.setItem('controle_agua_users', JSON.stringify(USERS_DB));
+                        }
+                    }
+
+                    if (userTriggered) {
+                        showToast('Dados sincronizados com o Google Sheets!', 'success');
+                    }
+                } catch (err) {
+                    console.warn("Carregamento remoto:", err);
+                    if (userTriggered) {
+                        showToast('Não foi possível sincronizar agora. Verifique sua conexão.', 'error');
+                    }
+                }
+            }
+
+            setTimeout(() => {
+                if (iconMobile) iconMobile.classList.remove('fa-spin');
+                if (iconDesktop) iconDesktop.classList.remove('fa-spin');
+            }, 600);
+
+            renderRecentTable();
+            updateStockUI();
+            updateDashboard();
+            const activeScreen = document.querySelector('.screen-content:not(.hidden)');
+            if (activeScreen && activeScreen.id === 'screen6') {
+                renderFullDatabaseTable();
+            }
+        }
+
+        // TABELA DE ÚLTIMOS LANÇAMENTOS
+        function renderRecentTable() {
+            const tbody = document.getElementById('table-recent-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const list = [...database].reverse().slice(0, 5);
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-3 text-center text-xs text-slate-400">Nenhum lançamento.</td></tr>`;
+                return;
+            }
+
+            list.forEach((r, idx) => {
+                const realIndex = database.length - 1 - idx;
+                const compBtn = r.Comprovante 
+                    ? `<button onclick="viewProofModal(${realIndex})" class="text-emerald-600 font-black text-xs hover:underline flex items-center justify-center gap-1 mx-auto"><i class="fa-solid fa-eye"></i> Ver Anexo</button>` 
+                    : `<span class="text-slate-300 text-[10px]">-</span>`;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2" title="Gravado em: ${r.DataRegistro || '-'}">${formatDisplayDate(r.Data)}</td>
+                        <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : 'text-emerald-600'}">${r.Tipo || '-'}</td>
+                        <td class="p-2">${r.LocalPrincipal || '-'}</td>
+                        <td class="p-2">${r.LocalDetalhe || '-'}</td>
+                        <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
+                        <td class="p-2 text-center">${compBtn}</td>
+                        <td class="p-2 text-center"><button onclick="deleteRecord(${realIndex})" class="text-red-500 font-bold"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // TABELA DA BASE DE DADOS COMPLETA
+        function renderFullDatabaseTable() {
+            const tbody = document.getElementById('table-full-db');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (database.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-3 text-center text-xs text-slate-400">Nenhum registro.</td></tr>`;
+                return;
+            }
+
+            database.forEach((r, idx) => {
+                const userName = r.Usuario || 'Não informado';
+                const compBtn = r.Comprovante 
+                    ? `<button onclick="viewProofModal(${idx})" class="text-emerald-600 font-black text-xs hover:underline flex items-center justify-center gap-1 mx-auto"><i class="fa-solid fa-eye"></i> Ver Anexo</button>` 
+                    : `<span class="text-slate-300 text-[10px]">-</span>`;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2" title="Gravado em: ${r.DataRegistro || '-'}">${formatDisplayDate(r.Data)}</td>
+                        <td class="p-2 font-bold ${r.Tipo === 'Consumo' ? 'text-blue-600' : (r.Tipo === 'Entrada' ? 'text-emerald-600' : 'text-amber-600')}">${r.Tipo || '-'}</td>
+                        <td class="p-2">${r.LocalPrincipal || '-'}</td>
+                        <td class="p-2 text-slate-500">${r.LocalDetalhe || '-'}</td>
+                        <td class="p-2 text-center font-black">${r.Quantidade || 0}</td>
+                        <td class="p-2 text-center">${compBtn}</td>
+                        <td class="p-2">
+                            <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-800 px-2 py-0.5 rounded-full text-[10px] font-bold border border-slate-200">
+                                <i class="fa-solid fa-user-check text-sky-600 text-[9px]"></i> ${userName}
+                            </span>
+                        </td>
+                        <td class="p-2 text-center"><button onclick="deleteRecord(${idx})" class="text-red-500 hover:text-red-700 font-bold transition p-1"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function shareDashboardWhatsApp() {
+            const filterLoc = document.getElementById('dash-filter-local')?.value || 'Todos';
+            const startDate = document.getElementById('dash-date-start')?.value || '';
+            const endDate = document.getElementById('dash-date-end')?.value || '';
+
+            const consumoTotal = document.getElementById('dash-consumo-total')?.innerText || '0';
+            const litrosTotal = document.getElementById('dash-litros-total')?.innerText || '0 litros';
+            const entradas = document.getElementById('dash-entradas')?.innerText || '0';
+            const devolucoes = document.getElementById('dash-devolucoes')?.innerText || '0';
+            const estoqueAtual = document.getElementById('dash-estoque-atual')?.innerText || '0';
+            const mediaDia = document.getElementById('dash-media-diaria')?.innerText || '0';
+            const litrosPessoa = document.getElementById('dash-litros-pessoa')?.innerText || '0,0';
+
+            const periodoStr = (startDate && endDate) 
+                ? `${formatDisplayDate(startDate)} até ${formatDisplayDate(endDate)}` 
+                : 'Período Completo';
+
+            let msg = `💧 *OUD PRIME - CONTROLE DE ÁGUA*\n`;
+            msg += `📋 *RESUMO OPERACIONAL*\n`;
+            msg += `🗓️ *Período:* ${periodoStr}\n`;
+            msg += `🏢 *Local:* ${filterLoc}\n\n`;
+
+            msg += `📊 *INDICADORES:*\n`;
+            msg += `• *Consumo Total:* ${consumoTotal} galões (${litrosTotal})\n`;
+            msg += `• *Entradas (Cheios):* ${entradas} galões\n`;
+            msg += `• *Devoluções (Vazios):* ${devolucoes} galões\n`;
+            msg += `• *Estoque Atual (Cheios):* ${estoqueAtual} galões\n`;
+            msg += `• *Média Diária:* ${mediaDia} galões/dia\n`;
+            msg += `• *Consumo/Pessoa:* ${litrosPessoa} L/pessoa/dia\n\n`;
+
+            const stock = calculateStock();
+            msg += `📦 *SITUAÇÃO DO ESTOQUE:*\n`;
+            mainLocations.forEach(loc => {
+                const s = stock[loc] || { cheios: 0, vazios: 0, min: 200 };
+                const alerta = s.cheios < s.min ? '⚠️ BAIXO' : '✅ OK';
+                msg += `• ${loc}: ${s.cheios} cheios | ${s.vazios} vazios (${alerta})\n`;
+            });
+
+            msg += `\n_Gerado pelo Sistema OUD PRIME em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}._`;
+
+            const encoded = encodeURIComponent(msg);
+            const waUrl = `https://api.whatsapp.com/send?text=${encoded}`;
+            window.open(waUrl, '_blank');
         }
 
         function openConfigModal() {
