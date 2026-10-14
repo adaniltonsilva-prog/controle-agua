@@ -428,20 +428,20 @@
             <!-- 1. TELA – MENU PRINCIPAL -->
             <section id="screen1" class="screen-content space-y-4 md:space-y-6">
                 
-                <!-- BANNER PAINEL OPERACIONAL COM O NOVO MENU TRÊS PONTINHOS POSICIONADO FORA DE SOBREPOSIÇÃO -->
-                <div class="banner-op text-white p-4 sm:p-5 md:p-6 rounded-3xl shadow-2xl flex flex-col space-y-3 relative">
+                <!-- BANNER PAINEL OPERACIONAL FIXO AO ROLAR A TELA NA INICIAL -->
+                <div class="banner-op text-white p-4 sm:p-5 md:p-6 rounded-3xl shadow-2xl flex flex-col space-y-3 sticky top-0 z-20 backdrop-blur-md">
                     <div class="flex justify-between items-center w-full relative">
                         <span class="inline-block bg-sky-500/20 backdrop-blur-md text-sky-200 border border-sky-400/40 text-[10px] sm:text-xs uppercase font-black px-3 py-1 rounded-full tracking-widest shadow-sm">
                             OUD PRIME
                         </span>
 
-                        <!-- BOTÃO "TRÊS PONTINHOS" DROPDOWN PARA CELULAR -->
+                        <!-- BOTÃO DROPDOWN MÓVEL "TRÊS PONTINHOS" -->
                         <div class="lg:hidden relative">
                             <button onclick="toggleMobileDropdownMenu()" class="bg-slate-900/90 hover:bg-slate-800 text-sky-300 border border-sky-500/40 px-3 py-1 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-lg">
                                 <i class="fa-solid fa-ellipsis-vertical text-sm text-sky-400"></i> Menu
                             </button>
 
-                            <!-- DROPDOWN FLUTUANTE FORA DO BANNER COM Z-INDEX ELEVADO -->
+                            <!-- DROPDOWN FLUTUANTE COM Z-INDEX SUPERIOR -->
                             <div id="mobile-dropdown-menu" class="hidden absolute right-0 top-9 w-52 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl py-2 z-[300] text-xs space-y-1">
                                 <button onclick="selectMobileMenuOption('screen1')" class="w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2.5">
                                     <i class="fa-solid fa-house text-sky-400 w-4"></i> Início
@@ -549,11 +549,21 @@
 
             <!-- 2. TELA – LANÇAMENTOS -->
             <section id="screen2" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
-                <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex justify-between items-center shadow-lg">
-                    <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
-                        <i class="fa-solid fa-calendar-days"></i> 2. LANÇAMENTOS
-                    </h2>
-                    <span class="bg-blue-900/80 text-[10px] md:text-xs px-3 py-1 rounded-full text-blue-100 font-bold border border-blue-700/50">Comprovante obrigatório para Entrada e Devolução</span>
+                <!-- CABEÇALHO DA TELA COM BOTÃO VOLTAR -->
+                <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5 shadow-lg">
+                    <div class="flex items-center gap-2.5">
+                        <button onclick="switchScreen('screen1')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-arrow-left"></i> Voltar
+                        </button>
+                        <h2 class="text-base md:text-lg font-black uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-days"></i> 2. LANÇAMENTOS
+                        </h2>
+                    </div>
+
+                    <!-- AJUSTE COMPACTO DA BADGE DE COMPROVANTE OBRIGATÓRIO -->
+                    <span class="bg-blue-950/80 text-[10px] md:text-xs px-3 py-1 rounded-full text-blue-100 font-bold border border-blue-700/50 max-w-full truncate">
+                        Comprovante obrigatório p/ Entrada e Devolução
+                    </span>
                 </div>
 
                 <form id="form-single" onsubmit="handleSingleSubmit(event)" class="space-y-4">
@@ -660,9 +670,14 @@
             <!-- 3. TELA – CONSUMO DETALHADO -->
             <section id="screen3" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
                 <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full shadow-lg">
-                    <h2 id="batch-screen-title" class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
-                        <i class="fa-solid fa-building"></i> 3. CONSUMO DETALHADO
-                    </h2>
+                    <div class="flex items-center gap-2.5">
+                        <button onclick="switchScreen('screen2')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-arrow-left"></i> Voltar
+                        </button>
+                        <h2 id="batch-screen-title" class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
+                            <i class="fa-solid fa-building"></i> 3. CONSUMO DETALHADO
+                        </h2>
+                    </div>
                     
                     <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold">
                         <div class="flex items-center justify-between gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30">
@@ -708,12 +723,17 @@
                 </div>
             </section>
 
-            <!-- 4. TELA – ESTOQUE -->
+            <!-- 4. TELA – ESTOQUE DA APLICAÇÃO COM BOTÃO VOLTAR -->
             <section id="screen4" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
                 <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex justify-between items-center shadow-lg">
-                    <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
-                        <i class="fa-solid fa-cubes"></i> 4. ESTOQUE
-                    </h2>
+                    <div class="flex items-center gap-2.5">
+                        <button onclick="switchScreen('screen1')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-arrow-left"></i> Voltar
+                        </button>
+                        <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
+                            <i class="fa-solid fa-cubes"></i> 4. ESTOQUE
+                        </h2>
+                    </div>
                     <span class="bg-blue-900/80 text-[10px] md:text-xs px-3 py-1 rounded-full text-blue-100 font-bold border border-blue-700/50">Indicadores</span>
                 </div>
 
@@ -741,14 +761,19 @@
                 </div>
             </section>
 
-            <!-- 5. TELA – DASHBOARD -->
+            <!-- 5. TELA – DASHBOARD COM BOTÃO VOLTAR -->
             <section id="screen5" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
                 <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full shadow-lg">
-                    <div>
-                        <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
-                            <i class="fa-solid fa-chart-line"></i> 5. DASHBOARD COMPLETO
-                        </h2>
-                        <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
+                    <div class="flex items-center gap-2.5">
+                        <button onclick="switchScreen('screen1')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-arrow-left"></i> Voltar
+                        </button>
+                        <div>
+                            <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
+                                <i class="fa-solid fa-chart-line"></i> 5. DASHBOARD COMPLETO
+                            </h2>
+                            <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
+                        </div>
                     </div>
                     
                     <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2 rounded-xl flex flex-wrap items-center gap-2 text-xs font-semibold">
@@ -881,10 +906,13 @@
                 </div>
             </section>
 
-            <!-- 6. TELA – BASE DE DADOS -->
+            <!-- 6. TELA – BASE DE DADOS COM BOTÃO VOLTAR -->
             <section id="screen6" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
                 <div class="bg-[#6f42c1] text-white p-3.5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-lg">
-                    <div>
+                    <div class="flex items-center gap-2.5">
+                        <button onclick="switchScreen('screen1')" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-arrow-left"></i> Voltar
+                        </button>
                         <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
                             <i class="fa-solid fa-database"></i> BASE DE DADOS
                         </h2>
