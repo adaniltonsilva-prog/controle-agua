@@ -78,10 +78,6 @@
             box-shadow: 0 4px 14px rgba(0, 102, 204, 0.4);
         }
 
-        .nav-btn { transition: all 0.2s ease-in-out; color: #94a3b8; opacity: 0.85; white-space: nowrap; }
-        .nav-btn:hover { opacity: 1; color: #ffffff; background-color: rgba(255, 255, 255, 0.08); }
-        .nav-btn.active { background: linear-gradient(135deg, #0066cc 0%, #004499 100%); color: #ffffff; opacity: 1; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 102, 204, 0.35); }
-
         .card-module { 
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
             border: 1px solid rgba(255, 255, 255, 0.12); 
@@ -343,40 +339,19 @@
     <header class="bg-nav-dark text-white px-3.5 md:px-6 py-2 shadow-lg w-full sticky top-0 z-40 h-[65px] flex items-center">
         <div class="max-w-[1800px] w-full mx-auto flex justify-between items-center gap-2">
             
-            <!-- CORREÇÃO: BRANDING LADO A LADO SEM SOBREPOSIÇÃO -->
-            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-                <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OP" class="brand-logo-clean h-7 sm:h-9 md:h-10">
+            <!-- BRANDING: LOGO E NOME EM LINHA (LADO A LADO) -->
+            <div class="flex items-center gap-2.5 shrink-0">
+                <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OP" class="brand-logo-clean h-8 sm:h-9 md:h-10">
                 <div class="flex flex-col justify-center leading-none">
-                    <div class="flex items-center gap-1 text-xs sm:text-base font-black tracking-wider text-white whitespace-nowrap">
-                        <span>OUD PRIME</span>
-                    </div>
+                    <span class="text-xs sm:text-base font-black tracking-wider text-white whitespace-nowrap">OUD PRIME</span>
                     <p class="text-[8px] sm:text-[10px] text-sky-400 font-bold uppercase tracking-widest mt-0.5 whitespace-nowrap">
                         CONTROLE DE ÁGUA
                     </p>
                 </div>
             </div>
 
-            <!-- NAVEGAÇÃO MÓVEL EMBUTIDA -->
-            <nav class="lg:hidden flex items-center gap-1 text-xs overflow-x-auto max-w-[32vw] sm:max-w-[40vw] pb-0.5 scrollbar-none">
-                <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-2 py-1 flex items-center gap-1 text-[11px]">
-                    <i class="fa-solid fa-house"></i> Início
-                </button>
-                <button onclick="switchScreen('screen2')" id="nav-screen2" class="nav-btn px-2 py-1 flex items-center gap-1 text-[11px]">
-                    <i class="fa-solid fa-pen-to-square"></i> Lançamentos
-                </button>
-                <button onclick="switchScreen('screen4')" id="nav-screen4" class="nav-btn px-2 py-1 flex items-center gap-1 text-[11px]">
-                    <i class="fa-solid fa-boxes-stacked"></i> Estoque
-                </button>
-                <button onclick="switchScreen('screen5')" id="nav-screen5" class="nav-btn adm-only px-2 py-1 flex items-center gap-1 text-[11px]">
-                    <i class="fa-solid fa-chart-line"></i> Dashboard
-                </button>
-                <button onclick="switchScreen('screen6')" id="nav-screen6" class="nav-btn adm-only px-2 py-1 flex items-center gap-1 text-[11px]">
-                    <i class="fa-solid fa-database"></i> Base
-                </button>
-            </nav>
-
             <!-- AÇÕES DA DIREITA -->
-            <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 <!-- 1. NOTIFICAÇÕES -->
                 <button onclick="requestNotificationPermission()" title="Ativar Notificações" class="w-8 h-8 md:w-9 md:h-9 bg-slate-800/80 hover:bg-slate-700 text-amber-300 border border-slate-700/60 rounded-xl text-xs font-bold flex items-center justify-center transition shadow shrink-0">
                     <i class="fa-solid fa-bell"></i>
@@ -408,7 +383,7 @@
     <!-- CORPO PRINCIPAL COM SIDEBAR TOTALMENTE FIXA E SEM BARRA DE ROLAGEM NO DESKTOP -->
     <div class="flex-1 flex max-w-[1800px] w-full mx-auto relative overflow-hidden">
 
-        <!-- SIDEBAR FIXA NO DESKTOP (SEM BARRA DE ROLAGEM VISÍVEL) -->
+        <!-- SIDEBAR FIXA NO DESKTOP -->
         <aside class="hidden lg:flex flex-col w-64 bg-sidebar p-4 space-y-2 shrink-0 fixed top-[65px] left-0 h-[calc(100vh-65px)] overflow-hidden z-30">
             <div class="text-[10px] font-black uppercase text-slate-500 tracking-wider px-3 pt-2 pb-1">Navegação</div>
             
@@ -450,15 +425,52 @@
             <section id="screen1" class="screen-content space-y-4 md:space-y-6">
                 
                 <!-- BANNER PAINEL OPERACIONAL -->
-                <div class="banner-op text-white p-4 sm:p-5 md:p-6 rounded-3xl shadow-2xl flex justify-between items-center relative overflow-hidden">
-                    <div class="space-y-1.5 z-10 max-w-xl">
+                <div class="banner-op text-white p-4 sm:p-5 md:p-6 rounded-3xl shadow-2xl flex flex-col space-y-3 relative overflow-hidden">
+                    <div class="flex justify-between items-center z-10 w-full">
                         <span class="inline-block bg-sky-500/20 backdrop-blur-md text-sky-200 border border-sky-400/40 text-[10px] sm:text-xs uppercase font-black px-3 py-1 rounded-full tracking-widest shadow-sm">
                             OUD PRIME
                         </span>
+
+                        <!-- NOVO MENU DROPDOWN "TRÊS PONTINHOS" (EXCLUSIVO MOBILE) LOCALIZADO ABAIXO DA LOGO -->
+                        <div class="lg:hidden relative">
+                            <button onclick="toggleMobileDropdownMenu()" class="bg-slate-900/80 hover:bg-slate-800 text-sky-300 border border-sky-500/40 px-3 py-1 rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-md">
+                                <i class="fa-solid fa-ellipsis-vertical text-sm"></i> Menu
+                            </button>
+
+                            <!-- OPÇÕES DO MENU SUSPENSO DROPDOWN -->
+                            <div id="mobile-dropdown-menu" class="hidden absolute right-0 top-9 w-48 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl py-2 z-[100] text-xs space-y-1">
+                                <button onclick="selectMobileMenuOption('screen1')" class="w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-house text-sky-400 w-4"></i> Início
+                                </button>
+                                <button onclick="selectMobileMenuOption('screen2')" class="w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-pen-to-square text-sky-400 w-4"></i> Lançamentos
+                                </button>
+                                <button onclick="selectMobileMenuOption('screen4')" class="w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-boxes-stacked text-sky-400 w-4"></i> Estoque
+                                </button>
+                                <button onclick="selectMobileMenuOption('screen5')" class="adm-only w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-line text-sky-400 w-4"></i> Dashboard
+                                </button>
+                                <button onclick="selectMobileMenuOption('screen6')" class="adm-only w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-database text-sky-400 w-4"></i> Base de Dados
+                                </button>
+                                <div class="border-t border-slate-800 my-1"></div>
+                                <button onclick="selectMobileMenuOption('modal-config')" class="adm-only w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-gear text-amber-400 w-4"></i> Configurações
+                                </button>
+                                <button onclick="selectMobileMenuOption('modal-export')" class="adm-only w-full text-left px-4 py-2 hover:bg-sky-600/30 text-slate-200 font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-file-excel text-emerald-400 w-4"></i> Relatórios
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1 z-10">
                         <h2 class="text-base sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-white leading-tight">PAINEL OPERACIONAL</h2>
                         <p class="text-sky-100 text-xs sm:text-sm font-medium opacity-90">Sistemas Inteligentes para o seu dia a dia</p>
                     </div>
-                    <div class="hidden md:flex items-center justify-center opacity-25 text-white z-0 text-7xl pr-4">
+
+                    <div class="hidden md:flex items-center justify-center opacity-25 text-white z-0 text-7xl absolute right-6 bottom-4">
                         <i class="fa-solid fa-droplet"></i>
                     </div>
                 </div>
@@ -735,7 +747,6 @@
                         <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
                     </div>
                     
-                    <!-- CORREÇÃO: BOTÃO WHATSAPP E BARRA AJUSTADA SEM ULTRAPASSAR BORDAS -->
                     <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2 rounded-xl flex flex-wrap items-center gap-2 text-xs font-semibold">
                         <div class="grid grid-cols-2 gap-1.5 bg-blue-950/60 p-1.5 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
                             <div class="flex items-center gap-1 min-w-0">
@@ -1300,6 +1311,38 @@
 
         let chartDiario, chartLocal, chartEntradasDev, chartMensal;
         let notifiedCriticalLocs = new Set();
+
+        // CONTROLE DO MENU DROPDOWN MÓVEL
+        function toggleMobileDropdownMenu() {
+            const dropdown = document.getElementById('mobile-dropdown-menu');
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
+        }
+
+        function selectMobileMenuOption(target) {
+            toggleMobileDropdownMenu();
+            if (target === 'modal-config') {
+                openConfigModal();
+            } else if (target === 'modal-export') {
+                openExportModal();
+            } else {
+                switchScreen(target);
+            }
+        }
+
+        // FECHAR DROPDOWN AO CLICAR FORA
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('mobile-dropdown-menu');
+            const btn = e.target.closest('button');
+            if (dropdown && !dropdown.classList.contains('hidden')) {
+                if (!btn || !btn.getAttribute('onclick') || !btn.getAttribute('onclick').includes('toggleMobileDropdownMenu')) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.add('hidden');
+                    }
+                }
+            }
+        });
 
         async function requestNotificationPermission() {
             if (!('Notification' in window)) {
