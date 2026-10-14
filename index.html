@@ -15,7 +15,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#09111e">
 
     <script>
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
@@ -36,17 +36,73 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0b0f19; color: #f1f5f9; line-height: 1.25; overflow-x: hidden; }
-        .bg-nav { background-color: #0f172a; border-bottom: 1px solid #1e293b; }
-        .nav-btn { transition: all 0.2s; color: #94a3b8; opacity: 0.85; white-space: nowrap; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #070d18; 
+            color: #f1f5f9; 
+            line-height: 1.25; 
+            overflow-x: hidden; 
+        }
+
+        .bg-app-dark {
+            background-color: #070d18;
+        }
+
+        .bg-nav-dark {
+            background-color: #0c1628;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .bg-sidebar {
+            background-color: #091222;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #94a3b8;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .sidebar-btn:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .sidebar-btn.active {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: #ffffff;
+            font-weight: 700;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+        }
+
+        .nav-btn { transition: all 0.2s ease-in-out; color: #94a3b8; opacity: 0.85; white-space: nowrap; }
         .nav-btn:hover { opacity: 1; color: #ffffff; background-color: rgba(255, 255, 255, 0.08); }
-        .nav-btn.active { background-color: #0284c7; color: #ffffff; opacity: 1; font-weight: 700; border-radius: 8px; }
-        .card-menu { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .card-menu:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2); }
-        .banner-blue { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); }
+        .nav-btn.active { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; opacity: 1; font-weight: 700; border-radius: 8px; shadow: 0 4px 12px rgba(2, 132, 199, 0.3); }
+
+        .card-module { 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(10px);
+        }
+
+        .card-module:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 14px 28px -6px rgba(0, 0, 0, 0.55); 
+            border-color: rgba(255, 255, 255, 0.22); 
+        }
+
+        .banner-op { 
+            background: linear-gradient(135deg, #0284c7 0%, #0c4a6e 60%, #0369a1 100%); 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            box-shadow: 0 10px 30px -5px rgba(2, 132, 199, 0.3);
+        }
+
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
-        
+
         main input, main select, main textarea,
         #modal-config input, #modal-config select, #modal-config textarea,
         #modal-edit-user input, #modal-edit-user select,
@@ -84,6 +140,7 @@
             background-color: #0f172a !important;
             font-weight: 600 !important;
         }
+
         #login-overlay input::placeholder,
         #modal-master-auth input::placeholder,
         #modal-dev-panel input::placeholder {
@@ -99,7 +156,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col relative bg-slate-950 max-w-full overflow-x-hidden">
+<body class="min-h-screen flex flex-col bg-app-dark max-w-full overflow-x-hidden text-slate-100">
 
     <script>
         const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyziuy6KRoNseKWdzKC338B4TH9x1Ut2BbL8F9Ngd0rCr1cXU-Q9LJ-RoFwATLKb4bm/exec';
@@ -179,7 +236,7 @@
             </form>
 
             <div class="pt-2 border-t border-slate-800 text-center text-[11px] text-slate-500">
-                Desenvolvido por <strong class="text-slate-300">Adanilton Silva</strong>
+                OUD PRIME • Sistemas Inteligentes<br>Desenvolvido por <strong class="text-slate-300">Adanilton Silva</strong>
             </div>
         </div>
     </div>
@@ -258,7 +315,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE VISUALIZAÇÃO DO COMPROVANTE ATUALIZADO -->
+    <!-- MODAL DE VISUALIZAÇÃO DO COMPROVANTE -->
     <div id="modal-view-proof" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[250] flex items-center justify-center hidden p-4">
         <div class="bg-slate-900 border border-slate-700 rounded-3xl p-5 max-w-lg w-full text-center space-y-4 shadow-2xl relative">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -287,233 +344,574 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO DA APLICAÇÃO -->
-    <header class="bg-nav text-white px-3 md:px-6 py-2.5 shadow-md w-full">
-        <div class="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2.5">
-            <div class="flex items-center justify-between w-full md:w-auto">
-                <div class="flex items-center gap-2.5">
-                    <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OUD PRIME" class="clean-logo h-7 md:h-10 object-contain">
-                    <div>
-                        <h1 class="text-sm md:text-lg font-black uppercase tracking-wider leading-none text-white">CONTROLE DE ÁGUA</h1>
-                        <p class="text-[8px] md:text-[10px] text-sky-400 font-bold uppercase tracking-wide mt-0.5">Sistemas Inteligentes para o seu dia a dia</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-1.5 md:hidden">
-                    <button onclick="requestNotificationPermission()" title="Ativar Notificações" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded-lg text-xs font-bold shadow flex items-center gap-1">
-                        <i class="fa-solid fa-bell"></i>
-                    </button>
-                    <button onclick="loadDataFromSheet(true)" title="Sincronizar" class="bg-sky-700 hover:bg-sky-600 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow flex items-center gap-1">
-                        <i id="sync-icon-mobile" class="fa-solid fa-arrows-rotate"></i>
-                    </button>
-                    <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
+    <!-- CABEÇALHO SUPERIOR EXECUTIVO DA APLICAÇÃO -->
+    <header class="bg-nav-dark text-white px-3 md:px-6 py-2.5 shadow-lg w-full sticky top-0 z-40">
+        <div class="max-w-[1800px] mx-auto flex justify-between items-center">
+            <!-- BRANDING E LOGO -->
+            <div class="flex items-center gap-3">
+                <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OUD PRIME" class="clean-logo h-8 md:h-10 object-contain">
+                <div>
+                    <h1 class="text-sm md:text-lg font-black uppercase tracking-wider leading-none text-white flex items-center gap-2">
+                        OUD PRIME
+                    </h1>
+                    <p class="text-[8px] md:text-[10px] text-sky-400 font-bold uppercase tracking-wide mt-0.5">CONTROLE DE ÁGUA • Sistemas Inteligentes</p>
                 </div>
             </div>
 
-            <!-- NAVEGAÇÃO -->
-            <nav class="flex items-center gap-1 text-xs md:text-sm overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
-                <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-3 py-1.5 flex items-center gap-1.5">
-                    <i class="fa-solid fa-house text-xs"></i> Menu
+            <!-- NAVEGAÇÃO SUPERIOR RESPONSIVA (EXIBIDA APENAS NO MOBILE / TABLET) -->
+            <nav class="lg:hidden flex items-center gap-1 text-xs overflow-x-auto max-w-[50vw] pb-0.5 scrollbar-none">
+                <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-2.5 py-1 flex items-center gap-1">
+                    <i class="fa-solid fa-house"></i> Menu
                 </button>
-                <button onclick="switchScreen('screen2')" id="nav-screen2" class="nav-btn px-3 py-1.5 flex items-center gap-1.5">
-                    <i class="fa-solid fa-pen-to-square text-xs"></i> Lançamentos
+                <button onclick="switchScreen('screen2')" id="nav-screen2" class="nav-btn px-2.5 py-1 flex items-center gap-1">
+                    <i class="fa-solid fa-pen-to-square"></i> Lançamentos
                 </button>
-                <button onclick="switchScreen('screen4')" id="nav-screen4" class="nav-btn px-3 py-1.5 flex items-center gap-1.5">
-                    <i class="fa-solid fa-boxes-stacked text-xs"></i> Estoque
+                <button onclick="switchScreen('screen4')" id="nav-screen4" class="nav-btn px-2.5 py-1 flex items-center gap-1">
+                    <i class="fa-solid fa-boxes-stacked"></i> Estoque
                 </button>
-                <button onclick="switchScreen('screen5')" id="nav-screen5" class="nav-btn adm-only px-3 py-1.5 flex items-center gap-1.5">
-                    <i class="fa-solid fa-chart-line text-xs"></i> Dashboard
+                <button onclick="switchScreen('screen5')" id="nav-screen5" class="nav-btn adm-only px-2.5 py-1 flex items-center gap-1">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard
                 </button>
-                <button onclick="switchScreen('screen6')" id="nav-screen6" class="nav-btn adm-only px-3 py-1.5 flex items-center gap-1.5">
-                    <i class="fa-solid fa-database text-xs"></i> Base
+                <button onclick="switchScreen('screen6')" id="nav-screen6" class="nav-btn adm-only px-2.5 py-1 flex items-center gap-1">
+                    <i class="fa-solid fa-database"></i> Base
                 </button>
             </nav>
 
-            <div class="hidden md:flex items-center gap-3">
-                <button onclick="requestNotificationPermission()" title="Ativar Notificações no Celular/Navegador" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow transition">
-                    <i class="fa-solid fa-bell"></i> <span>Notificações</span>
+            <!-- AÇÕES DIREITAS EXECUTIVAS -->
+            <div class="flex items-center gap-2 md:gap-3">
+                <button onclick="requestNotificationPermission()" title="Ativar Notificações no Dispositivo" class="bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 p-2 md:px-3 md:py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow">
+                    <i class="fa-solid fa-bell"></i> <span class="hidden md:inline">Notificações</span>
                 </button>
-                <button onclick="loadDataFromSheet(true)" title="Sincronizar Dados" class="bg-sky-700 hover:bg-sky-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow transition">
-                    <i id="sync-icon-desktop" class="fa-solid fa-arrows-rotate"></i> <span>Sincronizar</span>
+                
+                <button onclick="loadDataFromSheet(true)" title="Sincronizar Dados na Nuvem" class="bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 p-2 md:px-3 md:py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow">
+                    <i id="sync-icon-desktop" class="fa-solid fa-arrows-rotate"></i> <span class="hidden md:inline">Sincronizar</span>
                 </button>
-                <span id="user-badge" class="bg-slate-800 text-sky-300 text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1.5 border border-slate-700">
-                    <i class="fa-solid fa-user-check text-sky-400"></i> <span id="user-display-name">Ninguém</span>
-                </span>
-                <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow">
-                    <i class="fa-solid fa-right-from-bracket"></i> Sair
+
+                <div id="user-badge-container" class="bg-slate-900 border border-slate-800 text-slate-200 text-xs px-3 py-1.5 rounded-xl font-bold flex items-center gap-2 shadow-inner">
+                    <div class="w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center text-[10px] font-black"><i class="fa-solid fa-user"></i></div>
+                    <div class="hidden sm:block text-left leading-tight">
+                        <span id="user-display-name" class="block font-bold text-white text-xs">Carregando...</span>
+                        <span id="user-display-role" class="block text-[9px] text-sky-400 font-semibold uppercase">Usuário</span>
+                    </div>
+                </div>
+
+                <button onclick="handleLogout()" title="Sair do Sistema" class="bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/50 p-2 md:px-3 md:py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden md:inline">Sair</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-[1500px] w-full mx-auto p-3 md:p-6 flex-1 text-slate-800">
+    <!-- CORPO PRINCIPAL COM SIDEBAR NO DESKTOP -->
+    <div class="flex-1 flex max-w-[1800px] w-full mx-auto relative">
 
-        <!-- 1. TELA – MENU PRINCIPAL -->
-        <section id="screen1" class="screen-content space-y-3 md:space-y-6">
-            <div class="banner-blue text-white p-3.5 md:p-8 rounded-xl shadow-lg flex justify-between items-center relative overflow-hidden">
-                <div class="space-y-0.5 z-10">
-                    <span class="bg-white/20 text-[9px] md:text-xs uppercase font-extrabold px-2 py-0.5 rounded-full tracking-widest">OUD PRIME</span>
-                    <h2 class="text-lg md:text-5xl font-black uppercase tracking-tight">PAINEL OPERACIONAL</h2>
-                    <p class="text-sky-100 text-[10px] md:text-base font-medium">Sistemas Inteligentes para o seu dia a dia</p>
-                </div>
-                <div class="hidden md:block opacity-20 text-white z-0">
-                    <i class="fa-solid fa-droplet text-9xl"></i>
-                </div>
+        <!-- NAVEGAÇÃO LATERAL EXECUTIVA (EXIBIDA APENAS NO DESKTOP / TELA LARGA) -->
+        <aside class="hidden lg:flex flex-col w-64 bg-sidebar p-4 space-y-2 shrink-0 min-h-[calc(100vh-65px)]">
+            <div class="text-[10px] font-black uppercase text-slate-500 tracking-wider px-3 pt-2 pb-1">Menu Principal</div>
+            
+            <button onclick="switchScreen('screen1')" id="side-nav-screen1" class="sidebar-btn active w-full px-3.5 py-3 flex items-center gap-3 text-sm">
+                <i class="fa-solid fa-house text-base w-5 text-center"></i> <span>Início</span>
+            </button>
+            <button onclick="switchScreen('screen2')" id="side-nav-screen2" class="sidebar-btn w-full px-3.5 py-3 flex items-center gap-3 text-sm">
+                <i class="fa-solid fa-pen-to-square text-base w-5 text-center"></i> <span>Lançamentos</span>
+            </button>
+            <button onclick="switchScreen('screen4')" id="side-nav-screen4" class="sidebar-btn w-full px-3.5 py-3 flex items-center gap-3 text-sm">
+                <i class="fa-solid fa-boxes-stacked text-base w-5 text-center"></i> <span>Estoque</span>
+            </button>
+            <button onclick="switchScreen('screen5')" id="side-nav-screen5" class="sidebar-btn adm-only w-full px-3.5 py-3 flex items-center gap-3 text-sm">
+                <i class="fa-solid fa-chart-line text-base w-5 text-center"></i> <span>Dashboard</span>
+            </button>
+            <button onclick="switchScreen('screen6')" id="side-nav-screen6" class="sidebar-btn adm-only w-full px-3.5 py-3 flex items-center gap-3 text-sm">
+                <i class="fa-solid fa-database text-base w-5 text-center"></i> <span>Base de Dados</span>
+            </button>
+
+            <div class="text-[10px] font-black uppercase text-slate-500 tracking-wider px-3 pt-4 pb-1">Administração</div>
+            <button onclick="openConfigModal()" class="sidebar-btn adm-only w-full px-3.5 py-3 flex items-center gap-3 text-sm">
+                <i class="fa-solid fa-gear text-base w-5 text-center"></i> <span>Configurações</span>
+            </button>
+            <button onclick="openExportModal()" class="sidebar-btn adm-only w-full px-3.5 py-3 flex items-center gap-3 text-sm">
+                <i class="fa-solid fa-file-excel text-base w-5 text-center"></i> <span>Relatórios</span>
+            </button>
+
+            <!-- CARD INFORMATIVO SIDEBAR -->
+            <div class="mt-auto bg-slate-900/80 border border-slate-800 rounded-2xl p-3.5 text-center space-y-1.5 shadow-inner">
+                <span class="text-[10px] font-black uppercase text-sky-400 block tracking-widest">OUD PRIME</span>
+                <p class="text-[11px] text-slate-400 leading-tight">Sistemas Inteligentes para o seu dia a dia.</p>
             </div>
+        </aside>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
-                <div onclick="switchScreen('screen2')" class="card-menu cursor-pointer bg-[#0f5298] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
-                    <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-pen-to-square"></i></div>
-                    <div>
-                        <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">LANÇAMENTOS</h3>
-                        <p class="text-[10px] md:text-xs text-blue-100 mt-0.5">Entrada, Devolução e Consumo</p>
+        <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
+        <main class="flex-1 p-3.5 sm:p-5 md:p-6 text-slate-800 w-full min-w-0">
+
+            <!-- 1. TELA – MENU PRINCIPAL (MODELO FIEL À IMAGEM DE REFERÊNCIA) -->
+            <section id="screen1" class="screen-content space-y-4 md:space-y-6">
+                <!-- BANNER "PAINEL OPERACIONAL" EXACTO À IMAGEM DE REFERÊNCIA -->
+                <div class="banner-op text-white p-4 sm:p-6 md:p-8 rounded-3xl shadow-2xl flex justify-between items-center relative overflow-hidden">
+                    <div class="space-y-1.5 z-10 max-w-xl">
+                        <span class="bg-white/15 backdrop-blur-md text-[9px] sm:text-xs uppercase font-extrabold px-3 py-1 rounded-full tracking-widest border border-white/20 text-sky-200">OUD PRIME</span>
+                        <h2 class="text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-white leading-tight">PAINEL OPERACIONAL</h2>
+                        <p class="text-sky-100 text-xs sm:text-sm font-medium opacity-90">Sistemas Inteligentes para o seu dia a dia</p>
                     </div>
-                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-blue-200">ACESSAR &rarr;</div>
-                </div>
-
-                <div onclick="switchScreen('screen4')" class="card-menu cursor-pointer bg-[#0e8a44] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
-                    <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-cubes"></i></div>
-                    <div>
-                        <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">ESTOQUE</h3>
-                        <p class="text-[10px] md:text-xs text-emerald-100 mt-0.5">Consulta e Movimentação</p>
-                    </div>
-                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-emerald-200">ACESSAR &rarr;</div>
-                </div>
-
-                <div onclick="switchScreen('screen5')" class="card-menu adm-only cursor-pointer bg-[#d9530f] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
-                    <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-chart-column"></i></div>
-                    <div>
-                        <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">DASHBOARD</h3>
-                        <p class="text-[10px] md:text-xs text-amber-100 mt-0.5">Gráficos e Indicadores</p>
-                    </div>
-                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-amber-200">ACESSAR &rarr;</div>
-                </div>
-
-                <div onclick="switchScreen('screen6')" class="card-menu adm-only cursor-pointer bg-[#6f42c1] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
-                    <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-database"></i></div>
-                    <div>
-                        <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">BASE DE DADOS</h3>
-                        <p class="text-[10px] md:text-xs text-purple-100 mt-0.5">Registros de Lançamentos</p>
-                    </div>
-                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-purple-200">ACESSAR &rarr;</div>
-                </div>
-
-                <div onclick="openConfigModal()" class="card-menu adm-only cursor-pointer bg-[#495057] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
-                    <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-gear"></i></div>
-                    <div>
-                        <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">CONFIGURAÇÕES</h3>
-                        <p class="text-[10px] md:text-xs text-slate-200 mt-0.5">Usuários, Cadastros e Parâmetros</p>
-                    </div>
-                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-300">ACESSAR &rarr;</div>
-                </div>
-
-                <div onclick="openExportModal()" class="card-menu adm-only cursor-pointer bg-[#17a2b8] text-white p-4 rounded-2xl shadow-md flex flex-col justify-between h-32 md:h-48">
-                    <div class="w-9 h-9 md:w-12 md:h-12 bg-white/20 rounded-xl flex items-center justify-center text-base md:text-xl"><i class="fa-solid fa-file-excel"></i></div>
-                    <div>
-                        <h3 class="text-base md:text-xl font-bold uppercase tracking-wide">RELATÓRIOS</h3>
-                        <p class="text-[10px] md:text-xs text-teal-100 mt-0.5">Exportar por Período e Filtros</p>
-                    </div>
-                    <div class="text-right text-[10px] md:text-xs font-bold uppercase tracking-wider text-teal-200">GERAR &rarr;</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2. TELA – LANÇAMENTOS -->
-        <section id="screen2" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
-            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex justify-between items-center">
-                <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
-                    <i class="fa-solid fa-calendar-days"></i> 2. LANÇAMENTOS
-                </h2>
-                <span class="bg-blue-800 text-[10px] md:text-xs px-2.5 py-1 rounded-md text-blue-100">Comprovante obrigatório para Entrada e Devolução</span>
-            </div>
-
-            <form id="form-single" onsubmit="handleSingleSubmit(event)" class="space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-calendar text-blue-600"></i> DATA DO LANÇAMENTO
-                        </label>
-                        <input type="date" id="single-data" required class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-droplet text-blue-600"></i> TIPO DE LANÇAMENTO
-                        </label>
-                        <select id="single-tipo" onchange="updateSubLocations(); toggleComprovanteVisibility();" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-house text-blue-600"></i> LOCAL PRINCIPAL
-                        </label>
-                        <select id="single-local" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-sitemap text-blue-600"></i> LOCAL DE CONSUMO
-                        </label>
-                        <select id="single-detalhe" class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
+                    <div class="hidden md:flex items-center justify-center opacity-25 text-white z-0 text-7xl pr-4">
+                        <i class="fa-solid fa-droplet"></i>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-bottle-water text-blue-600"></i> QUANTIDADE (GALÕES)
-                        </label>
-                        <input type="number" id="single-qtd" min="1" placeholder="Ex: 35" required class="w-full p-2.5 border-2 border-emerald-300 bg-[#e8f8f2] text-emerald-900 font-extrabold text-xl rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
-                    </div>
-
-                    <div id="container-comprovante" class="hidden">
-                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center justify-between">
-                            <span class="flex items-center gap-1"><i class="fa-solid fa-paperclip text-blue-600"></i> ANEXAR COMPROVANTE</span>
-                            <span id="comprovante-badge-required" class="text-[9px] bg-rose-600 text-white font-black px-1.5 py-0.5 rounded uppercase">Obrigatório</span>
-                        </label>
-                        <div class="relative flex items-center">
-                            <input type="file" id="single-comprovante" accept="image/*,.pdf" onchange="updateFileLabel(this)" class="hidden">
-                            <label for="single-comprovante" class="w-full flex items-center justify-between p-2.5 border-2 border-sky-300 bg-sky-50/60 hover:bg-sky-100/80 rounded-xl cursor-pointer transition shadow-sm">
-                                <span id="file-chosen-text" class="text-xs font-bold text-sky-950 truncate max-w-[200px]">Selecionar comprovante...</span>
-                                <span class="bg-sky-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg uppercase flex items-center gap-1 shadow">
-                                    <i class="fa-solid fa-upload"></i> Arquivo
-                                </span>
-                            </label>
+                <!-- GRADE DE MÓDULOS: 1 COLUNA NO MOBILE / 2 COLUNAS NO DESKTOP (EXATAMENTE COMO NA IMAGEM) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-5">
+                    <!-- LANÇAMENTOS (AZUL) -->
+                    <div onclick="switchScreen('screen2')" class="card-module cursor-pointer bg-gradient-to-r from-[#0284c7] to-[#0369a1] text-white p-4 sm:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[90px] sm:min-h-[110px]">
+                        <div class="flex items-center gap-3.5 sm:gap-4">
+                            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center text-lg sm:text-2xl shadow-inner border border-white/20 shrink-0">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm sm:text-lg font-black uppercase tracking-wide leading-tight">LANÇAMENTOS</h3>
+                                <p class="text-[11px] sm:text-xs text-sky-100 opacity-90 mt-0.5">Entrada, Devolução e Consumo</p>
+                            </div>
+                        </div>
+                        <div class="text-right text-[10px] sm:text-xs font-black uppercase tracking-wider text-sky-200 shrink-0 flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10">
+                            ACESSAR &rarr;
                         </div>
                     </div>
 
-                    <div id="container-observacao" class="md:col-span-2">
-                        <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
-                            <i class="fa-solid fa-comment text-blue-600"></i> OBSERVAÇÃO (OPCIONAL)
-                        </label>
-                        <input type="text" id="single-obs" placeholder="Ex: Carga fornecedor, nota fiscal..." class="w-full p-2.5 border rounded-lg text-sm bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
+                    <!-- ESTOQUE (VERDE) -->
+                    <div onclick="switchScreen('screen4')" class="card-module cursor-pointer bg-gradient-to-r from-[#0e8a44] to-[#065026] text-white p-4 sm:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[90px] sm:min-h-[110px]">
+                        <div class="flex items-center gap-3.5 sm:gap-4">
+                            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center text-lg sm:text-2xl shadow-inner border border-white/20 shrink-0">
+                                <i class="fa-solid fa-cubes"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm sm:text-lg font-black uppercase tracking-wide leading-tight">ESTOQUE</h3>
+                                <p class="text-[11px] sm:text-xs text-emerald-100 opacity-90 mt-0.5">Consulta e Movimentação</p>
+                            </div>
+                        </div>
+                        <div class="text-right text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-200 shrink-0 flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10">
+                            ACESSAR &rarr;
+                        </div>
+                    </div>
+
+                    <!-- DASHBOARD (LARANJA/AMBER) -->
+                    <div onclick="switchScreen('screen5')" class="card-module adm-only cursor-pointer bg-gradient-to-r from-[#d9530f] to-[#8a3003] text-white p-4 sm:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[90px] sm:min-h-[110px]">
+                        <div class="flex items-center gap-3.5 sm:gap-4">
+                            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center text-lg sm:text-2xl shadow-inner border border-white/20 shrink-0">
+                                <i class="fa-solid fa-chart-column"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm sm:text-lg font-black uppercase tracking-wide leading-tight">DASHBOARD</h3>
+                                <p class="text-[11px] sm:text-xs text-amber-100 opacity-90 mt-0.5">Gráficos e Indicadores</p>
+                            </div>
+                        </div>
+                        <div class="text-right text-[10px] sm:text-xs font-black uppercase tracking-wider text-amber-200 shrink-0 flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10">
+                            ACESSAR &rarr;
+                        </div>
+                    </div>
+
+                    <!-- BASE DE DADOS (ROXO) -->
+                    <div onclick="switchScreen('screen6')" class="card-module adm-only cursor-pointer bg-gradient-to-r from-[#6f42c1] to-[#43237a] text-white p-4 sm:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[90px] sm:min-h-[110px]">
+                        <div class="flex items-center gap-3.5 sm:gap-4">
+                            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center text-lg sm:text-2xl shadow-inner border border-white/20 shrink-0">
+                                <i class="fa-solid fa-database"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm sm:text-lg font-black uppercase tracking-wide leading-tight">BASE DE DADOS</h3>
+                                <p class="text-[11px] sm:text-xs text-purple-100 opacity-90 mt-0.5">Registros de Lançamentos</p>
+                            </div>
+                        </div>
+                        <div class="text-right text-[10px] sm:text-xs font-black uppercase tracking-wider text-purple-200 shrink-0 flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10">
+                            ACESSAR &rarr;
+                        </div>
+                    </div>
+
+                    <!-- CONFIGURAÇÕES (CINZA ESCURO) -->
+                    <div onclick="openConfigModal()" class="card-module adm-only cursor-pointer bg-gradient-to-r from-[#495057] to-[#212529] text-white p-4 sm:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[90px] sm:min-h-[110px]">
+                        <div class="flex items-center gap-3.5 sm:gap-4">
+                            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center text-lg sm:text-2xl shadow-inner border border-white/20 shrink-0">
+                                <i class="fa-solid fa-gear"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm sm:text-lg font-black uppercase tracking-wide leading-tight">CONFIGURAÇÕES</h3>
+                                <p class="text-[11px] sm:text-xs text-slate-200 opacity-90 mt-0.5">Usuários, Cadastros e Parâmetros</p>
+                            </div>
+                        </div>
+                        <div class="text-right text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-300 shrink-0 flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10">
+                            ACESSAR &rarr;
+                        </div>
+                    </div>
+
+                    <!-- RELATÓRIOS (TEAL/CIANO) -->
+                    <div onclick="openExportModal()" class="card-module adm-only cursor-pointer bg-gradient-to-r from-[#17a2b8] to-[#0c6674] text-white p-4 sm:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[90px] sm:min-h-[110px]">
+                        <div class="flex items-center gap-3.5 sm:gap-4">
+                            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center text-lg sm:text-2xl shadow-inner border border-white/20 shrink-0">
+                                <i class="fa-solid fa-file-excel"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm sm:text-lg font-black uppercase tracking-wide leading-tight">RELATÓRIOS</h3>
+                                <p class="text-[11px] sm:text-xs text-teal-100 opacity-90 mt-0.5">Exportar por Período e Filtros</p>
+                            </div>
+                        </div>
+                        <div class="text-right text-[10px] sm:text-xs font-black uppercase tracking-wider text-teal-200 shrink-0 flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10">
+                            GERAR &rarr;
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. TELA – LANÇAMENTOS -->
+            <section id="screen2" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
+                <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex justify-between items-center shadow-lg">
+                    <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
+                        <i class="fa-solid fa-calendar-days"></i> 2. LANÇAMENTOS
+                    </h2>
+                    <span class="bg-blue-900/80 text-[10px] md:text-xs px-3 py-1 rounded-full text-blue-100 font-bold border border-blue-700/50">Comprovante obrigatório para Entrada e Devolução</span>
+                </div>
+
+                <form id="form-single" onsubmit="handleSingleSubmit(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-calendar text-blue-600"></i> DATA DO LANÇAMENTO
+                            </label>
+                            <input type="date" id="single-data" required class="w-full p-2.5 border rounded-xl text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-droplet text-blue-600"></i> TIPO DE LANÇAMENTO
+                            </label>
+                            <select id="single-tipo" onchange="updateSubLocations(); toggleComprovanteVisibility();" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-house text-blue-600"></i> LOCAL PRINCIPAL
+                            </label>
+                            <select id="single-local" onchange="updateSubLocations()" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-sitemap text-blue-600"></i> LOCAL DE CONSUMO
+                            </label>
+                            <select id="single-detalhe" class="w-full p-2.5 border rounded-xl text-sm bg-slate-50 font-medium outline-none focus:ring-2 focus:ring-blue-500"></select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-bottle-water text-blue-600"></i> QUANTIDADE (GALÕES)
+                            </label>
+                            <input type="number" id="single-qtd" min="1" placeholder="Ex: 35" required class="w-full p-2.5 border-2 border-emerald-300 bg-[#e8f8f2] text-emerald-900 font-extrabold text-xl rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+
+                        <div id="container-comprovante" class="hidden">
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center justify-between">
+                                <span class="flex items-center gap-1"><i class="fa-solid fa-paperclip text-blue-600"></i> ANEXAR COMPROVANTE</span>
+                                <span id="comprovante-badge-required" class="text-[9px] bg-rose-600 text-white font-black px-1.5 py-0.5 rounded uppercase">Obrigatório</span>
+                            </label>
+                            <div class="relative flex items-center">
+                                <input type="file" id="single-comprovante" accept="image/*,.pdf" onchange="updateFileLabel(this)" class="hidden">
+                                <label for="single-comprovante" class="w-full flex items-center justify-between p-2.5 border-2 border-sky-300 bg-sky-50/60 hover:bg-sky-100/80 rounded-xl cursor-pointer transition shadow-sm">
+                                    <span id="file-chosen-text" class="text-xs font-bold text-sky-950 truncate max-w-[200px]">Selecionar comprovante...</span>
+                                    <span class="bg-sky-600 text-white text-[10px] font-black px-2.5 py-1 rounded-lg uppercase flex items-center gap-1 shadow">
+                                        <i class="fa-solid fa-upload"></i> Arquivo
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="container-observacao" class="md:col-span-2">
+                            <label class="block text-xs font-bold uppercase text-slate-700 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-comment text-blue-600"></i> OBSERVAÇÃO (OPCIONAL)
+                            </label>
+                            <input type="text" id="single-obs" placeholder="Ex: Carga fornecedor, nota fiscal..." class="w-full p-2.5 border rounded-xl text-sm bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-2">
+                        <div class="flex gap-2">
+                            <button type="submit" class="flex-1 sm:flex-none bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm shadow-lg transition">
+                                <i class="fa-solid fa-check"></i> Registrar
+                            </button>
+                            <button type="reset" onclick="setTimeout(() => { updateSubLocations(); toggleComprovanteVisibility(); resetFileLabel(); }, 50)" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm shadow-lg transition">
+                                <i class="fa-solid fa-broom"></i> Limpar
+                            </button>
+                        </div>
+                        <button type="button" onclick="switchScreen('screen3')" class="bg-[#d9530f] hover:bg-amber-700 text-white font-bold px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm shadow-lg transition">
+                            <i class="fa-solid fa-plus"></i> Lançamento por Alojamento
+                        </button>
+                    </div>
+                </form>
+
+                <div class="space-y-3 pt-4 border-t border-slate-200">
+                    <h3 class="text-xs font-bold uppercase text-slate-700 flex items-center gap-1">
+                        <i class="fa-solid fa-clock-rotate-left"></i> ÚLTIMOS LANÇAMENTOS
+                    </h3>
+                    <div class="overflow-x-auto border rounded-2xl shadow-sm">
+                        <table class="w-full text-xs md:text-sm text-left text-slate-700">
+                            <thead class="bg-[#0b5394] text-white text-[11px] uppercase font-bold">
+                                <tr>
+                                    <th class="p-3">DATA</th>
+                                    <th class="p-3">TIPO</th>
+                                    <th class="p-3">LOCAL</th>
+                                    <th class="p-3">DETALHE</th>
+                                    <th class="p-3 text-center">QTD</th>
+                                    <th class="p-3 text-center">COMPROVANTE</th>
+                                    <th class="p-3 text-center">AÇÕES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-recent-body" class="divide-y divide-slate-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. TELA – CONSUMO DETALHADO -->
+            <section id="screen3" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
+                <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full shadow-lg">
+                    <h2 id="batch-screen-title" class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
+                        <i class="fa-solid fa-building"></i> 3. CONSUMO DETALHADO
+                    </h2>
+                    
+                    <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold">
+                        <div class="flex items-center justify-between gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30">
+                            <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">LOCAL:</span>
+                            <select id="batch-local-select" onchange="changeBatchLocation()" class="bg-white text-slate-800 px-2 py-1.5 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0"></select>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30">
+                            <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">DATA:</span>
+                            <input type="date" id="batch-data" class="bg-white text-slate-800 px-2 py-1.5 rounded text-xs font-bold outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0">
+                        </div>
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-2">
-                    <div class="flex gap-2">
-                        <button type="submit" class="flex-1 sm:flex-none bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
-                            <i class="fa-solid fa-check"></i> Registrar
-                        </button>
-                        <button type="reset" onclick="setTimeout(() => { updateSubLocations(); toggleComprovanteVisibility(); resetFileLabel(); }, 50)" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
-                            <i class="fa-solid fa-broom"></i> Limpar
-                        </button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-2">CONSUMO POR LOCAL</h3>
+                        <div id="batch-inputs" class="space-y-2 max-h-[350px] overflow-y-auto pr-1"></div>
                     </div>
-                    <button type="button" onclick="switchScreen('screen3')" class="bg-[#d9530f] hover:bg-amber-700 text-white font-bold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm shadow">
-                        <i class="fa-solid fa-plus"></i> Lançamento por Alojamento
+
+                    <div class="bg-[#fff9e6] border border-amber-200 p-5 rounded-2xl flex flex-col justify-between shadow-sm">
+                        <div>
+                            <h3 class="text-xs font-bold uppercase text-amber-900 border-b border-amber-200 pb-2 mb-3">RESUMO DO LANÇAMENTO</h3>
+                            <div id="batch-summary" class="space-y-2 text-xs md:text-sm max-h-[200px] overflow-y-auto pr-1"></div>
+                        </div>
+                        <div class="border-t border-amber-200 pt-3 flex justify-between items-center mt-4">
+                            <span id="batch-total-label" class="text-base font-bold uppercase text-amber-900">TOTAL</span>
+                            <span id="batch-total" class="text-2xl font-black text-amber-950">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 pt-3 border-t border-slate-200">
+                    <button onclick="submitBatch()" class="flex-1 bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs md:text-sm shadow-lg transition">
+                        <i class="fa-solid fa-check"></i> Registrar
+                    </button>
+                    <button onclick="clearBatch()" class="flex-1 bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs md:text-sm shadow-lg transition">
+                        <i class="fa-solid fa-broom"></i> Limpar
+                    </button>
+                    <button onclick="switchScreen('screen1')" class="w-full sm:w-auto bg-slate-500 hover:bg-slate-600 text-white font-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 text-xs md:text-sm shadow-lg transition">
+                        <i class="fa-solid fa-arrow-left"></i> Voltar
                     </button>
                 </div>
-            </form>
+            </section>
 
-            <div class="space-y-3 pt-4 border-t">
-                <h3 class="text-xs font-bold uppercase text-slate-700 flex items-center gap-1">
-                    <i class="fa-solid fa-clock-rotate-left"></i> ÚLTIMOS LANÇAMENTOS
-                </h3>
-                <div class="overflow-x-auto border rounded-xl shadow-sm">
-                    <table class="w-full text-xs md:text-sm text-left text-slate-700">
-                        <thead class="bg-[#0b5394] text-white text-[11px] uppercase font-bold">
+            <!-- 4. TELA – ESTOQUE -->
+            <section id="screen4" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
+                <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex justify-between items-center shadow-lg">
+                    <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
+                        <i class="fa-solid fa-cubes"></i> 4. ESTOQUE
+                    </h2>
+                    <span class="bg-blue-900/80 text-[10px] md:text-xs px-3 py-1 rounded-full text-blue-100 font-bold border border-blue-700/50">Indicadores</span>
+                </div>
+
+                <div id="stock-cards-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"></div>
+
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold uppercase text-slate-700">MOVIMENTAÇÃO DO ESTOQUE</h3>
+                    <div class="overflow-x-auto border rounded-2xl shadow-sm">
+                        <table class="w-full text-xs text-left text-slate-700">
+                            <thead class="bg-[#0b5394] text-white uppercase font-bold text-[10px]">
+                                <tr>
+                                    <th class="p-2.5">LOCAL</th>
+                                    <th class="p-2.5 text-center">INICIAL</th>
+                                    <th class="p-2.5 text-center">ENTRADAS</th>
+                                    <th class="p-2.5 text-center">CONSUMO</th>
+                                    <th class="p-2.5 text-center">DEVOLUÇÕES</th>
+                                    <th class="p-2.5 text-center">CHEIOS</th>
+                                    <th class="p-2.5 text-center">VAZIOS</th>
+                                    <th class="p-2.5 text-center">STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stock-summary-table" class="divide-y divide-slate-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. TELA – DASHBOARD -->
+            <section id="screen5" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
+                <div class="bg-[#0b5394] text-white p-3.5 rounded-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full shadow-lg">
+                    <div>
+                        <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
+                            <i class="fa-solid fa-chart-line"></i> 5. DASHBOARD COMPLETO
+                        </h2>
+                        <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
+                    </div>
+                    
+                    <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2.5 rounded-xl flex flex-col sm:flex-row items-stretch sm:items-center gap-2 text-xs font-semibold">
+                        <div class="grid grid-cols-2 gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">DE:</span>
+                                <input type="date" id="dash-date-start" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0">
+                            </div>
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">ATÉ:</span>
+                                <input type="date" id="dash-date-end" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between sm:justify-start gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
+                            <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">LOCAL:</span>
+                            <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full sm:w-36 min-w-0"></select>
+                        </div>
+
+                        <button onclick="shareDashboardWhatsApp()" class="bg-[#25D366] hover:bg-[#20ba5a] text-slate-950 font-black px-3.5 py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md transition active:scale-95 shrink-0" title="Compartilhar resumo no WhatsApp">
+                            <i class="fa-brands fa-whatsapp text-base"></i> <span>Enviar WhatsApp</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CARTÕES DE KPIS -->
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                    <div class="bg-[#0f5298] text-white p-3.5 rounded-2xl shadow-lg flex justify-between items-center border border-white/10">
+                        <div>
+                            <p class="text-[9px] uppercase font-bold text-sky-100">CONSUMO TOTAL</p>
+                            <h3 id="dash-consumo-total" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
+                            <p id="dash-litros-total" class="text-[9px] text-sky-200">0 litros</p>
+                        </div>
+                        <i class="fa-solid fa-faucet-drip text-2xl opacity-40"></i>
+                    </div>
+
+                    <div class="bg-[#0e8a44] text-white p-3.5 rounded-2xl shadow-lg flex justify-between items-center border border-white/10">
+                        <div>
+                            <p class="text-[9px] uppercase font-bold text-emerald-100">ENTRADAS (CHEIOS)</p>
+                            <h3 id="dash-entradas" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
+                            <p class="text-[9px] text-emerald-200">Galões</p>
+                        </div>
+                        <i class="fa-solid fa-arrow-down text-2xl opacity-40"></i>
+                    </div>
+
+                    <div class="bg-[#d9530f] text-white p-3.5 rounded-2xl shadow-lg flex justify-between items-center border border-white/10">
+                        <div>
+                            <p class="text-[9px] uppercase font-bold text-amber-100">DEVOLUÇÕES (VAZIOS)</p>
+                            <h3 id="dash-devolucoes" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
+                            <p class="text-[9px] text-amber-200">Galões</p>
+                        </div>
+                        <i class="fa-solid fa-arrow-up text-2xl opacity-40"></i>
+                    </div>
+
+                    <div class="bg-[#6f42c1] text-white p-3.5 rounded-2xl shadow-lg flex justify-between items-center border border-white/10">
+                        <div>
+                            <p class="text-[9px] uppercase font-bold text-purple-100">ESTOQUE ATUAL</p>
+                            <h3 id="dash-estoque-atual" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
+                            <p class="text-[9px] text-purple-200">Galões</p>
+                        </div>
+                        <i class="fa-solid fa-cubes text-2xl opacity-40"></i>
+                    </div>
+
+                    <div class="bg-[#343a40] text-white p-3.5 rounded-2xl shadow-lg flex justify-between items-center border border-white/10">
+                        <div>
+                            <p class="text-[9px] uppercase font-bold text-slate-300">MÉDIA DIÁRIA</p>
+                            <h3 id="dash-media-diaria" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
+                            <p id="dash-media-diaria-litros" class="text-[9px] text-slate-300">0 litros/dia</p>
+                        </div>
+                        <i class="fa-solid fa-chart-line text-2xl opacity-40"></i>
+                    </div>
+
+                    <div class="bg-[#495057] text-white p-3.5 rounded-2xl shadow-lg flex justify-between items-center border border-white/10">
+                        <div>
+                            <p class="text-[9px] uppercase font-bold text-slate-300">EFETIVO MÉDIO</p>
+                            <h3 id="dash-efetivo" class="text-xl md:text-2xl font-black mt-0.5">500</h3>
+                            <p class="text-[9px] text-slate-300">Pessoas</p>
+                        </div>
+                        <i class="fa-solid fa-users text-2xl opacity-40"></i>
+                    </div>
+
+                    <div class="bg-[#17a2b8] text-white p-3.5 rounded-2xl shadow-lg flex justify-between items-center border border-white/10">
+                        <div>
+                            <p class="text-[9px] uppercase font-bold text-teal-100">LITROS / PESSOA / DIA</p>
+                            <h3 id="dash-litros-pessoa" class="text-xl md:text-2xl font-black mt-0.5">0,0</h3>
+                            <p class="text-[9px] text-teal-200">L/pessoa/dia</p>
+                        </div>
+                        <i class="fa-solid fa-user text-2xl opacity-40"></i>
+                    </div>
+
+                    <div class="bg-[#fd7e14] text-white p-3.5 rounded-2xl shadow-lg flex justify-between items-center border border-white/10">
+                        <div>
+                            <p class="text-[9px] uppercase font-bold text-orange-100">META</p>
+                            <h3 id="dash-meta" class="text-xl md:text-2xl font-black mt-0.5">2,7</h3>
+                            <p class="text-[9px] text-orange-200">L/pessoa/dia</p>
+                        </div>
+                        <i class="fa-solid fa-bullseye text-2xl opacity-40"></i>
+                    </div>
+                </div>
+
+                <!-- GRÁFICOS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
+                        <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO DIÁRIO (GALÕES)</h4>
+                        <div class="relative h-56 w-full">
+                            <canvas id="chartConsumoDiario"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
+                        <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO POR LOCAL (PERÍODO)</h4>
+                        <div class="relative h-56 w-full">
+                            <canvas id="chartConsumoLocal"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
+                        <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">ENTRADAS X DEVOLUÇÕES (GALÕES)</h4>
+                        <div class="relative h-56 w-full">
+                            <canvas id="chartEntradasDevolucoes"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
+                        <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO MENSAL (GALÕES)</h4>
+                        <div class="relative h-56 w-full">
+                            <canvas id="chartConsumoMensal"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. TELA – BASE DE DADOS -->
+            <section id="screen6" class="screen-content hidden bg-white rounded-3xl shadow-2xl p-4 md:p-6 space-y-6">
+                <div class="bg-[#6f42c1] text-white p-3.5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-lg">
+                    <div>
+                        <h2 class="text-base md:text-lg font-black flex items-center gap-2 uppercase">
+                            <i class="fa-solid fa-database"></i> BASE DE DADOS
+                        </h2>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button onclick="openExportModal('excel')" class="flex-1 sm:flex-none bg-[#0e8a44] hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow transition">
+                            <i class="fa-solid fa-file-excel"></i> Exportar Excel
+                        </button>
+                        <button onclick="openExportModal('csv')" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-sky-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow transition">
+                            <i class="fa-solid fa-file-csv"></i> Exportar CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto border rounded-2xl shadow-sm">
+                    <table class="w-full text-xs text-left text-slate-700">
+                        <thead class="bg-[#0b5394] text-white uppercase font-bold text-[10px]">
                             <tr>
                                 <th class="p-2.5">DATA</th>
                                 <th class="p-2.5">TIPO</th>
@@ -521,287 +919,27 @@
                                 <th class="p-2.5">DETALHE</th>
                                 <th class="p-2.5 text-center">QTD</th>
                                 <th class="p-2.5 text-center">COMPROVANTE</th>
-                                <th class="p-2.5 text-center">AÇÕES</th>
+                                <th class="p-2.5">RESPONSÁVEL</th>
+                                <th class="p-2.5 text-center">AÇÃO</th>
                             </tr>
                         </thead>
-                        <tbody id="table-recent-body" class="divide-y divide-slate-200"></tbody>
+                        <tbody id="table-full-db" class="divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- 3. TELA – CONSUMO DETALHADO -->
-        <section id="screen3" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
-            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full max-w-full">
-                <h2 id="batch-screen-title" class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
-                    <i class="fa-solid fa-building"></i> 3. CONSUMO DETALHADO
-                </h2>
-                
-                <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold">
-                    <div class="flex items-center justify-between gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30">
-                        <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">LOCAL:</span>
-                        <select id="batch-local-select" onchange="changeBatchLocation()" class="bg-white text-slate-800 px-2 py-1.5 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0"></select>
-                    </div>
+        </main>
+    </div>
 
-                    <div class="flex items-center justify-between gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30">
-                        <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">DATA:</span>
-                        <input type="date" id="batch-data" class="bg-white text-slate-800 px-2 py-1.5 rounded text-xs font-bold outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0">
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-3">
-                    <h3 class="text-xs font-bold uppercase text-slate-700 border-b pb-2">CONSUMO POR LOCAL</h3>
-                    <div id="batch-inputs" class="space-y-2 max-h-[350px] overflow-y-auto pr-1"></div>
-                </div>
-
-                <div class="bg-[#fff9e6] border border-amber-200 p-5 rounded-2xl flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-xs font-bold uppercase text-amber-900 border-b border-amber-200 pb-2 mb-3">RESUMO DO LANÇAMENTO</h3>
-                        <div id="batch-summary" class="space-y-2 text-xs md:text-sm max-h-[200px] overflow-y-auto pr-1"></div>
-                    </div>
-                    <div class="border-t border-amber-200 pt-3 flex justify-between items-center mt-4">
-                        <span id="batch-total-label" class="text-base font-bold uppercase text-amber-900">TOTAL</span>
-                        <span id="batch-total" class="text-2xl font-black text-amber-950">0</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex flex-wrap gap-2 pt-3 border-t">
-                <button onclick="submitBatch()" class="flex-1 bg-[#0e8a44] hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 text-xs md:text-sm shadow">
-                    <i class="fa-solid fa-check"></i> Registrar
-                </button>
-                <button onclick="clearBatch()" class="flex-1 bg-[#0f5298] hover:bg-blue-800 text-white font-bold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 text-xs md:text-sm shadow">
-                    <i class="fa-solid fa-broom"></i> Limpar
-                </button>
-                <button onclick="switchScreen('screen1')" class="w-full sm:w-auto bg-slate-500 hover:bg-slate-600 text-white font-bold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 text-xs md:text-sm shadow">
-                    <i class="fa-solid fa-arrow-left"></i> Voltar
-                </button>
-            </div>
-        </section>
-
-        <!-- 4. TELA – ESTOQUE -->
-        <section id="screen4" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
-            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex justify-between items-center">
-                <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
-                    <i class="fa-solid fa-cubes"></i> 4. ESTOQUE
-                </h2>
-                <span class="bg-blue-800 text-[10px] md:text-xs px-2.5 py-1 rounded-md text-blue-100">Indicadores</span>
-            </div>
-
-            <div id="stock-cards-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"></div>
-
-            <div class="space-y-3">
-                <h3 class="text-xs font-bold uppercase text-slate-700">MOVIMENTAÇÃO DO ESTOQUE</h3>
-                <div class="overflow-x-auto border rounded-xl shadow-sm">
-                    <table class="w-full text-xs text-left text-slate-700">
-                        <thead class="bg-[#0b5394] text-white uppercase font-bold text-[10px]">
-                            <tr>
-                                <th class="p-2.5">LOCAL</th>
-                                <th class="p-2.5 text-center">INICIAL</th>
-                                <th class="p-2.5 text-center">ENTRADAS</th>
-                                <th class="p-2.5 text-center">CONSUMO</th>
-                                <th class="p-2.5 text-center">DEVOLUÇÕES</th>
-                                <th class="p-2.5 text-center">CHEIOS</th>
-                                <th class="p-2.5 text-center">VAZIOS</th>
-                                <th class="p-2.5 text-center">STATUS</th>
-                            </tr>
-                        </thead>
-                        <tbody id="stock-summary-table" class="divide-y divide-slate-200"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- 5. TELA – DASHBOARD -->
-        <section id="screen5" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
-            <div class="bg-[#0b5394] text-white p-3.5 rounded-xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 w-full max-w-full">
-                <div>
-                    <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
-                        <i class="fa-solid fa-chart-line"></i> 5. DASHBOARD COMPLETO
-                    </h2>
-                    <p class="text-xs text-blue-200">Indicadores Consolidados e Análise de Consumo</p>
-                </div>
-                
-                <div class="w-full lg:w-auto bg-blue-900/60 border border-blue-700/50 p-2.5 rounded-xl flex flex-col sm:flex-row items-stretch sm:items-center gap-2 text-xs font-semibold">
-                    <div class="grid grid-cols-2 gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
-                        <div class="flex items-center gap-1.5 min-w-0">
-                            <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">DE:</span>
-                            <input type="date" id="dash-date-start" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0">
-                        </div>
-                        <div class="flex items-center gap-1.5 min-w-0">
-                            <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">ATÉ:</span>
-                            <input type="date" id="dash-date-end" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full min-w-0">
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between sm:justify-start gap-2 bg-blue-950/60 p-2 rounded-lg border border-blue-700/30 flex-1 sm:flex-none">
-                        <span class="text-blue-200 font-bold uppercase text-[10px] shrink-0">LOCAL:</span>
-                        <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1 rounded font-bold text-xs outline-none focus:ring-2 focus:ring-sky-400 w-full sm:w-36 min-w-0"></select>
-                    </div>
-
-                    <button onclick="shareDashboardWhatsApp()" class="bg-[#25D366] hover:bg-[#20ba5a] text-slate-950 font-black px-3.5 py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-md transition active:scale-95 shrink-0" title="Compartilhar resumo no WhatsApp">
-                        <i class="fa-brands fa-whatsapp text-base"></i> <span>Enviar WhatsApp</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- TODOS OS 8 CARTÕES DE KPIS -->
-            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <div class="bg-[#0f5298] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
-                    <div>
-                        <p class="text-[9px] uppercase font-bold text-sky-100">CONSUMO TOTAL</p>
-                        <h3 id="dash-consumo-total" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
-                        <p id="dash-litros-total" class="text-[9px] text-sky-200">0 litros</p>
-                    </div>
-                    <i class="fa-solid fa-faucet-drip text-2xl opacity-40"></i>
-                </div>
-
-                <div class="bg-[#0e8a44] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
-                    <div>
-                        <p class="text-[9px] uppercase font-bold text-emerald-100">ENTRADAS (CHEIOS)</p>
-                        <h3 id="dash-entradas" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
-                        <p class="text-[9px] text-emerald-200">Galões</p>
-                    </div>
-                    <i class="fa-solid fa-arrow-down text-2xl opacity-40"></i>
-                </div>
-
-                <div class="bg-[#d9530f] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
-                    <div>
-                        <p class="text-[9px] uppercase font-bold text-amber-100">DEVOLUÇÕES (VAZIOS)</p>
-                        <h3 id="dash-devolucoes" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
-                        <p class="text-[9px] text-amber-200">Galões</p>
-                    </div>
-                    <i class="fa-solid fa-arrow-up text-2xl opacity-40"></i>
-                </div>
-
-                <div class="bg-[#6f42c1] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
-                    <div>
-                        <p class="text-[9px] uppercase font-bold text-purple-100">ESTOQUE ATUAL</p>
-                        <h3 id="dash-estoque-atual" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
-                        <p class="text-[9px] text-purple-200">Galões</p>
-                    </div>
-                    <i class="fa-solid fa-cubes text-2xl opacity-40"></i>
-                </div>
-
-                <div class="bg-[#343a40] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
-                    <div>
-                        <p class="text-[9px] uppercase font-bold text-slate-300">MÉDIA DIÁRIA</p>
-                        <h3 id="dash-media-diaria" class="text-xl md:text-2xl font-black mt-0.5">0</h3>
-                        <p id="dash-media-diaria-litros" class="text-[9px] text-slate-300">0 litros/dia</p>
-                    </div>
-                    <i class="fa-solid fa-chart-line text-2xl opacity-40"></i>
-                </div>
-
-                <div class="bg-[#495057] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
-                    <div>
-                        <p class="text-[9px] uppercase font-bold text-slate-300">EFETIVO MÉDIO</p>
-                        <h3 id="dash-efetivo" class="text-xl md:text-2xl font-black mt-0.5">500</h3>
-                        <p class="text-[9px] text-slate-300">Pessoas</p>
-                    </div>
-                    <i class="fa-solid fa-users text-2xl opacity-40"></i>
-                </div>
-
-                <div class="bg-[#17a2b8] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
-                    <div>
-                        <p class="text-[9px] uppercase font-bold text-teal-100">LITROS / PESSOA / DIA</p>
-                        <h3 id="dash-litros-pessoa" class="text-xl md:text-2xl font-black mt-0.5">0,0</h3>
-                        <p class="text-[9px] text-teal-200">L/pessoa/dia</p>
-                    </div>
-                    <i class="fa-solid fa-user text-2xl opacity-40"></i>
-                </div>
-
-                <div class="bg-[#fd7e14] text-white p-3.5 rounded-2xl shadow flex justify-between items-center">
-                    <div>
-                        <p class="text-[9px] uppercase font-bold text-orange-100">META</p>
-                        <h3 id="dash-meta" class="text-xl md:text-2xl font-black mt-0.5">2,7</h3>
-                        <p class="text-[9px] text-orange-200">L/pessoa/dia</p>
-                    </div>
-                    <i class="fa-solid fa-bullseye text-2xl opacity-40"></i>
-                </div>
-            </div>
-
-            <!-- TODOS OS 4 GRÁFICOS -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO DIÁRIO (GALÕES)</h4>
-                    <div class="relative h-56 w-full">
-                        <canvas id="chartConsumoDiario"></canvas>
-                    </div>
-                </div>
-
-                <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO POR LOCAL (PERÍODO)</h4>
-                    <div class="relative h-56 w-full">
-                        <canvas id="chartConsumoLocal"></canvas>
-                    </div>
-                </div>
-
-                <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">ENTRADAS X DEVOLUÇÕES (GALÕES)</h4>
-                    <div class="relative h-56 w-full">
-                        <canvas id="chartEntradasDevolucoes"></canvas>
-                    </div>
-                </div>
-
-                <div class="border rounded-2xl p-3 md:p-4 shadow-sm flex flex-col">
-                    <h4 class="text-xs font-bold uppercase text-slate-700 mb-2">CONSUMO MENSAL (GALÕES)</h4>
-                    <div class="relative h-56 w-full">
-                        <canvas id="chartConsumoMensal"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 6. TELA – BASE DE DADOS -->
-        <section id="screen6" class="screen-content hidden bg-white rounded-2xl shadow-lg p-4 md:p-6 space-y-6">
-            <div class="bg-[#6f42c1] text-white p-3.5 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div>
-                    <h2 class="text-base md:text-lg font-bold flex items-center gap-2 uppercase">
-                        <i class="fa-solid fa-database"></i> BASE DE DADOS
-                    </h2>
-                </div>
-                <div class="flex gap-2 w-full sm:w-auto">
-                    <button onclick="openExportModal('excel')" class="flex-1 sm:flex-none bg-[#0e8a44] hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow">
-                        <i class="fa-solid fa-file-excel"></i> Exportar Excel
-                    </button>
-                    <button onclick="openExportModal('csv')" class="flex-1 sm:flex-none bg-[#0f5298] hover:bg-sky-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 shadow">
-                        <i class="fa-solid fa-file-csv"></i> Exportar CSV
-                    </button>
-                </div>
-            </div>
-
-            <div class="overflow-x-auto border rounded-xl shadow-sm">
-                <table class="w-full text-xs text-left text-slate-700">
-                    <thead class="bg-[#0b5394] text-white uppercase font-bold text-[10px]">
-                        <tr>
-                            <th class="p-2.5">DATA</th>
-                            <th class="p-2.5">TIPO</th>
-                            <th class="p-2.5">LOCAL</th>
-                            <th class="p-2.5">DETALHE</th>
-                            <th class="p-2.5 text-center">QTD</th>
-                            <th class="p-2.5 text-center">COMPROVANTE</th>
-                            <th class="p-2.5">RESPONSÁVEL</th>
-                            <th class="p-2.5 text-center">AÇÃO</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-full-db" class="divide-y divide-slate-200"></tbody>
-                </table>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- RODAPÉ -->
-    <footer class="bg-slate-950 text-slate-400 text-xs py-3 px-4 mt-auto border-t border-slate-900 w-full">
-        <div class="max-w-[1500px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left">
+    <!-- RODAPÉ EXECUTIVO FIEL À IMAGEM DE REFERÊNCIA -->
+    <footer class="bg-slate-950 text-slate-400 text-xs py-3 px-4 md:px-8 border-t border-slate-900 w-full z-10">
+        <div class="max-w-[1800px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left">
             <div class="flex items-center gap-2">
-                <strong class="text-sky-400 font-black tracking-wider text-xs">OUD PRIME</strong>
+                <strong class="text-sky-400 font-black tracking-wider">OUD PRIME</strong>
                 <span class="text-slate-500 text-[11px]">• Sistemas Inteligentes</span>
             </div>
             <div class="text-[11px] flex items-center gap-2">
-                <span>Desenvolvido por <strong onclick="promptDevAccess()" class="text-slate-200 font-semibold cursor-pointer hover:text-sky-400 transition" title="Clique para Acesso do Desenvolvedor">Adanilton Silva</strong></span>
+                <span>Desenvolvido por <strong onclick="promptDevAccess()" class="text-slate-200 font-bold cursor-pointer hover:text-sky-400 transition" title="Acesso do Desenvolvedor">Adanilton Silva</strong></span>
                 <button onclick="promptDevAccess()" title="Painel do Desenvolvedor" class="bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-amber-400 border border-slate-800 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1 transition">
                     <i class="fa-solid fa-shield-halved"></i> <span>DEV</span>
                 </button>
@@ -878,7 +1016,7 @@
                 </div>
             </div>
 
-            <!-- 1. CONFIGURAÇÃO DA API (SCRIPT URL DO GOOGLE SHEETS) -->
+            <!-- CONFIGURAÇÃO DA API -->
             <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 space-y-3">
                 <div class="flex justify-between items-center">
                     <h4 class="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
@@ -903,7 +1041,7 @@
                 </div>
             </div>
 
-            <!-- 2. BACKUP TOTAL E RESTAURAÇÃO BRUTA -->
+            <!-- BACKUP TOTAL -->
             <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 space-y-3">
                 <h4 class="text-xs font-black uppercase text-emerald-400 flex items-center gap-1.5">
                     <i class="fa-solid fa-database"></i> Backup & Recuperação do Sistema (Dump JSON)
@@ -924,7 +1062,7 @@
                 </div>
             </div>
 
-            <!-- 3. ZONA DE SEGURANÇA E SENHA MESTRA -->
+            <!-- ZONA DE SEGURANÇA -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 space-y-2.5">
                     <h4 class="text-xs font-black uppercase text-sky-400 flex items-center gap-1.5">
@@ -957,7 +1095,7 @@
         </div>
     </div>
 
-    <!-- MODAL CONFIGURAÇÕES COMPLETO COM SUPORTE A EDIÇÃO -->
+    <!-- MODAL CONFIGURAÇÕES -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3">
         <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full p-5 space-y-5 relative border max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2 border-b">
@@ -968,15 +1106,14 @@
             </div>
 
             <div class="space-y-5">
-                <!-- 1. GESTÃO DE USUÁRIOS COM BOTOES DE EDITAR -->
                 <div class="bg-blue-50/60 border border-blue-200 p-3.5 rounded-2xl space-y-3">
                     <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b border-blue-200 pb-1">GESTÃO DE USUÁRIOS E PERMISSÕES</h4>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <input type="text" id="add-user-name" placeholder="Nome Completo" class="p-2.5 border-2 border-slate-300 rounded-xl text-xs bg-white text-black font-bold placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
-                        <input type="text" id="add-user-login" placeholder="Login / E-mail" class="p-2.5 border-2 border-slate-300 rounded-xl text-xs bg-white text-black font-bold placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
-                        <input type="password" id="add-user-pass" placeholder="Senha" class="p-2.5 border-2 border-slate-300 rounded-xl text-xs bg-white text-black font-bold placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
-                        <select id="add-user-role" class="p-2.5 border-2 border-slate-300 rounded-xl text-xs bg-white font-bold text-black outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
+                        <input type="text" id="add-user-name" placeholder="Nome Completo" class="p-2.5 border-2 border-slate-300 rounded-xl text-xs bg-white text-black font-bold outline-none focus:ring-2 focus:ring-sky-500">
+                        <input type="text" id="add-user-login" placeholder="Login / E-mail" class="p-2.5 border-2 border-slate-300 rounded-xl text-xs bg-white text-black font-bold outline-none focus:ring-2 focus:ring-sky-500">
+                        <input type="password" id="add-user-pass" placeholder="Senha" class="p-2.5 border-2 border-slate-300 rounded-xl text-xs bg-white text-black font-bold outline-none focus:ring-2 focus:ring-sky-500">
+                        <select id="add-user-role" class="p-2.5 border-2 border-slate-300 rounded-xl text-xs bg-white font-bold text-black outline-none focus:ring-2 focus:ring-sky-500">
                             <option value="OPERADOR">Operador</option>
                             <option value="ADM">Administrador</option>
                         </select>
@@ -1000,7 +1137,6 @@
                     </div>
                 </div>
 
-                <!-- 2. PARÂMETROS GERAIS -->
                 <div>
                     <h4 class="text-xs font-bold uppercase text-[#0b5394] border-b pb-1 mb-2">PARÂMETROS GERAIS DO SISTEMA</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -1019,14 +1155,13 @@
                     </div>
                 </div>
 
-                <!-- 3. CADASTRO DE LOCAIS E TIPOS -->
                 <div class="bg-slate-50 p-3.5 rounded-2xl border space-y-3">
                     <h4 class="text-xs font-bold uppercase text-purple-700 border-b pb-1">CADASTRO DE LOCAIS E OPÇÕES</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div class="space-y-1.5">
                             <label class="block text-[10px] font-bold text-slate-700">Locais Principais:</label>
                             <div class="flex gap-1.5">
-                                <input type="text" id="add-main-loc-input" placeholder="Novo Local..." class="w-full p-2 border-2 border-slate-300 rounded-lg text-xs bg-white text-black font-bold placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-sky-500">
+                                <input type="text" id="add-main-loc-input" placeholder="Novo Local..." class="w-full p-2 border-2 border-slate-300 rounded-lg text-xs bg-white text-black font-bold outline-none focus:ring-2 focus:ring-sky-500">
                                 <button onclick="addMainLocation()" class="bg-[#0b5394] text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-sky-800 transition">Adicionar</button>
                             </div>
                             <div id="cfg-main-loc-list" class="flex flex-wrap gap-1 pt-1"></div>
@@ -1035,7 +1170,7 @@
                         <div class="space-y-1.5">
                             <label class="block text-[10px] font-bold text-slate-700">Tipos de Lançamento:</label>
                             <div class="flex gap-1.5">
-                                <input type="text" id="add-tipo-input" placeholder="Novo Tipo..." class="w-full p-2 border-2 border-slate-300 rounded-lg text-xs bg-white text-black font-bold placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-sky-500">
+                                <input type="text" id="add-tipo-input" placeholder="Novo Tipo..." class="w-full p-2 border-2 border-slate-300 rounded-lg text-xs bg-white text-black font-bold outline-none focus:ring-2 focus:ring-sky-500">
                                 <button onclick="addTipoLancamento()" class="bg-[#0b5394] text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-sky-800 transition">Adicionar</button>
                             </div>
                             <div id="cfg-tipos-list" class="flex flex-wrap gap-1 pt-1"></div>
@@ -1046,14 +1181,13 @@
                         <label class="block text-[10px] font-bold text-slate-700">Sub-Locais de Consumo (Detalhe):</label>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                             <select id="cfg-subloc-parent-select" class="p-2 border-2 border-slate-300 rounded-lg text-xs bg-white font-bold text-black outline-none focus:ring-2 focus:ring-sky-500"></select>
-                            <input type="text" id="add-subloc-input" placeholder="Novo Sub-Local..." class="p-2 border-2 border-slate-300 rounded-lg text-xs bg-white text-black font-bold placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-sky-500">
+                            <input type="text" id="add-subloc-input" placeholder="Novo Sub-Local..." class="p-2 border-2 border-slate-300 rounded-lg text-xs bg-white text-black font-bold outline-none focus:ring-2 focus:ring-sky-500">
                             <button onclick="addSubLocation()" class="bg-[#0e8a44] text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-emerald-700 transition">Adicionar</button>
                         </div>
                         <div id="cfg-subloc-list" class="flex flex-wrap gap-1 pt-1"></div>
                     </div>
                 </div>
 
-                <!-- 4. ESTOQUES INICIAIS -->
                 <div>
                     <h4 class="text-xs font-bold uppercase text-emerald-700 border-b pb-1 mb-2">ESTOQUE INICIAL (GALÕES CHEIOS)</h4>
                     <div id="cfg-ini-container" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
@@ -1064,13 +1198,11 @@
                     <div id="cfg-inivaz-container" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
                 </div>
 
-                <!-- 5. ESTOQUES MÍNIMOS -->
                 <div>
                     <h4 class="text-xs font-bold uppercase text-amber-700 border-b pb-1 mb-2">ESTOQUE MÍNIMO DE SEGURANÇA</h4>
                     <div id="cfg-min-container" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
                 </div>
 
-                <!-- LIMPAR CACHE -->
                 <div class="pt-2 border-t">
                     <button type="button" onclick="executeResetCache()" class="w-full bg-red-50 text-red-700 font-bold p-2 rounded-xl text-xs border border-red-200">
                         Limpar Cache / Atualizar do Google Sheets
@@ -1085,7 +1217,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE EXPORTAÇÃO COM SELEÇÃO DE PERÍODO -->
+    <!-- MODAL DE EXPORTAÇÃO -->
     <div id="modal-export" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[160] flex items-center justify-center hidden p-3">
         <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-5 space-y-4 relative border border-slate-200 max-h-[95vh] overflow-y-auto">
             <div class="flex justify-between items-center pb-2.5 border-b border-slate-200">
@@ -1161,6 +1293,7 @@
         </div>
     </div>
 
+    <!-- SCRIPT DE NÓDULO LÓGICO E REGRAS DE NEGÓCIO -->
     <script>
         const BASE_USERS = {
             'admin': { pass: '123456', role: 'ADM', name: 'Administrador Principal' },
@@ -1193,7 +1326,6 @@
         let chartDiario, chartLocal, chartEntradasDev, chartMensal;
         let notifiedCriticalLocs = new Set();
 
-        // 1. SOLICITAR PERMISSÃO DE NOTIFICAÇÃO NO NAVEGADOR/CELULAR
         async function requestNotificationPermission() {
             if (!('Notification' in window)) {
                 showToast('Este dispositivo não suporta Notificações Push.', 'error');
@@ -1209,7 +1341,6 @@
             }
         }
 
-        // 2. DISPARAR NOTIFICAÇÃO PUSH NATIVA
         function triggerLocalPushNotification(title, body) {
             if ('Notification' in window && Notification.permission === 'granted') {
                 if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
@@ -1228,7 +1359,6 @@
             }
         }
 
-        // 3. MONITORAMENTO DE ESTOQUE CRÍTICO COM NOTIFICAÇÃO PUSH
         function checkAndTriggerStockPush(stock) {
             mainLocations.forEach(loc => {
                 const s = stock[loc];
@@ -1783,7 +1913,9 @@
         function applyUserPermissions() {
             if (!currentUser) return;
             const badge = document.getElementById('user-display-name');
-            if (badge) badge.innerText = `${currentUser.name} (${currentUser.role})`;
+            const roleBadge = document.getElementById('user-display-role');
+            if (badge) badge.innerText = currentUser.name;
+            if (roleBadge) roleBadge.innerText = currentUser.role;
             
             if (currentUser.role === 'OPERADOR') {
                 document.querySelectorAll('.adm-only').forEach(el => el.classList.add('hidden'));
@@ -1835,9 +1967,11 @@
             const targetScreen = document.getElementById(screenId);
             if (targetScreen) targetScreen.classList.remove('hidden');
 
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn, .sidebar-btn').forEach(el => el.classList.remove('active'));
             const activeNav = document.getElementById(`nav-${screenId}`);
+            const activeSideNav = document.getElementById(`side-nav-${screenId}`);
             if (activeNav) activeNav.classList.add('active');
+            if (activeSideNav) activeSideNav.classList.add('active');
 
             if (screenId === 'screen3') buildBatchInputs();
             if (screenId === 'screen4') updateStockUI();
@@ -2328,31 +2462,6 @@
                 }
             }
 
-            if (tbody) {
-                tbody.innerHTML = '';
-                mainLocations.forEach(loc => {
-                    const s = stock[loc] || { inicial: 0, inicialVazios: 0, min: 200, cheios: 0, vazios: 0, entrada: 0, consumo: 0, devolucao: 0 };
-                    const isNormal = s.cheios >= s.min;
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50">
-                            <td class="p-2.5 font-bold text-slate-800">${loc}</td>
-                            <td class="p-2.5 text-center">${s.inicial}</td>
-                            <td class="p-2.5 text-center text-emerald-600 font-bold">+${s.entrada}</td>
-                            <td class="p-2.5 text-center text-blue-600 font-bold">-${s.consumo}</td>
-                            <td class="p-2.5 text-center text-amber-600 font-bold">-${s.devolucao}</td>
-                            <td class="p-2.5 text-center font-black ${isNormal ? 'text-slate-900' : 'text-rose-600'} text-sm">${s.cheios}</td>
-                            <td class="p-2.5 text-center font-black text-amber-600 text-sm">${s.vazios}</td>
-                            <td class="p-2.5 text-center">
-                                <span class="${isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'} font-bold px-2 py-0.5 rounded-full text-[10px]">
-                                    ● ${isNormal ? 'OK' : 'Crítico'}
-                                </span>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-
-            // CHECA E DISPARA NOTIFICAÇÃO PUSH AUTOMÁTICA
             checkAndTriggerStockPush(stock);
         }
 
@@ -2738,10 +2847,10 @@
         }
 
         async function loadDataFromSheet(userTriggered = false) {
-            const iconMobile = document.getElementById('sync-icon-mobile');
             const iconDesktop = document.getElementById('sync-icon-desktop');
-            if (iconMobile) iconMobile.classList.add('fa-spin');
+            const iconMobile = document.getElementById('sync-icon-mobile');
             if (iconDesktop) iconDesktop.classList.add('fa-spin');
+            if (iconMobile) iconMobile.classList.add('fa-spin');
 
             const savedLocalDB = localStorage.getItem('controle_agua_db');
             if (savedLocalDB && database.length === 0) {
@@ -2781,8 +2890,8 @@
             }
 
             setTimeout(() => {
-                if (iconMobile) iconMobile.classList.remove('fa-spin');
                 if (iconDesktop) iconDesktop.classList.remove('fa-spin');
+                if (iconMobile) iconMobile.classList.remove('fa-spin');
             }, 600);
 
             renderRecentTable();
