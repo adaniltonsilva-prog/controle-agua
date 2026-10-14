@@ -15,7 +15,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#09111e">
+    <meta name="theme-color" content="#070d18">
 
     <script>
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
@@ -80,7 +80,7 @@
 
         .nav-btn { transition: all 0.2s ease-in-out; color: #94a3b8; opacity: 0.85; white-space: nowrap; }
         .nav-btn:hover { opacity: 1; color: #ffffff; background-color: rgba(255, 255, 255, 0.08); }
-        .nav-btn.active { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; opacity: 1; font-weight: 700; border-radius: 8px; shadow: 0 4px 12px rgba(2, 132, 199, 0.3); }
+        .nav-btn.active { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; opacity: 1; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3); }
 
         .card-module { 
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
@@ -102,6 +102,15 @@
 
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* MASCARA E INTEGRAÇÃO DA LOGO SEM QUADRADO DE FUNDO */
+        .brand-logo-clean {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            mix-blend-mode: screen;
+            object-fit: contain;
+        }
 
         main input, main select, main textarea,
         #modal-config input, #modal-config select, #modal-config textarea,
@@ -146,13 +155,6 @@
         #modal-dev-panel input::placeholder {
             color: #94a3b8 !important;
             -webkit-text-fill-color: #94a3b8 !important;
-        }
-
-        .clean-logo {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            mix-blend-mode: normal;
         }
     </style>
 </head>
@@ -202,7 +204,7 @@
     <div id="login-overlay" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 w-full h-full overflow-y-auto">
         <div class="bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm p-6 space-y-5 border border-slate-800 my-auto text-center mx-auto">
             <div class="space-y-2 flex flex-col items-center justify-center">
-                <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OUD PRIME Logo" class="clean-logo max-w-[170px] w-full h-auto object-contain mx-auto">
+                <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OUD PRIME Logo" class="brand-logo-clean max-w-[170px] w-full h-auto mx-auto">
                 <p class="text-[10px] text-sky-400 font-extrabold uppercase tracking-widest mt-1">SISTEMAS INTELIGENTES PARA O SEU DIA A DIA</p>
             </div>
 
@@ -344,22 +346,25 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO SUPERIOR EXECUTIVO DA APLICAÇÃO -->
-    <header class="bg-nav-dark text-white px-3 md:px-6 py-2.5 shadow-lg w-full sticky top-0 z-40">
-        <div class="max-w-[1800px] mx-auto flex justify-between items-center">
-            <!-- BRANDING E LOGO -->
+    <!-- CABEÇALHO SUPERIOR EXECUTIVO (REQ 2 & REQ 3) -->
+    <header class="bg-nav-dark text-white px-3.5 md:px-6 py-2.5 shadow-lg w-full sticky top-0 z-40 h-[65px] flex items-center">
+        <div class="max-w-[1800px] w-full mx-auto flex justify-between items-center gap-2">
+            
+            <!-- REQ 2: LOGO OP SEM MOLDURA/QUADRADO + NOME E SUBTÍTULO "CONTROLE DE ÁGUA" -->
             <div class="flex items-center gap-3">
-                <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OUD PRIME" class="clean-logo h-8 md:h-10 object-contain">
-                <div>
-                    <h1 class="text-sm md:text-lg font-black uppercase tracking-wider leading-none text-white flex items-center gap-2">
+                <img src="logo_2.jpg" onerror="this.onerror=null; this.src='logo.png';" alt="OP" class="brand-logo-clean h-8 md:h-10">
+                <div class="leading-none">
+                    <h1 class="text-sm md:text-lg font-black uppercase tracking-wider text-white">
                         OUD PRIME
                     </h1>
-                    <p class="text-[8px] md:text-[10px] text-sky-400 font-bold uppercase tracking-wide mt-0.5">CONTROLE DE ÁGUA • Sistemas Inteligentes</p>
+                    <p class="text-[9px] md:text-[11px] text-sky-400 font-bold uppercase tracking-widest mt-0.5">
+                        CONTROLE DE ÁGUA
+                    </p>
                 </div>
             </div>
 
-            <!-- NAVEGAÇÃO SUPERIOR RESPONSIVA (EXIBIDA APENAS NO MOBILE / TABLET) -->
-            <nav class="lg:hidden flex items-center gap-1 text-xs overflow-x-auto max-w-[50vw] pb-0.5 scrollbar-none">
+            <!-- NAVEGAÇÃO SUPERIOR RESPONSIVA MÓVEL -->
+            <nav class="lg:hidden flex items-center gap-1 text-xs overflow-x-auto max-w-[40vw] pb-0.5 scrollbar-none">
                 <button onclick="switchScreen('screen1')" id="nav-screen1" class="nav-btn active px-2.5 py-1 flex items-center gap-1">
                     <i class="fa-solid fa-house"></i> Menu
                 </button>
@@ -377,37 +382,42 @@
                 </button>
             </nav>
 
-            <!-- AÇÕES DIREITAS EXECUTIVAS -->
-            <div class="flex items-center gap-2 md:gap-3">
-                <button onclick="requestNotificationPermission()" title="Ativar Notificações no Dispositivo" class="bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 p-2 md:px-3 md:py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow">
-                    <i class="fa-solid fa-bell"></i> <span class="hidden md:inline">Notificações</span>
+            <!-- REQ 3: EXCLUSIVAMENTE OS 3 ÍCONES DE AÇÃO SEGUIDOS DA IDENTIFICAÇÃO DO USUÁRIO -->
+            <div class="flex items-center gap-1.5 md:gap-2.5">
+                <!-- 1. NOTIFICAÇÕES -->
+                <button onclick="requestNotificationPermission()" title="Ativar Notificações" class="w-8 h-8 md:w-9 md:h-9 bg-slate-800/80 hover:bg-slate-700 text-amber-300 border border-slate-700/60 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center transition shadow">
+                    <i class="fa-solid fa-bell"></i>
                 </button>
                 
-                <button onclick="loadDataFromSheet(true)" title="Sincronizar Dados na Nuvem" class="bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 p-2 md:px-3 md:py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow">
-                    <i id="sync-icon-desktop" class="fa-solid fa-arrows-rotate"></i> <span class="hidden md:inline">Sincronizar</span>
+                <!-- 2. SINCRONIZAÇÃO -->
+                <button onclick="loadDataFromSheet(true)" title="Sincronizar Dados na Nuvem" class="w-8 h-8 md:w-9 md:h-9 bg-slate-800/80 hover:bg-slate-700 text-sky-300 border border-slate-700/60 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center transition shadow">
+                    <i id="sync-icon-desktop" class="fa-solid fa-arrows-rotate"></i>
                 </button>
 
-                <div id="user-badge-container" class="bg-slate-900 border border-slate-800 text-slate-200 text-xs px-3 py-1.5 rounded-xl font-bold flex items-center gap-2 shadow-inner">
-                    <div class="w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center text-[10px] font-black"><i class="fa-solid fa-user"></i></div>
+                <!-- 3. SAIR DO SISTEMA -->
+                <button onclick="handleLogout()" title="Sair do Sistema" class="w-8 h-8 md:w-9 md:h-9 bg-rose-950/50 hover:bg-rose-900/80 text-rose-300 border border-rose-800/60 rounded-xl text-xs md:text-sm font-bold flex items-center justify-center transition shadow">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+
+                <!-- IDENTIFICAÇÃO DO USUÁRIO AUTENTICADO -->
+                <div id="user-badge-container" class="ml-1 bg-slate-900/90 border border-slate-800 text-slate-200 text-xs px-2.5 py-1 md:px-3 md:py-1.5 rounded-xl font-bold flex items-center gap-2 shadow-inner">
+                    <div class="w-6 h-6 rounded-lg bg-sky-600/30 text-sky-400 border border-sky-500/40 flex items-center justify-center text-[11px] font-black"><i class="fa-solid fa-user"></i></div>
                     <div class="hidden sm:block text-left leading-tight">
                         <span id="user-display-name" class="block font-bold text-white text-xs">Carregando...</span>
-                        <span id="user-display-role" class="block text-[9px] text-sky-400 font-semibold uppercase">Usuário</span>
+                        <span id="user-display-role" class="block text-[9px] text-sky-400 font-bold uppercase">Usuário</span>
                     </div>
                 </div>
-
-                <button onclick="handleLogout()" title="Sair do Sistema" class="bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/50 p-2 md:px-3 md:py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow">
-                    <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden md:inline">Sair</span>
-                </button>
             </div>
+
         </div>
     </header>
 
-    <!-- CORPO PRINCIPAL COM SIDEBAR NO DESKTOP -->
+    <!-- CORPO PRINCIPAL COM REQ 6: SIDEBAR FIXA NO DESKTOP -->
     <div class="flex-1 flex max-w-[1800px] w-full mx-auto relative">
 
-        <!-- NAVEGAÇÃO LATERAL EXECUTIVA (EXIBIDA APENAS NO DESKTOP / TELA LARGA) -->
-        <aside class="hidden lg:flex flex-col w-64 bg-sidebar p-4 space-y-2 shrink-0 min-h-[calc(100vh-65px)]">
-            <div class="text-[10px] font-black uppercase text-slate-500 tracking-wider px-3 pt-2 pb-1">Menu Principal</div>
+        <!-- REQ 6: SIDEBAR FIXA NO DESKTOP COM ROLAGEM INDEPENDENTE -->
+        <aside class="hidden lg:flex flex-col w-64 bg-sidebar p-4 space-y-2 shrink-0 fixed top-[65px] left-0 h-[calc(100vh-65px)] overflow-y-auto z-30">
+            <div class="text-[10px] font-black uppercase text-slate-500 tracking-wider px-3 pt-2 pb-1">Navegação</div>
             
             <button onclick="switchScreen('screen1')" id="side-nav-screen1" class="sidebar-btn active w-full px-3.5 py-3 flex items-center gap-3 text-sm">
                 <i class="fa-solid fa-house text-base w-5 text-center"></i> <span>Início</span>
@@ -434,22 +444,26 @@
             </button>
 
             <!-- CARD INFORMATIVO SIDEBAR -->
-            <div class="mt-auto bg-slate-900/80 border border-slate-800 rounded-2xl p-3.5 text-center space-y-1.5 shadow-inner">
+            <div class="mt-auto bg-slate-900/80 border border-slate-800 rounded-2xl p-3.5 text-center space-y-1 shadow-inner">
                 <span class="text-[10px] font-black uppercase text-sky-400 block tracking-widest">OUD PRIME</span>
-                <p class="text-[11px] text-slate-400 leading-tight">Sistemas Inteligentes para o seu dia a dia.</p>
+                <p class="text-[10px] text-slate-400 leading-tight">Sistemas Inteligentes</p>
             </div>
         </aside>
 
-        <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
-        <main class="flex-1 p-3.5 sm:p-5 md:p-6 text-slate-800 w-full min-w-0">
+        <!-- ÁREA DE CONTEÚDO PRINCIPAL COM DESLOCAMENTO NO DESKTOP PARA SIDEBAR FIXA -->
+        <main class="flex-1 p-3.5 sm:p-5 md:p-6 text-slate-800 w-full min-w-0 lg:ml-64 h-[calc(100vh-65px)] overflow-y-auto">
 
-            <!-- 1. TELA – MENU PRINCIPAL (MODELO FIEL À IMAGEM DE REFERÊNCIA) -->
+            <!-- 1. TELA – MENU PRINCIPAL (REQ 4 & REQ 5 & REQ 8) -->
             <section id="screen1" class="screen-content space-y-4 md:space-y-6">
-                <!-- BANNER "PAINEL OPERACIONAL" EXACTO À IMAGEM DE REFERÊNCIA -->
-                <div class="banner-op text-white p-4 sm:p-6 md:p-8 rounded-3xl shadow-2xl flex justify-between items-center relative overflow-hidden">
+                
+                <!-- REQ 4: BANNER PAINEL OPERACIONAL COM IDENTIFICAÇÃO OUD PRIME DESTACADA -->
+                <div class="banner-op text-white p-4 sm:p-5 md:p-6 rounded-3xl shadow-2xl flex justify-between items-center relative overflow-hidden">
                     <div class="space-y-1.5 z-10 max-w-xl">
-                        <span class="bg-white/15 backdrop-blur-md text-[9px] sm:text-xs uppercase font-extrabold px-3 py-1 rounded-full tracking-widest border border-white/20 text-sky-200">OUD PRIME</span>
-                        <h2 class="text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-white leading-tight">PAINEL OPERACIONAL</h2>
+                        <!-- IDENTIFICAÇÃO OUD PRIME COM CONTRASTE REFORÇADO -->
+                        <span class="inline-block bg-sky-500/20 backdrop-blur-md text-sky-200 border border-sky-400/40 text-[10px] sm:text-xs uppercase font-black px-3 py-1 rounded-full tracking-widest shadow-sm">
+                            OUD PRIME
+                        </span>
+                        <h2 class="text-base sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-white leading-tight">PAINEL OPERACIONAL</h2>
                         <p class="text-sky-100 text-xs sm:text-sm font-medium opacity-90">Sistemas Inteligentes para o seu dia a dia</p>
                     </div>
                     <div class="hidden md:flex items-center justify-center opacity-25 text-white z-0 text-7xl pr-4">
@@ -457,17 +471,18 @@
                     </div>
                 </div>
 
-                <!-- GRADE DE MÓDULOS: 1 COLUNA NO MOBILE / 2 COLUNAS NO DESKTOP (EXATAMENTE COMO NA IMAGEM) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-5">
-                    <!-- LANÇAMENTOS (AZUL) -->
-                    <div onclick="switchScreen('screen2')" class="card-module cursor-pointer bg-gradient-to-r from-[#0284c7] to-[#0369a1] text-white p-4 sm:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[90px] sm:min-h-[110px]">
-                        <div class="flex items-center gap-3.5 sm:gap-4">
-                            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center text-lg sm:text-2xl shadow-inner border border-white/20 shrink-0">
+                <!-- REQ 5: APENAS OS 4 MÓDULOS OPERACIONAIS PRINCIPAIS NA TELA INICIAL (SEM CONFIGS E RELATÓRIOS) -->
+                <!-- REQ 7 & REQ 8: CARTÕES COMPACTOS NO MOBILE (ALTURA REDUZIDA ENTRADINHA) E 2 COLUNAS NO DESKTOP -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4.5">
+                    <!-- 1. LANÇAMENTOS -->
+                    <div onclick="switchScreen('screen2')" class="card-module cursor-pointer bg-gradient-to-r from-[#0284c7] to-[#0369a1] text-white p-3.5 sm:p-4 md:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[80px] sm:min-h-[95px]">
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-2xl flex items-center justify-center text-base sm:text-xl shadow-inner border border-white/20 shrink-0">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </div>
                             <div>
-                                <h3 class="text-sm sm:text-lg font-black uppercase tracking-wide leading-tight">LANÇAMENTOS</h3>
-                                <p class="text-[11px] sm:text-xs text-sky-100 opacity-90 mt-0.5">Entrada, Devolução e Consumo</p>
+                                <h3 class="text-xs sm:text-base font-black uppercase tracking-wide leading-tight">LANÇAMENTOS</h3>
+                                <p class="text-[10px] sm:text-xs text-sky-100 opacity-90 mt-0.5">Entrada, Devolução e Consumo</p>
                             </div>
                         </div>
                         <div class="text-right text-[10px] sm:text-xs font-black uppercase tracking-wider text-sky-200 shrink-0 flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10">
@@ -475,15 +490,15 @@
                         </div>
                     </div>
 
-                    <!-- ESTOQUE (VERDE) -->
-                    <div onclick="switchScreen('screen4')" class="card-module cursor-pointer bg-gradient-to-r from-[#0e8a44] to-[#065026] text-white p-4 sm:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[90px] sm:min-h-[110px]">
-                        <div class="flex items-center gap-3.5 sm:gap-4">
-                            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center text-lg sm:text-2xl shadow-inner border border-white/20 shrink-0">
+                    <!-- 2. ESTOQUE -->
+                    <div onclick="switchScreen('screen4')" class="card-module cursor-pointer bg-gradient-to-r from-[#0e8a44] to-[#065026] text-white p-3.5 sm:p-4 md:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[80px] sm:min-h-[95px]">
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-2xl flex items-center justify-center text-base sm:text-xl shadow-inner border border-white/20 shrink-0">
                                 <i class="fa-solid fa-cubes"></i>
                             </div>
                             <div>
-                                <h3 class="text-sm sm:text-lg font-black uppercase tracking-wide leading-tight">ESTOQUE</h3>
-                                <p class="text-[11px] sm:text-xs text-emerald-100 opacity-90 mt-0.5">Consulta e Movimentação</p>
+                                <h3 class="text-xs sm:text-base font-black uppercase tracking-wide leading-tight">ESTOQUE</h3>
+                                <p class="text-[10px] sm:text-xs text-emerald-100 opacity-90 mt-0.5">Consulta e Movimentação</p>
                             </div>
                         </div>
                         <div class="text-right text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-200 shrink-0 flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10">
@@ -491,15 +506,15 @@
                         </div>
                     </div>
 
-                    <!-- DASHBOARD (LARANJA/AMBER) -->
-                    <div onclick="switchScreen('screen5')" class="card-module adm-only cursor-pointer bg-gradient-to-r from-[#d9530f] to-[#8a3003] text-white p-4 sm:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[90px] sm:min-h-[110px]">
-                        <div class="flex items-center gap-3.5 sm:gap-4">
-                            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center text-lg sm:text-2xl shadow-inner border border-white/20 shrink-0">
+                    <!-- 3. DASHBOARD -->
+                    <div onclick="switchScreen('screen5')" class="card-module adm-only cursor-pointer bg-gradient-to-r from-[#d9530f] to-[#8a3003] text-white p-3.5 sm:p-4 md:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[80px] sm:min-h-[95px]">
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-2xl flex items-center justify-center text-base sm:text-xl shadow-inner border border-white/20 shrink-0">
                                 <i class="fa-solid fa-chart-column"></i>
                             </div>
                             <div>
-                                <h3 class="text-sm sm:text-lg font-black uppercase tracking-wide leading-tight">DASHBOARD</h3>
-                                <p class="text-[11px] sm:text-xs text-amber-100 opacity-90 mt-0.5">Gráficos e Indicadores</p>
+                                <h3 class="text-xs sm:text-base font-black uppercase tracking-wide leading-tight">DASHBOARD</h3>
+                                <p class="text-[10px] sm:text-xs text-amber-100 opacity-90 mt-0.5">Gráficos e Indicadores</p>
                             </div>
                         </div>
                         <div class="text-right text-[10px] sm:text-xs font-black uppercase tracking-wider text-amber-200 shrink-0 flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10">
@@ -507,51 +522,19 @@
                         </div>
                     </div>
 
-                    <!-- BASE DE DADOS (ROXO) -->
-                    <div onclick="switchScreen('screen6')" class="card-module adm-only cursor-pointer bg-gradient-to-r from-[#6f42c1] to-[#43237a] text-white p-4 sm:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[90px] sm:min-h-[110px]">
-                        <div class="flex items-center gap-3.5 sm:gap-4">
-                            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center text-lg sm:text-2xl shadow-inner border border-white/20 shrink-0">
+                    <!-- 4. BASE DE DADOS -->
+                    <div onclick="switchScreen('screen6')" class="card-module adm-only cursor-pointer bg-gradient-to-r from-[#6f42c1] to-[#43237a] text-white p-3.5 sm:p-4 md:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[80px] sm:min-h-[95px]">
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-2xl flex items-center justify-center text-base sm:text-xl shadow-inner border border-white/20 shrink-0">
                                 <i class="fa-solid fa-database"></i>
                             </div>
                             <div>
-                                <h3 class="text-sm sm:text-lg font-black uppercase tracking-wide leading-tight">BASE DE DADOS</h3>
-                                <p class="text-[11px] sm:text-xs text-purple-100 opacity-90 mt-0.5">Registros de Lançamentos</p>
+                                <h3 class="text-xs sm:text-base font-black uppercase tracking-wide leading-tight">BASE DE DADOS</h3>
+                                <p class="text-[10px] sm:text-xs text-purple-100 opacity-90 mt-0.5">Registros de Lançamentos</p>
                             </div>
                         </div>
                         <div class="text-right text-[10px] sm:text-xs font-black uppercase tracking-wider text-purple-200 shrink-0 flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10">
                             ACESSAR &rarr;
-                        </div>
-                    </div>
-
-                    <!-- CONFIGURAÇÕES (CINZA ESCURO) -->
-                    <div onclick="openConfigModal()" class="card-module adm-only cursor-pointer bg-gradient-to-r from-[#495057] to-[#212529] text-white p-4 sm:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[90px] sm:min-h-[110px]">
-                        <div class="flex items-center gap-3.5 sm:gap-4">
-                            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center text-lg sm:text-2xl shadow-inner border border-white/20 shrink-0">
-                                <i class="fa-solid fa-gear"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm sm:text-lg font-black uppercase tracking-wide leading-tight">CONFIGURAÇÕES</h3>
-                                <p class="text-[11px] sm:text-xs text-slate-200 opacity-90 mt-0.5">Usuários, Cadastros e Parâmetros</p>
-                            </div>
-                        </div>
-                        <div class="text-right text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-300 shrink-0 flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10">
-                            ACESSAR &rarr;
-                        </div>
-                    </div>
-
-                    <!-- RELATÓRIOS (TEAL/CIANO) -->
-                    <div onclick="openExportModal()" class="card-module adm-only cursor-pointer bg-gradient-to-r from-[#17a2b8] to-[#0c6674] text-white p-4 sm:p-5 rounded-2xl shadow-xl flex items-center justify-between min-h-[90px] sm:min-h-[110px]">
-                        <div class="flex items-center gap-3.5 sm:gap-4">
-                            <div class="w-11 h-11 sm:w-14 sm:h-14 bg-white/20 rounded-2xl flex items-center justify-center text-lg sm:text-2xl shadow-inner border border-white/20 shrink-0">
-                                <i class="fa-solid fa-file-excel"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm sm:text-lg font-black uppercase tracking-wide leading-tight">RELATÓRIOS</h3>
-                                <p class="text-[11px] sm:text-xs text-teal-100 opacity-90 mt-0.5">Exportar por Período e Filtros</p>
-                            </div>
-                        </div>
-                        <div class="text-right text-[10px] sm:text-xs font-black uppercase tracking-wider text-teal-200 shrink-0 flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10">
-                            GERAR &rarr;
                         </div>
                     </div>
                 </div>
@@ -931,7 +914,7 @@
         </main>
     </div>
 
-    <!-- RODAPÉ EXECUTIVO FIEL À IMAGEM DE REFERÊNCIA -->
+    <!-- REQ 1: RODAPÉ INSTITUCIONAL INSTITUÍDO -->
     <footer class="bg-slate-950 text-slate-400 text-xs py-3 px-4 md:px-8 border-t border-slate-900 w-full z-10">
         <div class="max-w-[1800px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-center sm:text-left">
             <div class="flex items-center gap-2">
@@ -1853,7 +1836,7 @@
                 showToast('Lançamentos pendentes sincronizados com a nuvem!', 'success');
             } catch(e) {
                 console.error("Falha ao sincronizar fila offline:", e);
-            } finally {
+            } flexy {
                 updateNetworkStatus();
             }
         }
@@ -2848,9 +2831,7 @@
 
         async function loadDataFromSheet(userTriggered = false) {
             const iconDesktop = document.getElementById('sync-icon-desktop');
-            const iconMobile = document.getElementById('sync-icon-mobile');
             if (iconDesktop) iconDesktop.classList.add('fa-spin');
-            if (iconMobile) iconMobile.classList.add('fa-spin');
 
             const savedLocalDB = localStorage.getItem('controle_agua_db');
             if (savedLocalDB && database.length === 0) {
@@ -2891,7 +2872,6 @@
 
             setTimeout(() => {
                 if (iconDesktop) iconDesktop.classList.remove('fa-spin');
-                if (iconMobile) iconMobile.classList.remove('fa-spin');
             }, 600);
 
             renderRecentTable();
