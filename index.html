@@ -111,7 +111,6 @@
             object-fit: contain;
         }
 
-        /* TEMA ESCURO PADRONIZADO PARA TODOS OS INPUTS, SELECTS E TABELAS DO SISTEMA */
         main input, main select, main textarea,
         #modal-config input, #modal-config select, #modal-config textarea,
         #modal-edit-user input, #modal-edit-user select,
@@ -783,7 +782,7 @@
 
                             <div class="flex items-center justify-between sm:justify-start gap-1.5 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800 flex-1 sm:flex-none">
                                 <span class="text-amber-300 font-bold uppercase text-[9px] shrink-0">LOCAL:</span>
-                                <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1.5 rounded-lg font-bold text-xs outline-none focus:ring-2 focus:ring-amber-400 w-full sm:w-28 min-w-0"></select>
+                                <select id="dash-filter-local" onchange="updateDashboard()" class="bg-white text-slate-800 px-2 py-1.5 rounded-xl font-bold text-xs outline-none focus:ring-2 focus:ring-amber-400 w-full sm:w-28 min-w-0"></select>
                             </div>
                         </div>
                     </div>
@@ -2613,30 +2612,39 @@
             database.forEach(r => {
                 if (!r) return;
                 const q = parseInt(r.Quantidade) || 0;
-                const matchesLoc = selectedFilterLoc === 'Todos' || r.LocalPrincipal === selectedFilterLoc;
+                
+                // NORMALIZAÇÃO PARA LEITURA COMPLETA DE TODOS OS REGISTROS DO SHEET
+                const rawLoc = (r.LocalPrincipal || '').trim().toLowerCase();
+                const selLocNorm = selectedFilterLoc.trim().toLowerCase();
+                const matchesLoc = selLocNorm === 'todos' || rawLoc === selLocNorm;
                 
                 let matchesDate = true;
-                if (r.Data && startDateVal && endDateVal) {
-                    matchesDate = (r.Data >= startDateVal && r.Data <= endDateVal);
+                const normRecDate = normalizeDate(r.Data);
+                if (normRecDate && startDateVal && endDateVal) {
+                    matchesDate = (normRecDate >= startDateVal && normRecDate <= endDateVal);
                 }
 
                 if (matchesLoc && matchesDate) {
-                    if (r.Tipo === 'Consumo') {
+                    const tipoNorm = (r.Tipo || '').trim().toLowerCase();
+                    if (tipoNorm === 'consumo') {
                         totalConsumo += q;
-                        dailyConsumption[r.Data] = (dailyConsumption[r.Data] || 0) + q;
-                        if (r.LocalPrincipal) {
-                            localConsumption[r.LocalPrincipal] = (localConsumption[r.LocalPrincipal] || 0) + q;
+                        dailyConsumption[normRecDate] = (dailyConsumption[normRecDate] || 0) + q;
+                        
+                        const matchedMainLoc = mainLocations.find(m => m.trim().toLowerCase() === rawLoc);
+                        if (matchedMainLoc) {
+                            localConsumption[matchedMainLoc] = (localConsumption[matchedMainLoc] || 0) + q;
                         }
-                        if (r.Data) {
-                            const monthIdx = new Date(r.Data + 'T00:00:00').getMonth();
+                        
+                        if (normRecDate) {
+                            const monthIdx = new Date(normRecDate + 'T00:00:00').getMonth();
                             if (monthIdx >= 0 && monthIdx < 12) monthlyConsumption[monthIdx] += q;
                         }
-                    } else if (r.Tipo === 'Entrada') {
+                    } else if (tipoNorm === 'entrada') {
                         totalEntradas += q;
-                        dailyEntradas[r.Data] = (dailyEntradas[r.Data] || 0) + q;
-                    } else if (r.Tipo === 'Devolução') {
+                        dailyEntradas[normRecDate] = (dailyEntradas[normRecDate] || 0) + q;
+                    } else if (tipoNorm === 'devolução' || tipoNorm === 'devolucao') {
                         totalDevolucoes += q;
-                        dailyDevolucoes[r.Data] = (dailyDevolucoes[r.Data] || 0) + q;
+                        dailyDevolucoes[normRecDate] = (dailyDevolucoes[normRecDate] || 0) + q;
                     }
                 }
             });
@@ -2820,12 +2828,32 @@
             updateBatchSummary();
         }
 
+        // VALIDAÇÃO FÍSICA DE ESTOQUE/SALDO DE VAZIOS E CHEIOS ANTES DE SALVAR
         async function handleSingleSubmit(e) {
             e.preventDefault();
 
             const tipo = document.getElementById('single-tipo').value;
+            const local = document.getElementById('single-local').value;
+            const qtd = parseInt(document.getElementById('single-qtd').value) || 0;
             const compFileEl = document.getElementById('single-comprovante');
-            
+
+            // 1. VALIDAÇÃO DE SALDO DISPONÍVEL
+            const currentStock = calculateStock();
+            const locStock = currentStock[local] || { cheios: 0, vazios: 0 };
+
+            if (tipo === 'Devolução') {
+                if (qtd > locStock.vazios) {
+                    showToast(`Operação bloqueada! O local ${local} possui apenas ${locStock.vazios} galões vazios disponíveis para devolução.`, 'error');
+                    return;
+                }
+            } else if (tipo === 'Consumo') {
+                if (qtd > locStock.cheios) {
+                    showToast(`Operação bloqueada! O local ${local} possui apenas ${locStock.cheios} galões cheios em estoque.`, 'error');
+                    return;
+                }
+            }
+
+            // 2. VALIDAÇÃO DE COMPROVANTE OBRIGATÓRIO
             if ((tipo === 'Entrada' || tipo === 'Devolução') && (!compFileEl.files || compFileEl.files.length === 0)) {
                 showToast(`É obrigatório anexar um comprovante para lançamentos de ${tipo}!`, 'error');
                 return;
@@ -2847,9 +2875,9 @@
                 DataRegistro: timestampNow,
                 Data: document.getElementById('single-data').value,
                 Tipo: tipo,
-                LocalPrincipal: document.getElementById('single-local').value,
+                LocalPrincipal: local,
                 LocalDetalhe: document.getElementById('single-detalhe').value,
-                Quantidade: parseInt(document.getElementById('single-qtd').value) || 0,
+                Quantidade: qtd,
                 Comprovante: comprovanteBase64,
                 Observacao: document.getElementById('single-obs').value || '-',
                 Usuario: currentUser ? currentUser.name : 'Operador'
